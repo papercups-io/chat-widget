@@ -11,7 +11,7 @@ const App = () => {
         like to render the widget on, or in your root/router component
         if you would like it to render on every page
       */}
-      <ChatWidget accountId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx' />;
+      <ChatWidget accountId='eb504736-0f20-4978-98ff-1a82ae60b266' />;
     </>
   );
 };
