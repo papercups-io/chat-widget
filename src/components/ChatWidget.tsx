@@ -21,6 +21,7 @@ type Message = {
 
 type Props = {
   accountId: string;
+  title?: string;
 };
 type State = {
   message: string;
@@ -178,6 +179,7 @@ class ChatWidget extends React.Component<Props, State> {
   };
 
   render() {
+    const {title = 'Welcome!'} = this.props;
     const {customerId, message, messages = []} = this.state;
 
     return (
@@ -196,7 +198,7 @@ class ChatWidget extends React.Component<Props, State> {
           }}
         >
           <Title level={4} style={{color: colors.white, margin: 0}}>
-            Welcome to Taro!
+            {title}
           </Title>
         </Box>
         <Box

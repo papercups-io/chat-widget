@@ -6,6 +6,7 @@ import ChatWidget from './ChatWidget';
 import styles from '../styles.module.css';
 
 type Props = {
+  title?: string;
   accountId: string;
 };
 type State = {
@@ -47,7 +48,10 @@ class EmbeddableWidget extends React.Component<Props, State> {
               overflow: 'hidden',
             }}
           >
-            <ChatWidget accountId={this.props.accountId} />
+            <ChatWidget
+              title={this.props.title}
+              accountId={this.props.accountId}
+            />
           </Box>
         )}
         <Box
