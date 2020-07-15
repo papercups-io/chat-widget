@@ -1,9 +1,17 @@
-/* add css module styles here (optional) */
+@import '~antd/dist/antd.css';
 
-.test {
-  margin: 2em;
-  padding: 0.5em;
-  border: 2px solid #000;
-  font-size: 2em;
-  text-align: center;
+.ChatWidget {
+  font-family: 'Open Sans', 'Helvetica Neue', Arial, san-serif;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Add custom styles here */
+.TextArea--transparent,
+.TextArea--transparent:hover,
+.TextArea--transparent:focus,
+.TextArea--transparent:active {
+  border: none !important;
+  box-shadow: none !important;
+  resize: none !important;
 }
