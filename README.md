@@ -13,16 +13,14 @@ npm install --save @papercups-io/chat-widget
 ## Usage
 
 ```tsx
-import React, { Component } from 'react'
+import React from 'react';
 
-import MyComponent from '@papercups-io/chat-widget'
-import '@papercups-io/chat-widget/dist/index.css'
+import ChatWidget from '@papercups-io/chat-widget';
+import '@papercups-io/chat-widget/dist/index.css';
 
-class Example extends Component {
-  render() {
-    return <MyComponent />
-  }
-}
+const Example = () => {
+  return <ChatWidget accountId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx' />;
+};
 ```
 
 ## License
