@@ -56,7 +56,8 @@ const ChatMessage = ({
       <Box pr={0} pl={4} pb={isLastInGroup ? 3 : 2}>
         <Flex sx={{justifyContent: 'flex-end'}}>
           <Box
-            p={3}
+            px='14px'
+            py={2}
             sx={{
               color: colors.white,
               background: colors.primary,
@@ -69,7 +70,7 @@ const ChatMessage = ({
         {shouldDisplayTimestamp && (
           <Flex m={1} sx={{justifyContent: 'flex-end'}}>
             {/* TODO: this should be dynamic */}
-            <Text type='secondary'>Sent {timestamp || '30 mins ago'}</Text>
+            <Text type='secondary'>Sent {timestamp}</Text>
           </Flex>
         )}
       </Box>
@@ -83,7 +84,8 @@ const ChatMessage = ({
           <SmileTwoTone style={{fontSize: 20}} twoToneColor={colors.gold} />
         </Box>
         <Box
-          p={3}
+          px='14px'
+          py={2}
           sx={{
             color: colors.black,
             background: 'rgb(245, 245, 245)',
@@ -97,7 +99,7 @@ const ChatMessage = ({
       {shouldDisplayTimestamp && (
         <Flex m={1} pl={4} sx={{justifyContent: 'flex-start'}}>
           {/* TODO: this should be dynamic */}
-          <Text type='secondary'>Sent {timestamp || '30 mins ago'}</Text>
+          <Text type='secondary'>Sent {timestamp}</Text>
         </Flex>
       )}
     </Box>
