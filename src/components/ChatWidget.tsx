@@ -1,6 +1,7 @@
 import React from 'react';
 import {Box, Flex} from 'theme-ui';
 import {Socket} from 'phoenix';
+import {motion} from 'framer-motion';
 import {colors, Button, TextArea, Title} from './common';
 import {SendOutlined} from './icons';
 import ChatMessage from './ChatMessage';
@@ -216,15 +217,23 @@ class ChatWidget extends React.Component<Props, State> {
               ? msg.customer_id !== next.customer_id
               : true;
             const shouldDisplayTimestamp = key === messages.length - 1;
+            const isMe = msg.customer_id === customerId;
 
             return (
-              <ChatMessage
+              <motion.div
                 key={key}
-                message={msg}
-                isMe={msg.customer_id === customerId}
-                isLastInGroup={isLastInGroup}
-                shouldDisplayTimestamp={shouldDisplayTimestamp}
-              />
+                initial={{opacity: 0, x: isMe ? 4 : -4}}
+                animate={{opacity: 1, x: 0}}
+                transition={{duration: 0.2, ease: 'easeIn'}}
+              >
+                <ChatMessage
+                  key={key}
+                  message={msg}
+                  isMe={isMe}
+                  isLastInGroup={isLastInGroup}
+                  shouldDisplayTimestamp={shouldDisplayTimestamp}
+                />
+              </motion.div>
             );
           })}
           <div ref={(el) => (this.scrollToEl = el)} />

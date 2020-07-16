@@ -1,8 +1,7 @@
 import React from 'react';
-import {Box, Flex} from 'theme-ui';
-import {colors} from './common';
-import {DownOutlined, UpOutlined} from './icons';
+import {motion} from 'framer-motion';
 import ChatWidget from './ChatWidget';
+import WidgetToggle from './WidgetToggle';
 import styles from '../styles.module.css';
 
 type Props = {
@@ -31,8 +30,11 @@ class EmbeddableWidget extends React.Component<Props, State> {
       <React.Fragment>
         {/* TODO: use emotion or styled to handle this? */}
         {open && (
-          <Box
+          <motion.div
             className={styles.ChatWidget}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.4, ease: 'easeIn'}}
             style={{
               zIndex: 2147483000,
               position: 'fixed',
@@ -42,7 +44,6 @@ class EmbeddableWidget extends React.Component<Props, State> {
               minHeight: '250px',
               maxHeight: '704px',
               boxShadow: 'rgba(0, 0, 0, 0.16) 0px 5px 40px',
-              opacity: 1,
               height: 'calc(100% - 120px)',
               borderRadius: 8,
               overflow: 'hidden',
@@ -52,41 +53,20 @@ class EmbeddableWidget extends React.Component<Props, State> {
               title={this.props.title}
               accountId={this.props.accountId}
             />
-          </Box>
+          </motion.div>
         )}
-        <Box
+        <motion.div
+          initial={false}
+          animate={open ? 'open' : 'closed'}
           style={{
-            color: colors.white,
-            background: colors.primary,
             position: 'fixed',
             zIndex: 2147483003,
             bottom: '20px',
             right: '20px',
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            cursor: 'pointer',
-            boxShadow:
-              '0 1px 6px 0 rgba(0, 0, 0, 0.06), 0 2px 32px 0 rgba(0, 0, 0, 0.16)',
           }}
         >
-          <Flex
-            sx={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
-              width: '100%',
-            }}
-            // TODO: don't use onClick handler here?
-            onClick={this.handleToggleOpen}
-          >
-            {open ? (
-              <DownOutlined style={{fontSize: 16}} />
-            ) : (
-              <UpOutlined style={{fontSize: 16}} />
-            )}
-          </Flex>
-        </Box>
+          <WidgetToggle toggle={this.handleToggleOpen} />
+        </motion.div>
       </React.Fragment>
     );
   }

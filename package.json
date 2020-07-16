@@ -66,6 +66,7 @@
   "dependencies": {
     "antd": "^4.4.2",
     "dayjs": "^1.8.29",
+    "framer-motion": "^2.0.1",
     "phoenix": "^1.5.3",
     "superagent": "^5.3.1",
     "theme-ui": "^0.3.1"
