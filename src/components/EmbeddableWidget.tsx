@@ -1,7 +1,9 @@
 import React from 'react';
 import {motion} from 'framer-motion';
+import {ThemeProvider} from 'theme-ui';
 import ChatWidget from './ChatWidget';
 import WidgetToggle from './WidgetToggle';
+import theme from '../theme';
 import styles from '../styles.module.css';
 
 type Props = {
@@ -27,7 +29,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
     const {open} = this.state;
 
     return (
-      <React.Fragment>
+      <ThemeProvider theme={theme}>
         {/* TODO: use emotion or styled to handle this? */}
         {open && (
           <motion.div
@@ -67,7 +69,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
         >
           <WidgetToggle toggle={this.handleToggleOpen} />
         </motion.div>
-      </React.Fragment>
+      </ThemeProvider>
     );
   }
 }

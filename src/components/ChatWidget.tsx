@@ -186,18 +186,13 @@ class ChatWidget extends React.Component<Props, State> {
     return (
       <Flex
         sx={{
-          background: colors.white,
+          bg: 'background',
           flexDirection: 'column',
           height: '100%',
           width: '100%',
         }}
       >
-        <Box
-          p={4}
-          sx={{
-            background: colors.primary,
-          }}
-        >
+        <Box p={4} sx={{bg: 'primary'}}>
           <Title level={4} style={{color: colors.white, margin: 0}}>
             {title}
           </Title>
