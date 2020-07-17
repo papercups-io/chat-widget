@@ -1,10 +1,9 @@
 import React from 'react';
-import {Box, Flex} from 'theme-ui';
+import {Box, Button, Flex, Heading, Text, Textarea} from 'theme-ui';
 import {Socket} from 'phoenix';
 import {motion} from 'framer-motion';
-import {colors, Button, TextArea, Title} from './common';
-import {SendOutlined} from './icons';
 import ChatMessage from './ChatMessage';
+import SendIcon from './SendIcon';
 import * as API from '../api';
 import {getCustomerId, setCustomerId} from '../storage';
 import {WS_URL} from '../config';
@@ -192,10 +191,13 @@ class ChatWidget extends React.Component<Props, State> {
           width: '100%',
         }}
       >
-        <Box p={4} sx={{bg: 'primary'}}>
-          <Title level={4} style={{color: colors.white, margin: 0}}>
+        <Box py={3} px={4} sx={{bg: 'primary'}}>
+          <Heading as='h2' sx={{color: 'white', my: 1}}>
             {title}
-          </Title>
+          </Heading>
+          <Text sx={{color: 'offset'}}>
+            Ask us anything in the chat window below 😊
+          </Text>
         </Box>
         <Box
           p={3}
@@ -217,7 +219,7 @@ class ChatWidget extends React.Component<Props, State> {
             return (
               <motion.div
                 key={key}
-                initial={{opacity: 0, x: isMe ? 4 : -4}}
+                initial={{opacity: 0, x: isMe ? 2 : -2}}
                 animate={{opacity: 1, x: 0}}
                 transition={{duration: 0.2, ease: 'easeIn'}}
               >
@@ -234,7 +236,7 @@ class ChatWidget extends React.Component<Props, State> {
           <div ref={(el) => (this.scrollToEl = el)} />
         </Box>
         <Box
-          p={3}
+          p={2}
           sx={{
             borderTop: '1px solid rgb(230, 230, 230)',
             // TODO: only show shadow on focus TextArea below
@@ -243,23 +245,33 @@ class ChatWidget extends React.Component<Props, State> {
         >
           <Flex sx={{alignItems: 'center'}}>
             <Box mr={3} sx={{flex: 1}}>
-              <TextArea
+              <Textarea
+                sx={{border: 'none', fontFamily: 'body', color: 'input'}}
                 className={styles['TextArea--transparent']}
-                autoSize={{minRows: 1, maxRows: 4}}
+                rows={1}
                 autoFocus
                 value={message}
                 onKeyDown={this.handleKeyDown}
                 onChange={this.handleMessageChange}
               />
             </Box>
-            <Box px={3}>
+            <Box pl={3}>
               <Button
-                htmlType='submit'
-                type='primary'
-                shape='circle'
-                icon={<SendOutlined />}
+                variant='primary'
+                type='submit'
                 onClick={this.handleSendMessage}
-              />
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: '50%',
+                  height: '36px',
+                  width: '36px',
+                  padding: 0,
+                }}
+              >
+                <SendIcon width={16} height={16} fill='white' />
+              </Button>
             </Box>
           </Flex>
         </Box>
