@@ -192,7 +192,7 @@ class ChatWidget extends React.Component<Props, State> {
         }}
       >
         <Box py={3} px={4} sx={{bg: 'primary'}}>
-          <Heading as='h2' sx={{color: 'white', my: 1}}>
+          <Heading as='h2' sx={{color: 'background', my: 1}}>
             {title}
           </Heading>
           <Text sx={{color: 'offset'}}>
@@ -270,7 +270,7 @@ class ChatWidget extends React.Component<Props, State> {
                   padding: 0,
                 }}
               >
-                <SendIcon width={16} height={16} fill='white' />
+                <SendIcon width={16} height={16} fill='background' />
               </Button>
             </Box>
           </Flex>

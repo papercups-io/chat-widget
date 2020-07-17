@@ -3,22 +3,27 @@ import {motion} from 'framer-motion';
 import {ThemeProvider} from 'theme-ui';
 import ChatWidget from './ChatWidget';
 import WidgetToggle from './WidgetToggle';
-import theme from '../theme';
+import getThemeConfig from '../theme';
 import styles from '../styles.module.css';
 
 type Props = {
   title?: string;
+  primaryColor?: string;
   accountId: string;
 };
 type State = {
+  theme: any;
   open: boolean;
 };
 
 class EmbeddableWidget extends React.Component<Props, State> {
-  state: State = {open: false};
+  constructor(props: Props) {
+    super(props);
 
-  componentDidMount() {
-    // Load widget
+    this.state = {
+      theme: getThemeConfig({primary: props.primaryColor}),
+      open: false,
+    };
   }
 
   handleToggleOpen = () => {
@@ -26,7 +31,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
   };
 
   render() {
-    const {open} = this.state;
+    const {theme, open} = this.state;
 
     return (
       <ThemeProvider theme={theme}>
