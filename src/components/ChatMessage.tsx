@@ -1,9 +1,7 @@
 import React from 'react';
-import {Box, Flex} from 'theme-ui';
+import {Box, Flex, Text} from 'theme-ui';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import {colors, Text} from './common';
-import {SmileTwoTone} from './icons';
 
 dayjs.extend(utc);
 
@@ -30,7 +28,7 @@ const formatRelativeTime = (date: dayjs.Dayjs) => {
   } else if (hrs <= 24) {
     return `${hrs} hour${hrs === 1 ? '' : 's'} ago`;
   } else {
-    return `${days} days${days === 1 ? '' : 's'} ago`;
+    return `${days} day${days === 1 ? '' : 's'} ago`;
   }
 };
 
@@ -59,18 +57,17 @@ const ChatMessage = ({
             px='14px'
             py={2}
             sx={{
-              color: colors.white,
-              background: colors.primary,
+              color: 'white',
+              bg: 'primary',
               borderRadius: 4,
             }}
           >
-            {body}
+            <Text>{body}</Text>
           </Box>
         </Flex>
         {shouldDisplayTimestamp && (
           <Flex m={1} sx={{justifyContent: 'flex-end'}}>
-            {/* TODO: this should be dynamic */}
-            <Text type='secondary'>Sent {timestamp}</Text>
+            <Text sx={{color: 'gray'}}>Sent {timestamp}</Text>
           </Flex>
         )}
       </Box>
@@ -80,15 +77,17 @@ const ChatMessage = ({
   return (
     <Box pr={4} pl={0} pb={isLastInGroup ? 3 : 2}>
       <Flex sx={{justifyContent: 'flex-start', alignItems: 'center'}}>
+        {/*
         <Box mr={3} mt={1}>
-          <SmileTwoTone style={{fontSize: 20}} twoToneColor={colors.gold} />
+          TODO: show avatar here?
         </Box>
+        */}
         <Box
           px='14px'
           py={2}
           sx={{
-            color: colors.black,
-            background: 'rgb(245, 245, 245)',
+            color: 'text',
+            bg: 'rgb(245, 245, 245)',
             borderRadius: 4,
             maxWidth: '80%',
           }}
@@ -97,9 +96,9 @@ const ChatMessage = ({
         </Box>
       </Flex>
       {shouldDisplayTimestamp && (
-        <Flex m={1} pl={4} sx={{justifyContent: 'flex-start'}}>
+        <Flex m={1} sx={{justifyContent: 'flex-start'}}>
           {/* TODO: this should be dynamic */}
-          <Text type='secondary'>Sent {timestamp}</Text>
+          <Text sx={{color: 'gray'}}>Sent {timestamp}</Text>
         </Flex>
       )}
     </Box>

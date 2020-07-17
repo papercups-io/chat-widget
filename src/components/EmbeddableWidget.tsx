@@ -34,9 +34,9 @@ class EmbeddableWidget extends React.Component<Props, State> {
         {open && (
           <motion.div
             className={styles.ChatWidget}
-            initial={{opacity: 0, y: 8}}
+            initial={{opacity: 0, y: 4}}
             animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.4, ease: 'easeIn'}}
+            transition={{duration: 0.2, ease: 'easeIn'}}
             style={{
               zIndex: 2147483000,
               position: 'fixed',
@@ -67,7 +67,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
             right: '20px',
           }}
         >
-          <WidgetToggle toggle={this.handleToggleOpen} />
+          <WidgetToggle open={open} toggle={this.handleToggleOpen} />
         </motion.div>
       </ThemeProvider>
     );
