@@ -86,7 +86,7 @@ const ChatMessage = ({
           px='14px'
           py={2}
           sx={{
-            color: '#000',
+            color: 'text',
             bg: 'rgb(245, 245, 245)',
             borderRadius: 4,
             maxWidth: '80%',
