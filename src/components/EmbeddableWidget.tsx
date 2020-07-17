@@ -8,6 +8,7 @@ import styles from '../styles.module.css';
 
 type Props = {
   title?: string;
+  subtitle?: string;
   primaryColor?: string;
   accountId: string;
 };
@@ -58,6 +59,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
           >
             <ChatWidget
               title={this.props.title}
+              subtitle={this.props.subtitle}
               accountId={this.props.accountId}
             />
           </motion.div>

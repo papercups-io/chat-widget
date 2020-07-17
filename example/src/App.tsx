@@ -13,6 +13,7 @@ const App = () => {
       */}
       <ChatWidget
         title='Welcome to Papercups!'
+        subtitle='Ask us anything in the chat window below 😊'
         primaryColor='#13c2c2'
         accountId='eb504736-0f20-4978-98ff-1a82ae60b266'
       />
