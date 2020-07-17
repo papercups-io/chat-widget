@@ -22,6 +22,7 @@ type Message = {
 type Props = {
   accountId: string;
   title?: string;
+  subtitle?: string;
 };
 type State = {
   message: string;
@@ -48,6 +49,10 @@ class ChatWidget extends React.Component<Props, State> {
     socket.connect();
 
     this.fetchLatestConversation(this.state.customerId);
+  }
+
+  componentWillUnmount() {
+    this.channel && this.channel.leave();
   }
 
   fetchLatestConversation = (customerId: string) => {
@@ -179,7 +184,7 @@ class ChatWidget extends React.Component<Props, State> {
   };
 
   render() {
-    const {title = 'Welcome!'} = this.props;
+    const {title = 'Welcome!', subtitle = 'How can we help you?'} = this.props;
     const {customerId, message, messages = []} = this.state;
 
     return (
@@ -192,12 +197,10 @@ class ChatWidget extends React.Component<Props, State> {
         }}
       >
         <Box py={3} px={4} sx={{bg: 'primary'}}>
-          <Heading as='h2' sx={{color: 'white', my: 1}}>
+          <Heading as='h2' sx={{color: 'background', my: 1}}>
             {title}
           </Heading>
-          <Text sx={{color: 'offset'}}>
-            Ask us anything in the chat window below 😊
-          </Text>
+          <Text sx={{color: 'offset'}}>{subtitle}</Text>
         </Box>
         <Box
           p={3}
@@ -270,7 +273,7 @@ class ChatWidget extends React.Component<Props, State> {
                   padding: 0,
                 }}
               >
-                <SendIcon width={16} height={16} fill='white' />
+                <SendIcon width={16} height={16} fill='background' />
               </Button>
             </Box>
           </Flex>
