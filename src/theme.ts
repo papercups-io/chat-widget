@@ -156,6 +156,44 @@ export const getThemeConfig = (settings: ThemeSettings) => {
       img: {
         maxWidth: '100%',
       },
+      textarea: {
+        transparent: {
+          border: 'none',
+          boxShadow: 'none',
+          resize: 'none',
+          outline: 0,
+          '&:hover': {
+            border: 'none',
+            boxShadow: 'none',
+            resize: 'none',
+            outline: 0,
+          },
+          '&:active': {
+            border: 'none',
+            boxShadow: 'none',
+            resize: 'none',
+            outline: 0,
+          },
+          '&:focus': {
+            border: 'none',
+            boxShadow: 'none',
+            resize: 'none',
+            outline: 0,
+          },
+        },
+      },
+      WidgetToggle: {
+        outline: 'none',
+        border: 'none',
+        userSelect: 'none',
+        cursor: 'pointer',
+        width: '50px',
+        height: '50px',
+        borderRadius: '50%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
     },
   };
 };
