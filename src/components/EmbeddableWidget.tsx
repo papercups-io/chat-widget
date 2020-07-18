@@ -4,7 +4,6 @@ import {ThemeProvider} from 'theme-ui';
 import ChatWidget from './ChatWidget';
 import WidgetToggle from './WidgetToggle';
 import getThemeConfig from '../theme';
-import styles from '../styles.module.css';
 
 type Props = {
   title?: string;
@@ -39,7 +38,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
         {/* TODO: use emotion or styled to handle this? */}
         {open && (
           <motion.div
-            className={styles.ChatWidget}
+            sx={{margin: 0}}
             initial={{opacity: 0, y: 4}}
             animate={{opacity: 1, y: 0}}
             transition={{duration: 0.2, ease: 'easeIn'}}

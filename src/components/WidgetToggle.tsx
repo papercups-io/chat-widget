@@ -1,7 +1,6 @@
 import React from 'react';
 import {Button, Flex} from 'theme-ui';
 import {motion} from 'framer-motion';
-import styles from '../styles.module.css';
 
 const Path = (props: any) => (
   <motion.path
@@ -32,8 +31,12 @@ export const WidgetToggle = ({
     >
       <Button
         p={0}
-        className={styles.WidgetToggle}
-        sx={{bg: 'primary', pt: '2px', pl: open ? '2px' : 0}}
+        sx={{
+          bg: 'primary',
+          pt: '2px',
+          pl: open ? '2px' : 0,
+          variant: 'styles.WidgetToggle',
+        }}
         onClick={toggle}
       >
         <svg width='23' height='23' viewBox='0 0 23 23'>

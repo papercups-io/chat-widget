@@ -7,7 +7,6 @@ import SendIcon from './SendIcon';
 import * as API from '../api';
 import {getCustomerId, setCustomerId} from '../storage';
 import {WS_URL} from '../config';
-import styles from '../styles.module.css';
 
 const socket = new Socket(WS_URL);
 
@@ -249,8 +248,12 @@ class ChatWidget extends React.Component<Props, State> {
           <Flex sx={{alignItems: 'center'}}>
             <Box mr={3} sx={{flex: 1}}>
               <Textarea
-                sx={{border: 'none', fontFamily: 'body', color: 'input'}}
-                className={styles['TextArea--transparent']}
+                sx={{
+                  fontFamily: 'body',
+                  color: 'input',
+                  variant: 'styles.textarea.transparent',
+                }}
+                className='TextArea--transparent'
                 rows={1}
                 autoFocus
                 value={message}
