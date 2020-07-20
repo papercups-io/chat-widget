@@ -3,7 +3,36 @@ import React from 'react';
 import ChatWidget from '@papercups-io/chat-widget';
 import '@papercups-io/chat-widget/dist/index.css';
 
-const App = () => {
+type Props = {disco?: boolean};
+
+const App = ({disco}: Props) => {
+  const colors = [
+    '#1890ff',
+    '#f5222d',
+    '#7cb305',
+    '#52c41a',
+    '#13c2c2',
+    '#722ed1',
+    '#eb2f96',
+  ];
+
+  const [primaryColor, setPrimaryColor] = React.useState(colors[0]);
+
+  React.useEffect(() => {
+    if (!disco) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const idx = colors.indexOf(primaryColor);
+      const next = (idx + 1) % (colors.length - 1);
+
+      setPrimaryColor(colors[next]);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [disco, colors, primaryColor]);
+
   return (
     <>
       {/*
@@ -14,7 +43,7 @@ const App = () => {
       <ChatWidget
         title='Welcome to Papercups!'
         subtitle='Ask us anything in the chat window below 😊'
-        primaryColor='#13c2c2'
+        primaryColor={primaryColor}
         accountId='eb504736-0f20-4978-98ff-1a82ae60b266'
       />
     </>

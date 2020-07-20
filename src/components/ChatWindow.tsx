@@ -8,9 +8,7 @@ import * as API from '../api';
 import {getCustomerId, setCustomerId} from '../storage';
 import {WS_URL} from '../config';
 
-const socket = new Socket(WS_URL);
-
-// TODO:
+// TODO: add better types
 type Message = {
   sender: string;
   body: string;
@@ -30,9 +28,10 @@ type State = {
   conversationId: string | null;
 };
 
-class ChatWidget extends React.Component<Props, State> {
+class ChatWindow extends React.Component<Props, State> {
   scrollToEl: any = null;
 
+  socket: any;
   channel: any;
 
   state: State = {
@@ -45,7 +44,8 @@ class ChatWidget extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    socket.connect();
+    this.socket = new Socket(WS_URL);
+    this.socket.connect();
 
     this.fetchLatestConversation(this.state.customerId);
   }
@@ -81,17 +81,15 @@ class ChatWidget extends React.Component<Props, State> {
         this.setState({
           conversationId,
           messages: messages
-            .map((msg: any) => {
+            .map((msg: Message) => {
               return {
-                body: msg.body,
-                created_at: msg.created_at,
-                customer_id: msg.customer_id,
+                ...msg,
                 // Deprecate
                 sender: msg.customer_id ? 'customer' : 'agent',
               };
             })
             .sort(
-              (a: any, b: any) =>
+              (a: Message, b: Message) =>
                 +new Date(a.created_at) - +new Date(b.created_at)
             ),
         });
@@ -132,7 +130,7 @@ class ChatWidget extends React.Component<Props, State> {
 
     console.log('Joining channel:', conversationId);
 
-    this.channel = socket.channel(`conversation:${conversationId}`, {
+    this.channel = this.socket.channel(`conversation:${conversationId}`, {
       customer_id: customerId,
     });
 
@@ -298,4 +296,4 @@ class ChatWidget extends React.Component<Props, State> {
   }
 }
 
-export default ChatWidget;
+export default ChatWindow;
