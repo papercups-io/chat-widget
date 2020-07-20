@@ -28,8 +28,7 @@ type State = {
   conversationId: string | null;
 };
 
-// TODO: rename so that base component is ChatWidget
-class ChatWidget extends React.Component<Props, State> {
+class ChatWindow extends React.Component<Props, State> {
   scrollToEl: any = null;
 
   socket: any;
@@ -297,4 +296,4 @@ class ChatWidget extends React.Component<Props, State> {
   }
 }
 
-export default ChatWidget;
+export default ChatWindow;
