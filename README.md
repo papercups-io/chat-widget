@@ -45,7 +45,6 @@ Place the code below in any pages on which you would like to render the widget. 
 import React from 'react';
 
 import ChatWidget from '@papercups-io/chat-widget';
-import '@papercups-io/chat-widget/dist/index.css';
 
 const ExamplePage = () => {
   return (
