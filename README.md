@@ -12,7 +12,7 @@ npm install --save @papercups-io/chat-widget
 
 ## Usage
 
-First, sign up at https://www.papercups.io/register to get your account token. Your account token is what you will use to pass in as the `accountId` prop below.
+First, sign up at https://app.papercups.io/register to get your account token. Your account token is what you will use to pass in as the `accountId` prop below.
 
 ### Using in HTML
 
@@ -33,7 +33,7 @@ Paste the code below between your `<head>` and `</head>` tags:
   type="text/javascript"
   async
   defer
-  src="https://www.papercups.io/widget.js"
+  src="https://app.papercups.io/widget.js"
 ></script>
 ```
 
