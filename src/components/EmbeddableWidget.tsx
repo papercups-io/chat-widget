@@ -10,6 +10,7 @@ type Props = {
   subtitle?: string;
   primaryColor?: string;
   accountId: string;
+  baseUrl?: string;
 };
 
 const EmbeddableWidget = ({
@@ -17,6 +18,7 @@ const EmbeddableWidget = ({
   title,
   subtitle,
   primaryColor,
+  baseUrl,
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const theme = getThemeConfig({primary: primaryColor});
@@ -46,7 +48,12 @@ const EmbeddableWidget = ({
             overflow: 'hidden',
           }}
         >
-          <ChatWindow title={title} subtitle={subtitle} accountId={accountId} />
+          <ChatWindow
+            title={title}
+            subtitle={subtitle}
+            accountId={accountId}
+            baseUrl={baseUrl}
+          />
         </motion.div>
       )}
       <motion.div

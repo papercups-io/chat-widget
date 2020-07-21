@@ -6,7 +6,7 @@ import ChatMessage from './ChatMessage';
 import SendIcon from './SendIcon';
 import * as API from '../api';
 import {getCustomerId, setCustomerId} from '../storage';
-import {WS_URL} from '../config';
+import {getWebsocketUrl} from '../config';
 
 // TODO: add better types
 type Message = {
@@ -20,7 +20,9 @@ type Props = {
   accountId: string;
   title?: string;
   subtitle?: string;
+  baseUrl?: string;
 };
+
 type State = {
   message: string;
   messages: Array<Message>;
@@ -44,7 +46,9 @@ class ChatWindow extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.socket = new Socket(WS_URL);
+    const websocketUrl = getWebsocketUrl(this.props.baseUrl);
+
+    this.socket = new Socket(websocketUrl);
     this.socket.connect();
 
     this.fetchLatestConversation(this.state.customerId);
@@ -61,11 +65,11 @@ class ChatWindow extends React.Component<Props, State> {
       return;
     }
 
-    const {accountId} = this.props;
+    const {accountId, baseUrl} = this.props;
 
     console.log('Fetching conversations for customer:', customerId);
 
-    return API.fetchCustomerConversations(customerId, accountId)
+    return API.fetchCustomerConversations(customerId, accountId, baseUrl)
       .then((conversations) => {
         console.log('Found existing conversations:', conversations);
 
@@ -100,7 +104,8 @@ class ChatWindow extends React.Component<Props, State> {
   };
 
   createNewCustomerId = async (accountId: string) => {
-    const {id: customerId} = await API.createNewCustomer(accountId);
+    const {baseUrl} = this.props;
+    const {id: customerId} = await API.createNewCustomer(accountId, baseUrl);
 
     setCustomerId(customerId);
 
@@ -108,12 +113,13 @@ class ChatWindow extends React.Component<Props, State> {
   };
 
   initializeNewConversation = async () => {
-    const {accountId} = this.props;
+    const {accountId, baseUrl} = this.props;
 
     const customerId = await this.createNewCustomerId(accountId);
     const {id: conversationId} = await API.createNewConversation(
       accountId,
-      customerId
+      customerId,
+      baseUrl
     );
 
     this.setState({customerId, conversationId, messages: []});
@@ -264,6 +270,7 @@ class ChatWindow extends React.Component<Props, State> {
                   variant: 'styles.textarea.transparent',
                 }}
                 className='TextArea--transparent'
+                placeholder='Start typing...'
                 rows={1}
                 autoFocus
                 value={message}
