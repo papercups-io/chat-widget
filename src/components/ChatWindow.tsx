@@ -6,7 +6,7 @@ import ChatMessage from './ChatMessage';
 import SendIcon from './SendIcon';
 import * as API from '../api';
 import {getCustomerId, setCustomerId} from '../storage';
-import {WS_URL} from '../config';
+import {getBackendUrl} from '../config';
 
 // TODO: add better types
 type Message = {
@@ -21,11 +21,13 @@ type Props = {
   title?: string;
   subtitle?: string;
 };
+
 type State = {
   message: string;
   messages: Array<Message>;
   customerId: string;
   conversationId: string | null;
+  API_BASE_URL: string;
 };
 
 class ChatWindow extends React.Component<Props, State> {
@@ -44,6 +46,9 @@ class ChatWindow extends React.Component<Props, State> {
   };
 
   componentDidMount() {
+    const {API_BASE_URL, WS_URL} = getBackendUrl()
+    this.setState({API_BASE_URL});
+    
     this.socket = new Socket(WS_URL);
     this.socket.connect();
 
@@ -62,10 +67,11 @@ class ChatWindow extends React.Component<Props, State> {
     }
 
     const {accountId} = this.props;
+    const {API_BASE_URL} = this.state;
 
     console.log('Fetching conversations for customer:', customerId);
 
-    return API.fetchCustomerConversations(customerId, accountId)
+    return API.fetchCustomerConversations(customerId, accountId, API_BASE_URL)
       .then((conversations) => {
         console.log('Found existing conversations:', conversations);
 
@@ -100,7 +106,7 @@ class ChatWindow extends React.Component<Props, State> {
   };
 
   createNewCustomerId = async (accountId: string) => {
-    const {id: customerId} = await API.createNewCustomer(accountId);
+    const {id: customerId} = await API.createNewCustomer(accountId, this.state.API_BASE_URL);
 
     setCustomerId(customerId);
 
@@ -113,7 +119,8 @@ class ChatWindow extends React.Component<Props, State> {
     const customerId = await this.createNewCustomerId(accountId);
     const {id: conversationId} = await API.createNewConversation(
       accountId,
-      customerId
+      customerId,
+      this.state.API_BASE_URL
     );
 
     this.setState({customerId, conversationId, messages: []});

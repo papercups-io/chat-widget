@@ -10,6 +10,7 @@ type Props = {
   subtitle?: string;
   primaryColor?: string;
   accountId: string;
+  backendUrl?: string;
 };
 
 const EmbeddableWidget = ({
@@ -46,7 +47,7 @@ const EmbeddableWidget = ({
             overflow: 'hidden',
           }}
         >
-          <ChatWindow title={title} subtitle={subtitle} accountId={accountId} />
+          <ChatWindow title={title} subtitle={subtitle} accountId={accountId} backendUrl={backendUrl} />
         </motion.div>
       )}
       <motion.div

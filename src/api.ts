@@ -1,5 +1,4 @@
 import request from 'superagent';
-import {API_BASE_URL} from './config';
 
 // TODO: handle this on the server instead
 function now() {
@@ -15,7 +14,7 @@ function now() {
   );
 }
 
-export const createNewCustomer = async (accountId: string) => {
+export const createNewCustomer = async (accountId: string, API_BASE_URL: string) => {
   return request
     .post(`${API_BASE_URL}/api/customers`)
     .send({
@@ -30,7 +29,8 @@ export const createNewCustomer = async (accountId: string) => {
 
 export const createNewConversation = async (
   accountId: string,
-  customerId: string
+  customerId: string,
+  API_BASE_URL: string
 ) => {
   return request
     .post(`${API_BASE_URL}/api/conversations`)
@@ -45,7 +45,8 @@ export const createNewConversation = async (
 
 export const fetchCustomerConversations = async (
   customerId: string,
-  accountId: string
+  accountId: string,
+  API_BASE_URL: string
 ) => {
   return request
     .get(`${API_BASE_URL}/api/conversations/customer`)
