@@ -270,6 +270,7 @@ class ChatWindow extends React.Component<Props, State> {
                   variant: 'styles.textarea.transparent',
                 }}
                 className='TextArea--transparent'
+                placeholder='Start typing...'
                 rows={1}
                 autoFocus
                 value={message}
