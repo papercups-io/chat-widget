@@ -1,14 +1,10 @@
+export const DEFAULT_BASE_URL = 'https://app.papercups.io';
 
-export const getBackendUrl = () => {
-  const isProd = window.location.hostname !== 'localhost';
+export const getWebsocketUrl = (baseUrl = DEFAULT_BASE_URL) => {
+  // TODO: handle this parsing better
+  const [protocol, host] = baseUrl.split('://');
+  const isHttps = protocol === 'https';
 
-  const API_BASE_URL = isProd
-    ? 'https://app.papercups.io'
-    : 'http://localhost:4000';
-
-  const WS_URL = isProd
-    ? 'wss://app.papercups.io/socket'
-    : 'ws://localhost:4000/socket';
-  
-    return {API_BASE_URL, WS_URL}
+  // TODO: not sure how websockets work with subdomains
+  return `${isHttps ? 'wss' : 'ws'}://${host}/socket`;
 };

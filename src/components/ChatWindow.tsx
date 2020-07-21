@@ -6,7 +6,7 @@ import ChatMessage from './ChatMessage';
 import SendIcon from './SendIcon';
 import * as API from '../api';
 import {getCustomerId, setCustomerId} from '../storage';
-import {getBackendUrl} from '../config';
+import {getWebsocketUrl} from '../config';
 
 // TODO: add better types
 type Message = {
@@ -20,6 +20,7 @@ type Props = {
   accountId: string;
   title?: string;
   subtitle?: string;
+  baseUrl?: string;
 };
 
 type State = {
@@ -27,7 +28,6 @@ type State = {
   messages: Array<Message>;
   customerId: string;
   conversationId: string | null;
-  API_BASE_URL: string;
 };
 
 class ChatWindow extends React.Component<Props, State> {
@@ -46,10 +46,9 @@ class ChatWindow extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const {API_BASE_URL, WS_URL} = getBackendUrl()
-    this.setState({API_BASE_URL});
-    
-    this.socket = new Socket(WS_URL);
+    const websocketUrl = getWebsocketUrl(this.props.baseUrl);
+
+    this.socket = new Socket(websocketUrl);
     this.socket.connect();
 
     this.fetchLatestConversation(this.state.customerId);
@@ -66,12 +65,11 @@ class ChatWindow extends React.Component<Props, State> {
       return;
     }
 
-    const {accountId} = this.props;
-    const {API_BASE_URL} = this.state;
+    const {accountId, baseUrl} = this.props;
 
     console.log('Fetching conversations for customer:', customerId);
 
-    return API.fetchCustomerConversations(customerId, accountId, API_BASE_URL)
+    return API.fetchCustomerConversations(customerId, accountId, baseUrl)
       .then((conversations) => {
         console.log('Found existing conversations:', conversations);
 
@@ -106,7 +104,8 @@ class ChatWindow extends React.Component<Props, State> {
   };
 
   createNewCustomerId = async (accountId: string) => {
-    const {id: customerId} = await API.createNewCustomer(accountId, this.state.API_BASE_URL);
+    const {baseUrl} = this.props;
+    const {id: customerId} = await API.createNewCustomer(accountId, baseUrl);
 
     setCustomerId(customerId);
 
@@ -114,13 +113,13 @@ class ChatWindow extends React.Component<Props, State> {
   };
 
   initializeNewConversation = async () => {
-    const {accountId} = this.props;
+    const {accountId, baseUrl} = this.props;
 
     const customerId = await this.createNewCustomerId(accountId);
     const {id: conversationId} = await API.createNewConversation(
       accountId,
       customerId,
-      this.state.API_BASE_URL
+      baseUrl
     );
 
     this.setState({customerId, conversationId, messages: []});
