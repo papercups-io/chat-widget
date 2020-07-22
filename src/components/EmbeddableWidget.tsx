@@ -11,6 +11,7 @@ type Props = {
   primaryColor?: string;
   accountId: string;
   baseUrl?: string;
+  defaultIsOpen?: boolean;
 };
 
 const EmbeddableWidget = ({
@@ -19,8 +20,9 @@ const EmbeddableWidget = ({
   subtitle,
   primaryColor,
   baseUrl,
+  defaultIsOpen = false,
 }: Props) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(defaultIsOpen);
   const theme = getThemeConfig({primary: primaryColor});
 
   const handleToggleOpen = () => setIsOpen(!isOpen);
