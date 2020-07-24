@@ -20,6 +20,15 @@ npm install --save @papercups-io/chat-widget
 
 First, sign up at https://app.papercups.io/register to get your account token. Your account token is what you will use to pass in as the `accountId` prop below.
 
+
+## Developement
+
+We have a sample bootstraped react app in `example/` folder 
+
+```bash
+cd example/ &&  npm install && npm start
+```
+
 ### Using in HTML
 
 Paste the code below between your `<head>` and `</head>` tags:
