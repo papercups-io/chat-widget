@@ -2,16 +2,9 @@ import React from 'react';
 import {Box, Flex, Text} from 'theme-ui';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import {Message} from '../utils';
 
 dayjs.extend(utc);
-
-// TODO: DRY up
-type Message = {
-  sender: string;
-  body: string;
-  created_at: string;
-  customer_id: string;
-};
 
 const formatRelativeTime = (date: dayjs.Dayjs) => {
   const ms = dayjs().diff(date, 'second');

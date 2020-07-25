@@ -5,22 +5,16 @@ import {motion} from 'framer-motion';
 import ChatMessage from './ChatMessage';
 import SendIcon from './SendIcon';
 import * as API from '../api';
+import {Message, now} from '../utils';
 import {getCustomerId, setCustomerId} from '../storage';
 import {getWebsocketUrl} from '../config';
-
-// TODO: add better types
-type Message = {
-  sender: string;
-  body: string;
-  created_at: string;
-  customer_id: string;
-};
 
 type Props = {
   accountId: string;
   title?: string;
   subtitle?: string;
   baseUrl?: string;
+  greeting?: string;
 };
 
 type State = {
@@ -58,10 +52,28 @@ class ChatWindow extends React.Component<Props, State> {
     this.channel && this.channel.leave();
   }
 
+  getDefaultGreeting = (): Array<Message> => {
+    const {greeting} = this.props;
+
+    if (!greeting) {
+      return [];
+    }
+
+    return [
+      {
+        sender: 'agent', // bot?
+        body: greeting, // 'Hi there! How can I help you?',
+        created_at: now().toString(),
+      },
+    ];
+  };
+
   fetchLatestConversation = (customerId: string) => {
     if (!customerId) {
       // If there's no customerId, we haven't seen this customer before,
       // so do nothing until they try to create a new message
+      this.setState({messages: [...this.getDefaultGreeting()]});
+
       return;
     }
 
@@ -76,26 +88,29 @@ class ChatWindow extends React.Component<Props, State> {
         if (!conversations || !conversations.length) {
           // If there are no conversations yet, wait until the customer creates
           // a new message to create the new conversation
+          this.setState({messages: [...this.getDefaultGreeting()]});
+
           return;
         }
 
         const [latest] = conversations;
         const {id: conversationId, messages = []} = latest;
+        const formattedMessages = messages
+          .map((msg: Message) => {
+            return {
+              ...msg,
+              // Deprecate
+              sender: msg.customer_id ? 'customer' : 'agent',
+            };
+          })
+          .sort(
+            (a: Message, b: Message) =>
+              +new Date(a.created_at) - +new Date(b.created_at)
+          );
 
         this.setState({
           conversationId,
-          messages: messages
-            .map((msg: Message) => {
-              return {
-                ...msg,
-                // Deprecate
-                sender: msg.customer_id ? 'customer' : 'agent',
-              };
-            })
-            .sort(
-              (a: Message, b: Message) =>
-                +new Date(a.created_at) - +new Date(b.created_at)
-            ),
+          messages: [...this.getDefaultGreeting(), ...formattedMessages],
         });
 
         return this.joinConversationChannel(conversationId);
@@ -122,7 +137,7 @@ class ChatWindow extends React.Component<Props, State> {
       baseUrl
     );
 
-    this.setState({customerId, conversationId, messages: []});
+    this.setState({customerId, conversationId});
 
     this.joinConversationChannel(conversationId, customerId);
 

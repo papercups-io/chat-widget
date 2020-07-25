@@ -1,19 +1,15 @@
 import request from 'superagent';
 import {DEFAULT_BASE_URL} from './config';
+import {now} from './utils';
 
-// TODO: handle this on the server instead
-function now() {
-  const date = new Date();
-
-  return new Date(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-    date.getUTCHours(),
-    date.getUTCMinutes(),
-    date.getUTCSeconds()
-  );
-}
+export type Message = {
+  body: string;
+  created_at: string;
+  customer_id?: string;
+  user_id?: number;
+  // Deprecate?
+  sender: string;
+};
 
 export const createNewCustomer = async (
   accountId: string,

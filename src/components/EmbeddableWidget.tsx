@@ -11,6 +11,7 @@ type Props = {
   primaryColor?: string;
   accountId: string;
   baseUrl?: string;
+  greeting?: string;
   defaultIsOpen?: boolean;
 };
 
@@ -20,6 +21,7 @@ const EmbeddableWidget = ({
   subtitle,
   primaryColor,
   baseUrl,
+  greeting,
   defaultIsOpen = false,
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(defaultIsOpen);
@@ -54,6 +56,7 @@ const EmbeddableWidget = ({
             title={title}
             subtitle={subtitle}
             accountId={accountId}
+            greeting={greeting}
             baseUrl={baseUrl}
           />
         </motion.div>
