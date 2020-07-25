@@ -1,7 +1,6 @@
 import React from 'react';
 
 import ChatWidget from '@papercups-io/chat-widget';
-import '@papercups-io/chat-widget/dist/index.css';
 
 type Props = {disco?: boolean};
 
