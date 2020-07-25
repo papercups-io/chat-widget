@@ -2,15 +2,6 @@ import request from 'superagent';
 import {DEFAULT_BASE_URL} from './config';
 import {now} from './utils';
 
-export type Message = {
-  body: string;
-  created_at: string;
-  customer_id?: string;
-  user_id?: number;
-  // Deprecate?
-  sender: string;
-};
-
 export const createNewCustomer = async (
   accountId: string,
   baseUrl = DEFAULT_BASE_URL
