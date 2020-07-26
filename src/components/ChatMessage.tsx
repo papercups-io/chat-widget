@@ -38,9 +38,11 @@ const ChatMessage = ({
   isLastInGroup,
   shouldDisplayTimestamp,
 }: Props) => {
-  const {body, created_at} = message;
+  const {body, created_at, sender} = message;
   const created = dayjs.utc(created_at);
   const timestamp = formatRelativeTime(created);
+  // TODO: include profile photo if available
+  const letter = sender && sender.length ? sender[0].toUpperCase() : 'A';
 
   if (isMe) {
     return (
@@ -70,11 +72,21 @@ const ChatMessage = ({
   return (
     <Box pr={4} pl={0} pb={isLastInGroup ? 3 : 2}>
       <Flex sx={{justifyContent: 'flex-start', alignItems: 'center'}}>
-        {/*
-        <Box mr={3} mt={1}>
-          TODO: show avatar here?
-        </Box>
-        */}
+        <Flex
+          mr={2}
+          sx={{
+            bg: 'primary',
+            height: 32,
+            width: 32,
+            borderRadius: '50%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#fff',
+          }}
+        >
+          {letter}
+        </Flex>
+
         <Box
           px='14px'
           py={2}
@@ -90,8 +102,8 @@ const ChatMessage = ({
       </Flex>
       {shouldDisplayTimestamp && (
         <Flex m={1} sx={{justifyContent: 'flex-start'}}>
-          {/* TODO: this should be dynamic */}
-          <Text sx={{color: 'gray'}}>Sent {timestamp}</Text>
+          {/* TODO: the name should be dynamic */}
+          <Text sx={{color: 'gray'}}>Agent · Sent {timestamp}</Text>
         </Flex>
       )}
     </Box>
