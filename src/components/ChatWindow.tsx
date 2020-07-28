@@ -61,7 +61,7 @@ class ChatWindow extends React.Component<Props, State> {
 
     return [
       {
-        sender: 'agent', // bot?
+        type: 'bot',
         body: greeting, // 'Hi there! How can I help you?',
         created_at: now().toString(),
       },
