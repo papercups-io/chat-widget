@@ -2,7 +2,8 @@ import React from 'react';
 import {Box, Flex, Text} from 'theme-ui';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import {Message} from '../utils';
+import BotIcon from './BotIcon';
+import {Message, User} from '../utils';
 
 dayjs.extend(utc);
 
@@ -25,6 +26,17 @@ const formatRelativeTime = (date: dayjs.Dayjs) => {
   }
 };
 
+const getAgentIdentifier = (user?: User) => {
+  if (!user) {
+    return 'Agent';
+  }
+
+  const {name, email} = user;
+  const [username] = email.split('@');
+
+  return name || username || 'Agent';
+};
+
 type Props = {
   message: Message;
   isMe?: boolean;
@@ -38,9 +50,12 @@ const ChatMessage = ({
   isLastInGroup,
   shouldDisplayTimestamp,
 }: Props) => {
-  const {body, created_at} = message;
+  const {body, created_at, user, type} = message;
   const created = dayjs.utc(created_at);
   const timestamp = formatRelativeTime(created);
+  const isBot = type === 'bot';
+  // TODO: include profile photo if available
+  const identifer = isBot ? 'Bot' : getAgentIdentifier(user);
 
   if (isMe) {
     return (
@@ -70,11 +85,25 @@ const ChatMessage = ({
   return (
     <Box pr={4} pl={0} pb={isLastInGroup ? 3 : 2}>
       <Flex sx={{justifyContent: 'flex-start', alignItems: 'center'}}>
-        {/*
-        <Box mr={3} mt={1}>
-          TODO: show avatar here?
-        </Box>
-        */}
+        <Flex
+          mr={2}
+          sx={{
+            bg: isBot ? 'gray' : 'primary',
+            height: 32,
+            width: 32,
+            borderRadius: '50%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#fff',
+          }}
+        >
+          {isBot ? (
+            <BotIcon fill='background' height={16} width={16} />
+          ) : (
+            identifer.slice(0, 1).toUpperCase()
+          )}
+        </Flex>
+
         <Box
           px='14px'
           py={2}
@@ -90,8 +119,9 @@ const ChatMessage = ({
       </Flex>
       {shouldDisplayTimestamp && (
         <Flex m={1} sx={{justifyContent: 'flex-start'}}>
-          {/* TODO: this should be dynamic */}
-          <Text sx={{color: 'gray'}}>Sent {timestamp}</Text>
+          <Text sx={{color: 'gray'}}>
+            {identifer} · Sent {timestamp}
+          </Text>
         </Flex>
       )}
     </Box>
