@@ -101,18 +101,10 @@ class ChatWindow extends React.Component<Props, State> {
 
       const [latest] = conversations;
       const {id: conversationId, messages = []} = latest;
-      const formattedMessages = messages
-        .map((msg: Message) => {
-          return {
-            ...msg,
-            // Deprecate
-            sender: msg.customer_id ? 'customer' : 'agent',
-          };
-        })
-        .sort(
-          (a: Message, b: Message) =>
-            +new Date(a.created_at) - +new Date(b.created_at)
-        );
+      const formattedMessages = messages.sort(
+        (a: Message, b: Message) =>
+          +new Date(a.created_at) - +new Date(b.created_at)
+      );
 
       this.setState({
         conversationId,
@@ -237,7 +229,6 @@ class ChatWindow extends React.Component<Props, State> {
     this.channel.push('shout', {
       body: message,
       customer_id: this.state.customerId,
-      sender: 'customer', // TODO: remove?
     });
 
     this.setState({message: ''});
