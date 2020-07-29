@@ -32,6 +32,16 @@ Paste the code below between your `<head>` and `</head>` tags:
       title: 'Welcome to Papercups!',
       subtitle: 'Ask us anything in the chat window below 😊',
       primaryColor: '#13c2c2',
+      // Optionally pass in a default greeting
+      greeting: 'Hi there! How can I help you?',
+      // Optionally pass in metadata to identify the customer
+      customer: {
+        name: 'Test User',
+        email: 'test@test.com',
+        external_id: '123',
+      },
+      // Optionally specify the base URL
+      baseUrl: 'https://app.papercups.io',
     },
   };
 </script>
@@ -65,6 +75,16 @@ const ExamplePage = () => {
         subtitle='Ask us anything in the chat window below 😊'
         primaryColor='#13c2c2'
         accountId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'
+        // Optionally pass in a default greeting
+        greeting='Hi there! How can I help you?'
+        // Optionally pass in metadata to identify the customer
+        customer={{
+          name: 'Test User',
+          email: 'test@test.com',
+          external_id: '123',
+        }}
+        // Optionally specify the base URL
+        baseUrl='https://app.papercups.io'
       />
     </>
   );

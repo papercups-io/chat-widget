@@ -15,6 +15,7 @@ type Props = {
   subtitle?: string;
   baseUrl?: string;
   greeting?: string;
+  customer?: API.CustomerMetadata;
 };
 
 type State = {
@@ -68,7 +69,7 @@ class ChatWindow extends React.Component<Props, State> {
     ];
   };
 
-  fetchLatestConversation = (customerId: string) => {
+  fetchLatestConversation = async (customerId: string) => {
     if (!customerId) {
       // If there's no customerId, we haven't seen this customer before,
       // so do nothing until they try to create a new message
@@ -77,54 +78,75 @@ class ChatWindow extends React.Component<Props, State> {
       return;
     }
 
-    const {accountId, baseUrl} = this.props;
+    const {accountId, baseUrl, customer: metadata} = this.props;
 
     console.log('Fetching conversations for customer:', customerId);
 
-    return API.fetchCustomerConversations(customerId, accountId, baseUrl)
-      .then((conversations) => {
-        console.log('Found existing conversations:', conversations);
+    try {
+      const conversations = await API.fetchCustomerConversations(
+        customerId,
+        accountId,
+        baseUrl
+      );
 
-        if (!conversations || !conversations.length) {
-          // If there are no conversations yet, wait until the customer creates
-          // a new message to create the new conversation
-          this.setState({messages: [...this.getDefaultGreeting()]});
+      console.log('Found existing conversations:', conversations);
 
-          return;
-        }
+      if (!conversations || !conversations.length) {
+        // If there are no conversations yet, wait until the customer creates
+        // a new message to create the new conversation
+        this.setState({messages: [...this.getDefaultGreeting()]});
 
-        const [latest] = conversations;
-        const {id: conversationId, messages = []} = latest;
-        const formattedMessages = messages
-          .map((msg: Message) => {
-            return {
-              ...msg,
-              // Deprecate
-              sender: msg.customer_id ? 'customer' : 'agent',
-            };
-          })
-          .sort(
-            (a: Message, b: Message) =>
-              +new Date(a.created_at) - +new Date(b.created_at)
-          );
+        return;
+      }
 
-        this.setState({
-          conversationId,
-          messages: [...this.getDefaultGreeting(), ...formattedMessages],
-        });
+      const [latest] = conversations;
+      const {id: conversationId, messages = []} = latest;
+      const formattedMessages = messages.sort(
+        (a: Message, b: Message) =>
+          +new Date(a.created_at) - +new Date(b.created_at)
+      );
 
-        return this.joinConversationChannel(conversationId);
-      })
-      .catch((err) => console.log('Error fetching conversations!', err));
+      this.setState({
+        conversationId,
+        messages: [...this.getDefaultGreeting(), ...formattedMessages],
+      });
+
+      this.joinConversationChannel(conversationId);
+
+      await this.updateExistingCustomer(customerId, metadata);
+    } catch (err) {
+      console.log('Error fetching conversations!', err);
+    }
   };
 
   createNewCustomerId = async (accountId: string) => {
-    const {baseUrl} = this.props;
-    const {id: customerId} = await API.createNewCustomer(accountId, baseUrl);
+    const {baseUrl, customer: metadata} = this.props;
+    const {id: customerId} = await API.createNewCustomer(
+      accountId,
+      metadata,
+      baseUrl
+    );
 
     setCustomerId(customerId);
 
     return customerId;
+  };
+
+  updateExistingCustomer = async (
+    customerId: string,
+    metadata?: API.CustomerMetadata
+  ) => {
+    if (!metadata) {
+      return;
+    }
+
+    try {
+      const {baseUrl} = this.props;
+
+      await API.updateCustomerMetadata(customerId, metadata, baseUrl);
+    } catch (err) {
+      console.log('Error updating customer metadata!', err);
+    }
   };
 
   initializeNewConversation = async () => {
@@ -207,7 +229,6 @@ class ChatWindow extends React.Component<Props, State> {
     this.channel.push('shout', {
       body: message,
       customer_id: this.state.customerId,
-      sender: 'customer', // TODO: remove?
     });
 
     this.setState({message: ''});

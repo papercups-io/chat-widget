@@ -3,6 +3,7 @@ import {motion} from 'framer-motion';
 import {ThemeProvider} from 'theme-ui';
 import ChatWindow from './ChatWindow';
 import WidgetToggle from './WidgetToggle';
+import {CustomerMetadata} from '../api';
 import getThemeConfig from '../theme';
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
   accountId: string;
   baseUrl?: string;
   greeting?: string;
+  customer?: CustomerMetadata;
   defaultIsOpen?: boolean;
 };
 
@@ -22,6 +24,7 @@ const EmbeddableWidget = ({
   primaryColor,
   baseUrl,
   greeting,
+  customer,
   defaultIsOpen = false,
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(defaultIsOpen);
@@ -57,6 +60,7 @@ const EmbeddableWidget = ({
             subtitle={subtitle}
             accountId={accountId}
             greeting={greeting}
+            customer={customer}
             baseUrl={baseUrl}
           />
         </motion.div>
