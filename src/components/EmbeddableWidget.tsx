@@ -1,6 +1,8 @@
+/** @jsx jsx */
+
 import React from 'react';
 import {motion} from 'framer-motion';
-import {ThemeProvider} from 'theme-ui';
+import {ThemeProvider, jsx} from 'theme-ui';
 import ChatWindow from './ChatWindow';
 import WidgetToggle from './WidgetToggle';
 import {CustomerMetadata} from '../api';
@@ -37,22 +39,11 @@ const EmbeddableWidget = ({
       {/* TODO: use emotion or styled to handle this? */}
       {isOpen && (
         <motion.div
-          sx={{margin: 0}}
           initial={{opacity: 0, y: 4}}
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.2, ease: 'easeIn'}}
-          style={{
-            zIndex: 2147483000,
-            position: 'fixed',
-            bottom: '100px',
-            right: '20px',
-            width: '376px',
-            minHeight: '250px',
-            maxHeight: '704px',
-            boxShadow: 'rgba(0, 0, 0, 0.16) 0px 5px 40px',
-            height: 'calc(100% - 120px)',
-            borderRadius: 8,
-            overflow: 'hidden',
+          sx={{
+            variant: 'styles.WidgetContainer',
           }}
         >
           <ChatWindow
