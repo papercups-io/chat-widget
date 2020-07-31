@@ -91,6 +91,21 @@ const ExamplePage = () => {
 };
 ```
 
+## Development
+
+To build the project, run `npm start` in the root directory.
+
+To test it out, use the `/example` directory:
+
+```
+cd example
+npm start
+```
+
+This will start a development server on localhost:3000 by default, and open up the example app in your browser.
+
+When creating a pull request, be sure to include a screenshot! 🎨
+
 ## License
 
 MIT © Papercups
