@@ -1,7 +1,9 @@
 export type User = {
   id: number;
   email: string;
-  name?: string;
+  display_name?: string;
+  full_name?: string;
+  profile_photo_url?: string;
 };
 
 export type Message = {

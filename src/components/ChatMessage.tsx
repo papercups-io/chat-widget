@@ -31,10 +31,62 @@ const getAgentIdentifier = (user?: User) => {
     return 'Agent';
   }
 
-  const {name, email} = user;
+  const {display_name, full_name, email} = user;
   const [username] = email.split('@');
 
-  return name || username || 'Agent';
+  return display_name || full_name || username || 'Agent';
+};
+
+const SenderAvatar = ({
+  name,
+  user,
+  isBot,
+}: {
+  name: string;
+  user?: User;
+  isBot?: boolean;
+}) => {
+  const profilePhotoUrl = user && user.profile_photo_url;
+
+  if (profilePhotoUrl) {
+    return (
+      <Box
+        mr={2}
+        style={{
+          height: 32,
+          width: 32,
+          borderRadius: '50%',
+          justifyContent: 'center',
+          alignItems: 'center',
+
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          backgroundImage: `url(${profilePhotoUrl})`,
+        }}
+      />
+    );
+  }
+
+  return (
+    <Flex
+      mr={2}
+      sx={{
+        bg: isBot ? 'gray' : 'primary',
+        height: 32,
+        width: 32,
+        borderRadius: '50%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: '#fff',
+      }}
+    >
+      {isBot ? (
+        <BotIcon fill='background' height={16} width={16} />
+      ) : (
+        name.slice(0, 1).toUpperCase()
+      )}
+    </Flex>
+  );
 };
 
 type Props = {
@@ -85,24 +137,7 @@ const ChatMessage = ({
   return (
     <Box pr={4} pl={0} pb={isLastInGroup ? 3 : 2}>
       <Flex sx={{justifyContent: 'flex-start', alignItems: 'center'}}>
-        <Flex
-          mr={2}
-          sx={{
-            bg: isBot ? 'gray' : 'primary',
-            height: 32,
-            width: 32,
-            borderRadius: '50%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: '#fff',
-          }}
-        >
-          {isBot ? (
-            <BotIcon fill='background' height={16} width={16} />
-          ) : (
-            identifer.slice(0, 1).toUpperCase()
-          )}
-        </Flex>
+        <SenderAvatar name={identifer} user={user} isBot={isBot} />
 
         <Box
           px='14px'
