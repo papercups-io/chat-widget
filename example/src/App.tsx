@@ -41,7 +41,7 @@ const App = ({disco}: Props) => {
       */}
       <ChatWidget
         title='Welcome to Papercups!'
-        subtitle='Ask us anything in the chat window below 😊'
+        subtitle='Ask us anything in the chat window 😊'
         primaryColor={primaryColor}
         accountId='eb504736-0f20-4978-98ff-1a82ae60b266'
         greeting='Hi there! How can I help you?'
