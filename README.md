@@ -93,12 +93,13 @@ const ExamplePage = () => {
 
 ## Development
 
-To build the project, run `npm start` in the root directory.
+To build the project, run `npm start` in the root directory. (If you're running it for the first time, you'll have to run `npm install` first.)
 
 To test it out, use the `/example` directory:
 
 ```
 cd example
+npm install
 npm start
 ```
 
