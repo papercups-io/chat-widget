@@ -111,7 +111,7 @@ class ChatWindow extends React.Component<Props, State> {
         messages: [...this.getDefaultGreeting(), ...formattedMessages],
       });
 
-      this.joinConversationChannel(conversationId);
+      this.joinConversationChannel(conversationId, customerId);
 
       await this.updateExistingCustomer(customerId, metadata);
     } catch (err) {
