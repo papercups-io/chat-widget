@@ -334,6 +334,11 @@ class ChatWindow extends React.Component<Props, State> {
             </Box>
           </Flex>
         </Box>
+        <img
+          src='https://papercups.s3.us-east-2.amazonaws.com/papercups-logo.svg'
+          width='0'
+          height='0'
+        />
       </Flex>
     );
   }
