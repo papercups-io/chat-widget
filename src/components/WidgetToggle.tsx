@@ -12,14 +12,7 @@ const Path = (props: any) => (
   />
 );
 
-export const WidgetToggle = ({
-  open,
-  toggle,
-}: {
-  open: boolean;
-  toggle: () => void;
-}) => {
-  // TODO: make sure this is actually centered!
+export const WidgetToggle = ({toggle}: {toggle: () => void}) => {
   return (
     <Flex
       sx={{
@@ -33,32 +26,34 @@ export const WidgetToggle = ({
         p={0}
         sx={{
           bg: 'primary',
-          pt: '2px',
-          pl: open ? '2px' : 0,
           variant: 'styles.WidgetToggle',
         }}
         onClick={toggle}
       >
-        <svg width='23' height='23' viewBox='0 0 23 23'>
+        <svg width='27' height='27' viewBox='0 0 27 27'>
           <Path
             variants={{
-              closed: {d: 'M 2 2.5 L 20 2.5'},
-              open: {d: 'M 3 16.5 L 17 2.5'},
+              closed: {opacity: 0, d: 'M 7.5 14.5 L 19 14.5'},
+              open: {opacity: 1, d: 'M 7 7 L 20 20'},
             }}
+            transition={{duration: 0.2}}
           />
+
           <Path
-            d='M 2 9.423 L 20 9.423'
+            variants={{
+              closed: {opacity: 0, d: 'M 7.5 8.5 L 19 8.5'},
+              open: {opacity: 1, d: 'M 7 20 L 20 7'},
+            }}
+            transition={{duration: 0.2}}
+          />
+
+          <Path
+            d='M22 21.6453C22 20 23 19.5 23 19.5C23 19.5 25.5 18 25.5 14V9C25.5 4 23 1.5 18 1.5H9C4 1.5 1.5 4 1.5 9V14C1.5 19 4 21 9 21H13.5C14 21 14 21 15 21.5L20.25 24.8572L20.8517 25.2118C21.5184 25.6046 22 25.631 22 24.8572V24.0287V22.7858V21.6453Z'
             variants={{
               closed: {opacity: 1},
               open: {opacity: 0},
             }}
-            transition={{duration: 0.1}}
-          />
-          <Path
-            variants={{
-              closed: {d: 'M 2 16.346 L 20 16.346'},
-              open: {d: 'M 3 2.5 L 17 16.346'},
-            }}
+            transition={{duration: 0.2}}
           />
         </svg>
       </Button>
