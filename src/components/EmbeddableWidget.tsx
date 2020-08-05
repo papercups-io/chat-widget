@@ -39,6 +39,7 @@ const EmbeddableWidget = ({
       {/* TODO: use emotion or styled to handle this? */}
       {isOpen && (
         <motion.div
+          className='Papercups-chatWindowContainer'
           initial={{opacity: 0, y: 4}}
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.2, ease: 'easeIn'}}
@@ -57,13 +58,11 @@ const EmbeddableWidget = ({
         </motion.div>
       )}
       <motion.div
+        className='Papercups-toggleButtonContainer'
         initial={false}
         animate={isOpen ? 'open' : 'closed'}
-        style={{
-          position: 'fixed',
-          zIndex: 2147483003,
-          bottom: '20px',
-          right: '20px',
+        sx={{
+          variant: 'styles.WidgetToggleContainer',
         }}
       >
         <WidgetToggle toggle={handleToggleOpen} />

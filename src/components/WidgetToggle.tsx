@@ -23,6 +23,7 @@ export const WidgetToggle = ({toggle}: {toggle: () => void}) => {
       }}
     >
       <Button
+        className='Papercups-toggleButton'
         p={0}
         sx={{
           bg: 'primary',
