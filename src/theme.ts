@@ -198,6 +198,12 @@ export const getThemeConfig = (settings: ThemeSettings) => {
         borderRadius: 8,
         overflow: 'hidden',
       },
+      WidgetToggleContainer: {
+        position: 'fixed',
+        zIndex: 2147483003,
+        bottom: '20px',
+        right: '20px',
+      },
       WidgetToggle: {
         outline: 'none',
         border: 'none',

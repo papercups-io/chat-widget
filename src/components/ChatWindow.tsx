@@ -255,7 +255,11 @@ class ChatWindow extends React.Component<Props, State> {
         }}
       >
         <Box py={3} px={4} sx={{bg: 'primary'}}>
-          <Heading as='h2' sx={{color: 'background', my: 1}}>
+          <Heading
+            as='h2'
+            className='Papercups-heading'
+            sx={{color: 'background', my: 1}}
+          >
             {title}
           </Heading>
           <Text sx={{color: 'offset'}}>{subtitle}</Text>
