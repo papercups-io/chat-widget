@@ -226,8 +226,8 @@ class ChatWindow extends React.Component<Props, State> {
       await this.initializeNewConversation();
     }
 
+    // We should never hit this block, just adding to satisfy TypeScript
     if (!this.channel) {
-      // We should never hit this block, just adding to satisfy TypeScript
       this.setState({isSending: false});
 
       return;
