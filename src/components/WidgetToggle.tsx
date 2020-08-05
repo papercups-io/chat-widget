@@ -12,14 +12,7 @@ const Path = (props: any) => (
   />
 );
 
-export const WidgetToggle = ({
-  // open,
-  toggle,
-}: {
-  // open: boolean;
-  toggle: () => void;
-}) => {
-  // TODO: make sure this is actually centered!
+export const WidgetToggle = ({toggle}: {toggle: () => void}) => {
   return (
     <Flex
       sx={{
