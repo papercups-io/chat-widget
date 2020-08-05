@@ -23,6 +23,7 @@ type State = {
   messages: Array<Message>;
   customerId: string;
   conversationId: string | null;
+  isSending: boolean;
 };
 
 class ChatWindow extends React.Component<Props, State> {
@@ -38,6 +39,7 @@ class ChatWindow extends React.Component<Props, State> {
     // (eventually we will probably use cookies for this)
     customerId: getCustomerId(),
     conversationId: null,
+    isSending: false,
   };
 
   componentDidMount() {
@@ -212,17 +214,22 @@ class ChatWindow extends React.Component<Props, State> {
   handleSendMessage = async (e?: any) => {
     e && e.preventDefault();
 
-    const {message, customerId, conversationId} = this.state;
+    const {message, customerId, conversationId, isSending} = this.state;
 
-    if (!message || message.trim().length === 0) {
+    if (isSending || !message || message.trim().length === 0) {
       return;
     }
+
+    this.setState({isSending: true});
 
     if (!customerId || !conversationId) {
       await this.initializeNewConversation();
     }
 
+    // We should never hit this block, just adding to satisfy TypeScript
     if (!this.channel) {
+      this.setState({isSending: false});
+
       return;
     }
 
@@ -231,12 +238,12 @@ class ChatWindow extends React.Component<Props, State> {
       customer_id: this.state.customerId,
     });
 
-    this.setState({message: ''});
+    this.setState({message: '', isSending: false});
   };
 
   render() {
     const {title = 'Welcome!', subtitle = 'How can we help you?'} = this.props;
-    const {customerId, message, messages = []} = this.state;
+    const {customerId, message, messages = [], isSending} = this.state;
 
     return (
       <Flex
@@ -318,6 +325,7 @@ class ChatWindow extends React.Component<Props, State> {
               <Button
                 variant='primary'
                 type='submit'
+                disabled={isSending}
                 onClick={this.handleSendMessage}
                 sx={{
                   display: 'flex',
