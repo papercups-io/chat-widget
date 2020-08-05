@@ -66,7 +66,7 @@ const EmbeddableWidget = ({
           right: '20px',
         }}
       >
-        <WidgetToggle open={isOpen} toggle={handleToggleOpen} />
+        <WidgetToggle toggle={handleToggleOpen} />
       </motion.div>
     </ThemeProvider>
   );
