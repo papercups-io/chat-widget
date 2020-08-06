@@ -68,6 +68,7 @@
     "dayjs": "^1.8.29",
     "framer-motion": "^2.0.1",
     "phoenix": "^1.5.3",
+    "query-string": "^6.13.1",
     "superagent": "^5.3.1",
     "theme-ui": "^0.3.1",
     "tinycolor2": "^1.4.1"
