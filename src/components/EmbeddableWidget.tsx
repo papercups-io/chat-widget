@@ -54,14 +54,17 @@ const EmbeddableWidget = ({
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const iframeRef = React.useRef(null);
-  const query = qs.stringify({
-    accountId,
-    title,
-    subtitle,
-    primaryColor,
-    baseUrl,
-    greeting,
-  });
+  // useRef since we only want to use this for the initial values
+  const query = React.useRef(
+    qs.stringify({
+      accountId,
+      title,
+      subtitle,
+      primaryColor,
+      baseUrl,
+      greeting,
+    })
+  ).current;
 
   const theme = getThemeConfig({primary: primaryColor});
 
@@ -105,6 +108,17 @@ const EmbeddableWidget = ({
 
     return () => unsubscribe();
   }, []);
+
+  React.useEffect(() => {
+    send('config:update', {
+      accountId,
+      title,
+      subtitle,
+      primaryColor,
+      baseUrl,
+      greeting,
+    });
+  }, [accountId, title, subtitle, primaryColor, baseUrl, greeting]);
 
   const handleToggleOpen = () => setIsOpen(!isOpen);
 
