@@ -46,25 +46,19 @@ type Props = {
   defaultIsOpen?: boolean;
 };
 
-const EmbeddableWidget = ({
-  accountId,
-  title,
-  subtitle,
-  primaryColor,
-  baseUrl,
-  greeting,
-  customer,
-  newMessagePlaceholder,
-  defaultIsOpen = false,
-}: Props) => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const iframeRef = React.useRef(null);
-  const win = (window || {}) as any; // FIXME?
-  const storage = store(win);
-  const cachedCustomerId = storage.getCustomerId();
-  // useRef since we only want to use this for the initial values
-  const query = React.useRef(
-    qs.stringify({
+class EmbeddableWidget extends React.Component<Props, any> {
+  iframeRef: any;
+  storage: any;
+  unsubscribe: any;
+
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {isOpen: false, query: ''};
+  }
+
+  componentDidMount() {
+    const {
       accountId,
       title,
       subtitle,
@@ -72,123 +66,172 @@ const EmbeddableWidget = ({
       baseUrl,
       greeting,
       newMessagePlaceholder,
-      customerId: cachedCustomerId,
-    })
-  ).current;
+    } = this.props;
 
-  const theme = getThemeConfig({primary: primaryColor});
+    this.unsubscribe = setup(window, this.handlers);
+    this.storage = store(window);
 
-  const send = (event: string, payload?: any) => {
-    console.log('Sending from parent:', {event, payload});
-    const el = iframeRef.current as any;
+    const query = qs.stringify({
+      accountId,
+      title,
+      subtitle,
+      primaryColor,
+      baseUrl,
+      greeting,
+      newMessagePlaceholder,
+      customerId: this.storage.getCustomerId(),
+    });
 
-    el.contentWindow.postMessage({event, payload}, '*');
-  };
+    this.setState({query});
+  }
 
-  const handleChatLoaded = () => {
-    if (defaultIsOpen) {
-      setIsOpen(true);
+  componentWillUnmount() {
+    this.unsubscribe && this.unsubscribe();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      accountId,
+      title,
+      subtitle,
+      primaryColor,
+      baseUrl,
+      greeting,
+      newMessagePlaceholder,
+    } = this.props;
+    const current = [
+      accountId,
+      title,
+      subtitle,
+      primaryColor,
+      baseUrl,
+      greeting,
+      newMessagePlaceholder,
+    ];
+    const prev = [
+      prevProps.accountId,
+      prevProps.title,
+      prevProps.subtitle,
+      prevProps.primaryColor,
+      prevProps.baseUrl,
+      prevProps.greeting,
+      prevProps.newMessagePlaceholder,
+    ];
+    const shouldUpdate = current.some((value, idx) => {
+      return value !== prev[idx];
+    });
+
+    // Send updates to iframe if props change. (This is mainly for use in
+    // the demo and "Getting Started" page, where users can play around with
+    // customizing the chat widget to suit their needs)
+    if (shouldUpdate) {
+      this.send('config:update', {
+        accountId,
+        title,
+        subtitle,
+        primaryColor,
+        baseUrl,
+        greeting,
+        newMessagePlaceholder,
+      });
     }
+  }
 
-    return send('papercups:ping'); // Just testing
-  };
-
-  const sendCustomerUpdate = (payload: any) => {
-    const {customerId} = payload;
-    const customerBrowserInfo = getUserInfo(win);
-    const metadata = {...customerBrowserInfo, ...customer};
-
-    return send('customer:update', {customerId, metadata});
-  };
-
-  const handleCacheCustomerId = (payload: any) => {
-    const {customerId} = payload;
-
-    return storage.setCustomerId(customerId);
-  };
-
-  const handlers = (msg: any) => {
+  handlers = (msg: any) => {
     console.log('Handling in parent:', msg.data);
     const {event, payload = {}} = msg.data;
 
     switch (event) {
       case 'chat:loaded':
-        return handleChatLoaded();
+        return this.handleChatLoaded();
       case 'customer:created':
-        return handleCacheCustomerId(payload);
+        return this.handleCacheCustomerId(payload);
       case 'conversation:join':
-        return sendCustomerUpdate(payload);
+        return this.sendCustomerUpdate(payload);
       default:
         return null;
     }
   };
 
-  React.useEffect(() => {
-    const unsubscribe = setup(win, handlers);
+  send = (event: string, payload?: any) => {
+    console.log('Sending from parent:', {event, payload});
+    const el = this.iframeRef as any;
 
-    return () => unsubscribe();
-  }, []);
+    el.contentWindow.postMessage({event, payload}, '*');
+  };
 
-  React.useEffect(() => {
-    // Send updates to iframe if props change. (This is mainly for use in
-    // the demo and "Getting Started" page, where users can play around with
-    // customizing the chat widget to suit their needs)
-    send('config:update', {
-      accountId,
-      title,
-      subtitle,
-      primaryColor,
-      baseUrl,
-      greeting,
-      newMessagePlaceholder,
-    });
-  }, [
-    accountId,
-    title,
-    subtitle,
-    primaryColor,
-    baseUrl,
-    greeting,
-    newMessagePlaceholder,
-  ]);
+  handleChatLoaded = () => {
+    if (this.props.defaultIsOpen) {
+      this.setState({isOpen: true});
+    }
 
-  const handleToggleOpen = () => setIsOpen(!isOpen);
+    return this.send('papercups:ping'); // Just testing
+  };
 
-  return (
-    <ThemeProvider theme={theme}>
-      {/* TODO: handle loading state better */}
-      <motion.iframe
-        ref={iframeRef}
-        className='Papercups-chatWindowContainer'
-        animate={isOpen ? 'open' : 'closed'}
-        variants={{
-          closed: {opacity: 0, y: 4},
-          open: {opacity: 1, y: 0},
-        }}
-        transition={{duration: 0.2, ease: 'easeIn'}}
-        src={`${IFRAME_URL}?${query}`}
-        style={isOpen ? {} : {bottom: -9999}}
-        sx={{
-          border: 'none',
-          bg: 'background',
-          variant: 'styles.WidgetContainer',
-        }}
-      >
-        Loading...
-      </motion.iframe>
+  sendCustomerUpdate = (payload: any) => {
+    const {customerId} = payload;
+    const customerBrowserInfo = getUserInfo(window);
+    const metadata = {...customerBrowserInfo, ...this.props.customer};
 
-      <motion.div
-        className='Papercups-toggleButtonContainer'
-        initial={false}
-        animate={isOpen ? 'open' : 'closed'}
-        sx={{
-          variant: 'styles.WidgetToggleContainer',
-        }}
-      >
-        <WidgetToggle toggle={handleToggleOpen} />
-      </motion.div>
-    </ThemeProvider>
-  );
-};
+    return this.send('customer:update', {customerId, metadata});
+  };
+
+  handleCacheCustomerId = (payload: any) => {
+    const {customerId} = payload;
+
+    return this.storage.setCustomerId(customerId);
+  };
+
+  handleToggleOpen = () => {
+    this.setState({isOpen: !this.state.isOpen});
+  };
+
+  render() {
+    const {primaryColor} = this.props;
+    const {isOpen, query} = this.state;
+
+    if (!query) {
+      return null;
+    }
+
+    const theme = getThemeConfig({primary: primaryColor});
+
+    return (
+      <ThemeProvider theme={theme}>
+        {/* TODO: handle loading state better */}
+        <motion.iframe
+          ref={(el) => (this.iframeRef = el)}
+          className='Papercups-chatWindowContainer'
+          animate={isOpen ? 'open' : 'closed'}
+          variants={{
+            closed: {opacity: 0, y: 4},
+            open: {opacity: 1, y: 0},
+          }}
+          transition={{duration: 0.2, ease: 'easeIn'}}
+          src={`${IFRAME_URL}?${query}`}
+          style={isOpen ? {} : {bottom: -9999}}
+          sx={{
+            border: 'none',
+            bg: 'background',
+            variant: 'styles.WidgetContainer',
+          }}
+        >
+          Loading...
+        </motion.iframe>
+
+        <motion.div
+          className='Papercups-toggleButtonContainer'
+          initial={false}
+          animate={isOpen ? 'open' : 'closed'}
+          sx={{
+            variant: 'styles.WidgetToggleContainer',
+          }}
+        >
+          <WidgetToggle toggle={this.handleToggleOpen} />
+        </motion.div>
+      </ThemeProvider>
+    );
+  }
+}
 
 export default EmbeddableWidget;
