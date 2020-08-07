@@ -7,7 +7,9 @@ import qs from 'query-string';
 import WidgetToggle from './WidgetToggle';
 import {CustomerMetadata} from '../api';
 import getThemeConfig from '../theme';
+import {getCustomerId, setCustomerId} from '../storage';
 
+// const IFRAME_URL = 'http://localhost:8080';
 const IFRAME_URL = 'https://chat-window.vercel.app';
 
 // TODO: set this up somewhere else
@@ -53,7 +55,9 @@ const EmbeddableWidget = ({
   defaultIsOpen = false,
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(false);
+
   const iframeRef = React.useRef(null);
+  const cachedCustomerId = getCustomerId();
   // useRef since we only want to use this for the initial values
   const query = React.useRef(
     qs.stringify({
@@ -63,6 +67,7 @@ const EmbeddableWidget = ({
       primaryColor,
       baseUrl,
       greeting,
+      customerId: cachedCustomerId,
     })
   ).current;
 
@@ -89,6 +94,12 @@ const EmbeddableWidget = ({
     return send('customer:update', {customerId, metadata: customer});
   };
 
+  const handleCacheCustomerId = (payload: any) => {
+    const {customerId} = payload;
+
+    return setCustomerId(customerId);
+  };
+
   const handlers = (msg: any) => {
     console.log('Handling in parent:', msg.data);
     const {event, payload = {}} = msg.data;
@@ -96,6 +107,8 @@ const EmbeddableWidget = ({
     switch (event) {
       case 'chat:loaded':
         return handleChatLoaded();
+      case 'customer:created':
+        return handleCacheCustomerId(payload);
       case 'conversation:join':
         return sendCustomerUpdate(payload);
       default:
