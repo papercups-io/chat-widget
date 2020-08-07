@@ -8,6 +8,7 @@ import WidgetToggle from './WidgetToggle';
 import {CustomerMetadata} from '../api';
 import getThemeConfig from '../theme';
 import {getCustomerId, setCustomerId} from '../storage';
+import {getUserInfo} from '../track/info';
 
 // const IFRAME_URL = 'http://localhost:8080';
 const IFRAME_URL = 'https://chat-window.vercel.app';
@@ -57,7 +58,6 @@ const EmbeddableWidget = ({
   defaultIsOpen = false,
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(false);
-
   const iframeRef = React.useRef(null);
   const cachedCustomerId = getCustomerId();
   // useRef since we only want to use this for the initial values
@@ -93,8 +93,10 @@ const EmbeddableWidget = ({
 
   const sendCustomerUpdate = (payload: any) => {
     const {customerId} = payload;
+    const customerBrowserInfo = getUserInfo();
+    const metadata = {...customerBrowserInfo, ...customer};
 
-    return send('customer:update', {customerId, metadata: customer});
+    return send('customer:update', {customerId, metadata});
   };
 
   const handleCacheCustomerId = (payload: any) => {
