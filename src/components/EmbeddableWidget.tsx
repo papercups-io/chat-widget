@@ -41,6 +41,7 @@ type Props = {
   baseUrl?: string;
   greeting?: string;
   customer?: CustomerMetadata;
+  newMessagePlaceholder?: string;
   defaultIsOpen?: boolean;
 };
 
@@ -52,6 +53,7 @@ const EmbeddableWidget = ({
   baseUrl,
   greeting,
   customer,
+  newMessagePlaceholder,
   defaultIsOpen = false,
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -67,6 +69,7 @@ const EmbeddableWidget = ({
       primaryColor,
       baseUrl,
       greeting,
+      newMessagePlaceholder,
       customerId: cachedCustomerId,
     })
   ).current;
@@ -123,6 +126,9 @@ const EmbeddableWidget = ({
   }, []);
 
   React.useEffect(() => {
+    // Send updates to iframe if props change. (This is mainly for use in
+    // the demo and "Getting Started" page, where users can play around with
+    // customizing the chat widget to suit their needs)
     send('config:update', {
       accountId,
       title,
@@ -130,8 +136,17 @@ const EmbeddableWidget = ({
       primaryColor,
       baseUrl,
       greeting,
+      newMessagePlaceholder,
     });
-  }, [accountId, title, subtitle, primaryColor, baseUrl, greeting]);
+  }, [
+    accountId,
+    title,
+    subtitle,
+    primaryColor,
+    baseUrl,
+    greeting,
+    newMessagePlaceholder,
+  ]);
 
   const handleToggleOpen = () => setIsOpen(!isOpen);
 
