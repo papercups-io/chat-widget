@@ -13,6 +13,8 @@ import {
   __NOOPTIONS,
 } from './helpers';
 
+// Mostly borrowed from:
+// https://github.com/PostHog/posthog-js/blob/dbfac85a2808626e3c1780013a9075d5c9fd0971/src/utils.js#L1433
 const info = {
   campaignParams: function () {
     const campaign_keywords = 'utm_source utm_medium utm_campaign utm_content utm_term'.split(
