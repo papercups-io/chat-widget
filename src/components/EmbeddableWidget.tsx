@@ -93,7 +93,7 @@ const EmbeddableWidget = ({
 
   const sendCustomerUpdate = (payload: any) => {
     const {customerId} = payload;
-    const customerBrowserInfo = getUserInfo();
+    const customerBrowserInfo = getUserInfo(window);
     const metadata = {...customerBrowserInfo, ...customer};
 
     return send('customer:update', {customerId, metadata});
