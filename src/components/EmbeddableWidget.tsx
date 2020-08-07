@@ -7,7 +7,7 @@ import qs from 'query-string';
 import WidgetToggle from './WidgetToggle';
 import {CustomerMetadata} from '../api';
 import getThemeConfig from '../theme';
-import {getCustomerId, setCustomerId} from '../storage';
+import store from '../storage';
 import {getUserInfo} from '../track/info';
 
 // const IFRAME_URL = 'http://localhost:8080';
@@ -59,7 +59,8 @@ const EmbeddableWidget = ({
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const iframeRef = React.useRef(null);
-  const cachedCustomerId = getCustomerId();
+  const storage = store(window);
+  const cachedCustomerId = storage.getCustomerId();
   // useRef since we only want to use this for the initial values
   const query = React.useRef(
     qs.stringify({
@@ -102,7 +103,7 @@ const EmbeddableWidget = ({
   const handleCacheCustomerId = (payload: any) => {
     const {customerId} = payload;
 
-    return setCustomerId(customerId);
+    return storage.setCustomerId(customerId);
   };
 
   const handlers = (msg: any) => {
