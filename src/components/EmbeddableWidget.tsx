@@ -59,7 +59,8 @@ const EmbeddableWidget = ({
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const iframeRef = React.useRef(null);
-  const storage = store(window);
+  const win = (window || {}) as any; // FIXME?
+  const storage = store(win);
   const cachedCustomerId = storage.getCustomerId();
   // useRef since we only want to use this for the initial values
   const query = React.useRef(
@@ -94,7 +95,7 @@ const EmbeddableWidget = ({
 
   const sendCustomerUpdate = (payload: any) => {
     const {customerId} = payload;
-    const customerBrowserInfo = getUserInfo(window);
+    const customerBrowserInfo = getUserInfo(win);
     const metadata = {...customerBrowserInfo, ...customer};
 
     return send('customer:update', {customerId, metadata});
@@ -123,7 +124,7 @@ const EmbeddableWidget = ({
   };
 
   React.useEffect(() => {
-    const unsubscribe = setup(window, handlers);
+    const unsubscribe = setup(win, handlers);
 
     return () => unsubscribe();
   }, []);
