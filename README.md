@@ -31,6 +31,7 @@ Paste the code below between your `<head>` and `</head>` tags:
       accountId: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx',
       title: 'Welcome to Papercups!',
       subtitle: 'Ask us anything in the chat window below 😊',
+      newMessagePlaceholder: 'Start typing...',
       primaryColor: '#13c2c2',
       // Optionally pass in a default greeting
       greeting: 'Hi there! How can I help you?',
@@ -71,10 +72,11 @@ const ExamplePage = () => {
         if you would like it to render on every page
       */}
       <ChatWidget
+        accountId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'
         title='Welcome to Papercups!'
         subtitle='Ask us anything in the chat window below 😊'
+        newMessagePlaceholder='Start typing...'
         primaryColor='#13c2c2'
-        accountId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'
         // Optionally pass in a default greeting
         greeting='Hi there! How can I help you?'
         // Optionally pass in metadata to identify the customer
