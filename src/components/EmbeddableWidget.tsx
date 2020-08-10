@@ -41,7 +41,7 @@ type Props = {
   accountId: string;
   baseUrl?: string;
   greeting?: string;
-  customer?: CustomerMetadata;
+  customer?: CustomerMetadata | null;
   newMessagePlaceholder?: string;
   defaultIsOpen?: boolean;
 };
@@ -168,10 +168,23 @@ class EmbeddableWidget extends React.Component<Props, any> {
     return this.send('papercups:ping'); // Just testing
   };
 
+  formatCustomerMetadata = () => {
+    const {customer = {}} = this.props;
+
+    if (!customer) {
+      return {};
+    }
+
+    // Make sure all custom passed-in values are strings
+    return Object.keys(customer).reduce((acc, key) => {
+      return {...acc, [key]: String(customer[key])};
+    }, {});
+  };
+
   sendCustomerUpdate = (payload: any) => {
     const {customerId} = payload;
     const customerBrowserInfo = getUserInfo(window);
-    const metadata = {...customerBrowserInfo, ...this.props.customer};
+    const metadata = {...customerBrowserInfo, ...this.formatCustomerMetadata()};
 
     return this.send('customer:update', {customerId, metadata});
   };

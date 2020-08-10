@@ -7,7 +7,7 @@ export type CustomerMetadata = {
   email?: string;
   external_id?: string;
   // TODO: include browser info
-} | null;
+};
 
 const EMPTY_METADATA = {} as CustomerMetadata;
 
