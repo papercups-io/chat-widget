@@ -6,7 +6,7 @@ import ChatMessage from './ChatMessage';
 import SendIcon from './SendIcon';
 import * as API from '../api';
 import {Message, now} from '../utils';
-import {getCustomerId, setCustomerId} from '../storage';
+import store from '../storage';
 import {getWebsocketUrl} from '../config';
 
 type Props = {
@@ -21,7 +21,7 @@ type Props = {
 type State = {
   message: string;
   messages: Array<Message>;
-  customerId: string;
+  customerId: string | null;
   conversationId: string | null;
   isSending: boolean;
 };
@@ -31,13 +31,14 @@ class ChatWindow extends React.Component<Props, State> {
 
   socket: any;
   channel: any;
+  storage: any;
 
   state: State = {
     message: '',
     messages: [],
     // TODO: figure out how to determine these, either by IP or localStorage
     // (eventually we will probably use cookies for this)
-    customerId: getCustomerId(),
+    customerId: null,
     conversationId: null,
     isSending: false,
   };
@@ -45,10 +46,15 @@ class ChatWindow extends React.Component<Props, State> {
   componentDidMount() {
     const websocketUrl = getWebsocketUrl(this.props.baseUrl);
 
+    this.storage = store(window);
     this.socket = new Socket(websocketUrl);
     this.socket.connect();
 
-    this.fetchLatestConversation(this.state.customerId);
+    const customerId = this.storage.getCustomerId();
+
+    this.setState({customerId}, () => {
+      this.fetchLatestConversation(customerId);
+    });
   }
 
   componentWillUnmount() {
@@ -129,7 +135,7 @@ class ChatWindow extends React.Component<Props, State> {
       baseUrl
     );
 
-    setCustomerId(customerId);
+    this.storage.setCustomerId(customerId);
 
     return customerId;
   };
