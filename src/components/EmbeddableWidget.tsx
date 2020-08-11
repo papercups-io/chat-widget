@@ -5,7 +5,7 @@ import {motion} from 'framer-motion';
 import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
 import WidgetToggle from './WidgetToggle';
-import {CustomerMetadata} from '../api';
+import {CustomerMetadata, WidgetSettings, fetchWidgetSettings} from '../api';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {getUserInfo} from '../track/info';
@@ -58,7 +58,8 @@ class EmbeddableWidget extends React.Component<Props, any> {
     this.state = {isOpen: false, query: ''};
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const settings = await this.fetchWidgetSettings();
     const {
       accountId,
       title,
@@ -73,17 +74,20 @@ class EmbeddableWidget extends React.Component<Props, any> {
     this.unsubscribe = setup(window, this.handlers);
     this.storage = store(window);
 
-    const query = qs.stringify({
+    const config = {
       accountId,
-      title,
-      subtitle,
-      primaryColor,
-      baseUrl,
-      greeting,
-      newMessagePlaceholder,
+      title: title || settings.title,
+      subtitle: subtitle || settings.subtitle,
+      primaryColor: primaryColor || settings.color,
+      baseUrl: baseUrl || settings.base_url,
+      greeting: greeting || settings.greeting,
+      newMessagePlaceholder:
+        newMessagePlaceholder || settings.new_message_placeholder,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       customerId: this.storage.getCustomerId(),
-    });
+    };
+
+    const query = qs.stringify(config);
 
     this.setState({query});
   }
@@ -139,6 +143,16 @@ class EmbeddableWidget extends React.Component<Props, any> {
       });
     }
   }
+
+  fetchWidgetSettings = () => {
+    const {accountId} = this.props;
+    const empty = {} as WidgetSettings;
+    const metadata = getUserInfo(window);
+
+    return fetchWidgetSettings(accountId, metadata)
+      .then((settings) => settings || empty)
+      .catch(() => empty);
+  };
 
   handlers = (msg: any) => {
     console.log('Handling in parent:', msg.data);
