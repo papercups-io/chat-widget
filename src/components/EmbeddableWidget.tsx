@@ -43,6 +43,7 @@ type Props = {
   greeting?: string;
   customer?: CustomerMetadata | null;
   newMessagePlaceholder?: string;
+  requireEmailUpfront?: boolean;
   defaultIsOpen?: boolean;
 };
 
@@ -66,6 +67,7 @@ class EmbeddableWidget extends React.Component<Props, any> {
       baseUrl,
       greeting,
       newMessagePlaceholder,
+      requireEmailUpfront,
     } = this.props;
 
     this.unsubscribe = setup(window, this.handlers);
@@ -79,6 +81,7 @@ class EmbeddableWidget extends React.Component<Props, any> {
       baseUrl,
       greeting,
       newMessagePlaceholder,
+      requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       customerId: this.storage.getCustomerId(),
     });
 
