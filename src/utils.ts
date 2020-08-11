@@ -15,6 +15,18 @@ export type Message = {
   type?: 'bot' | 'agent' | 'customer';
 };
 
+export type WidgetConfig = {
+  accountId?: string;
+  baseUrl?: string;
+  title?: string;
+  subtitle?: string;
+  primaryColor?: string;
+  greeting?: string;
+  newMessagePlaceholder?: string;
+  requireEmailUpfront?: 1 | 0;
+  customerId?: string;
+};
+
 // TODO: handle this on the server instead
 export function now() {
   const date = new Date();

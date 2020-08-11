@@ -11,6 +11,7 @@ import {
   fetchWidgetSettings,
   updateWidgetSettingsMetadata,
 } from '../api';
+import {WidgetConfig} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {getUserInfo} from '../track/info';
@@ -60,7 +61,7 @@ class EmbeddableWidget extends React.Component<Props, any> {
   constructor(props: Props) {
     super(props);
 
-    this.state = {isOpen: false, query: ''};
+    this.state = {isOpen: false, query: '', config: {} as WidgetConfig};
   }
 
   async componentDidMount() {
@@ -79,7 +80,7 @@ class EmbeddableWidget extends React.Component<Props, any> {
     this.unsubscribe = setup(window, this.handlers);
     this.storage = store(window);
 
-    const config = {
+    const config: WidgetConfig = {
       accountId,
       baseUrl,
       title: title || settings.title,
@@ -94,7 +95,7 @@ class EmbeddableWidget extends React.Component<Props, any> {
 
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
 
-    this.setState({query});
+    this.setState({config, query});
 
     // Set some metadata on the widget to better understand usage
     await this.updateWidgetSettingsMetadata();
@@ -236,8 +237,8 @@ class EmbeddableWidget extends React.Component<Props, any> {
   };
 
   render() {
-    const {primaryColor} = this.props;
-    const {isOpen, query} = this.state;
+    const {isOpen, query, config} = this.state;
+    const {primaryColor} = config;
 
     if (!query) {
       return null;
