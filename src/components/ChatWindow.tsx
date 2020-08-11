@@ -88,7 +88,7 @@ class ChatWindow extends React.Component<Props, State> {
 
     const {accountId, baseUrl, customer: metadata} = this.props;
 
-    console.log('Fetching conversations for customer:', customerId);
+    console.debug('Fetching conversations for customer:', customerId);
 
     try {
       const conversations = await API.fetchCustomerConversations(
@@ -97,7 +97,7 @@ class ChatWindow extends React.Component<Props, State> {
         baseUrl
       );
 
-      console.log('Found existing conversations:', conversations);
+      console.debug('Found existing conversations:', conversations);
 
       if (!conversations || !conversations.length) {
         // If there are no conversations yet, wait until the customer creates
@@ -123,7 +123,7 @@ class ChatWindow extends React.Component<Props, State> {
 
       await this.updateExistingCustomer(customerId, metadata);
     } catch (err) {
-      console.log('Error fetching conversations!', err);
+      console.debug('Error fetching conversations!', err);
     }
   };
 
@@ -153,7 +153,7 @@ class ChatWindow extends React.Component<Props, State> {
 
       await API.updateCustomerMetadata(customerId, metadata, baseUrl);
     } catch (err) {
-      console.log('Error updating customer metadata!', err);
+      console.debug('Error updating customer metadata!', err);
     }
   };
 
@@ -179,7 +179,7 @@ class ChatWindow extends React.Component<Props, State> {
       this.channel.leave(); // TODO: what's the best practice here?
     }
 
-    console.log('Joining channel:', conversationId);
+    console.debug('Joining channel:', conversationId);
 
     this.channel = this.socket.channel(`conversation:${conversationId}`, {
       customer_id: customerId,
@@ -192,10 +192,10 @@ class ChatWindow extends React.Component<Props, State> {
     this.channel
       .join()
       .receive('ok', (res: any) => {
-        console.log('Joined successfully!', res);
+        console.debug('Joined successfully!', res);
       })
       .receive('error', (err: any) => {
-        console.log('Unable to join!', err);
+        console.debug('Unable to join!', err);
       });
 
     this.scrollToEl.scrollIntoView();

@@ -5,7 +5,12 @@ import {motion} from 'framer-motion';
 import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
 import WidgetToggle from './WidgetToggle';
-import {CustomerMetadata, WidgetSettings, fetchWidgetSettings} from '../api';
+import {
+  CustomerMetadata,
+  WidgetSettings,
+  fetchWidgetSettings,
+  updateWidgetSettingsMetadata,
+} from '../api';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {getUserInfo} from '../track/info';
@@ -90,6 +95,9 @@ class EmbeddableWidget extends React.Component<Props, any> {
     const query = qs.stringify(config);
 
     this.setState({query});
+
+    // Set some metadata on the widget to better understand usage
+    await this.updateWidgetSettingsMetadata();
   }
 
   componentWillUnmount() {
@@ -145,17 +153,23 @@ class EmbeddableWidget extends React.Component<Props, any> {
   }
 
   fetchWidgetSettings = () => {
-    const {accountId} = this.props;
+    const {accountId, baseUrl} = this.props;
     const empty = {} as WidgetSettings;
-    const metadata = getUserInfo(window);
 
-    return fetchWidgetSettings(accountId, metadata)
+    return fetchWidgetSettings(accountId, baseUrl)
       .then((settings) => settings || empty)
       .catch(() => empty);
   };
 
+  updateWidgetSettingsMetadata = () => {
+    const {accountId, baseUrl} = this.props;
+    const metadata = getUserInfo(window);
+
+    return updateWidgetSettingsMetadata(accountId, metadata, baseUrl);
+  };
+
   handlers = (msg: any) => {
-    console.log('Handling in parent:', msg.data);
+    console.debug('Handling in parent:', msg.data);
     const {event, payload = {}} = msg.data;
 
     switch (event) {
@@ -171,7 +185,7 @@ class EmbeddableWidget extends React.Component<Props, any> {
   };
 
   send = (event: string, payload?: any) => {
-    console.log('Sending from parent:', {event, payload});
+    console.debug('Sending from parent:', {event, payload});
     const el = this.iframeRef as any;
 
     el.contentWindow.postMessage({event, payload}, '*');
