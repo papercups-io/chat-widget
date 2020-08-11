@@ -81,10 +81,10 @@ class EmbeddableWidget extends React.Component<Props, any> {
 
     const config = {
       accountId,
+      baseUrl,
       title: title || settings.title,
       subtitle: subtitle || settings.subtitle,
       primaryColor: primaryColor || settings.color,
-      baseUrl: baseUrl || settings.base_url,
       greeting: greeting || settings.greeting,
       newMessagePlaceholder:
         newMessagePlaceholder || settings.new_message_placeholder,
