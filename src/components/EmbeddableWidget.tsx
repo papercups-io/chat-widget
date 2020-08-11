@@ -5,7 +5,12 @@ import {motion} from 'framer-motion';
 import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
 import WidgetToggle from './WidgetToggle';
-import {CustomerMetadata} from '../api';
+import {
+  CustomerMetadata,
+  WidgetSettings,
+  fetchWidgetSettings,
+  updateWidgetSettingsMetadata,
+} from '../api';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {getUserInfo} from '../track/info';
@@ -58,7 +63,8 @@ class EmbeddableWidget extends React.Component<Props, any> {
     this.state = {isOpen: false, query: ''};
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const settings = await this.fetchWidgetSettings();
     const {
       accountId,
       title,
@@ -73,19 +79,25 @@ class EmbeddableWidget extends React.Component<Props, any> {
     this.unsubscribe = setup(window, this.handlers);
     this.storage = store(window);
 
-    const query = qs.stringify({
+    const config = {
       accountId,
-      title,
-      subtitle,
-      primaryColor,
       baseUrl,
-      greeting,
-      newMessagePlaceholder,
+      title: title || settings.title,
+      subtitle: subtitle || settings.subtitle,
+      primaryColor: primaryColor || settings.color,
+      greeting: greeting || settings.greeting,
+      newMessagePlaceholder:
+        newMessagePlaceholder || settings.new_message_placeholder,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       customerId: this.storage.getCustomerId(),
-    });
+    };
+
+    const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
 
     this.setState({query});
+
+    // Set some metadata on the widget to better understand usage
+    await this.updateWidgetSettingsMetadata();
   }
 
   componentWillUnmount() {
@@ -140,8 +152,29 @@ class EmbeddableWidget extends React.Component<Props, any> {
     }
   }
 
+  fetchWidgetSettings = () => {
+    const {accountId, baseUrl} = this.props;
+    const empty = {} as WidgetSettings;
+
+    return fetchWidgetSettings(accountId, baseUrl)
+      .then((settings) => settings || empty)
+      .catch(() => empty);
+  };
+
+  updateWidgetSettingsMetadata = () => {
+    const {accountId, baseUrl} = this.props;
+    const metadata = getUserInfo(window);
+
+    return updateWidgetSettingsMetadata(accountId, metadata, baseUrl).catch(
+      (err) => {
+        // No need to block on this
+        console.error('Failed to update widget metadata:', err);
+      }
+    );
+  };
+
   handlers = (msg: any) => {
-    console.log('Handling in parent:', msg.data);
+    console.debug('Handling in parent:', msg.data);
     const {event, payload = {}} = msg.data;
 
     switch (event) {
@@ -157,7 +190,7 @@ class EmbeddableWidget extends React.Component<Props, any> {
   };
 
   send = (event: string, payload?: any) => {
-    console.log('Sending from parent:', {event, payload});
+    console.debug('Sending from parent:', {event, payload});
     const el = this.iframeRef as any;
 
     el.contentWindow.postMessage({event, payload}, '*');
