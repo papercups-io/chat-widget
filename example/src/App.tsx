@@ -53,6 +53,7 @@ const App = ({disco}: Props) => {
         }}
         // TODO: default to point to production once that's working
         baseUrl='http://localhost:4000'
+        requireEmailUpfront
         defaultIsOpen
       />
     </>
