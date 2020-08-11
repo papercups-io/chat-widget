@@ -92,7 +92,7 @@ class EmbeddableWidget extends React.Component<Props, any> {
       customerId: this.storage.getCustomerId(),
     };
 
-    const query = qs.stringify(config);
+    const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
 
     this.setState({query});
 
@@ -165,7 +165,12 @@ class EmbeddableWidget extends React.Component<Props, any> {
     const {accountId, baseUrl} = this.props;
     const metadata = getUserInfo(window);
 
-    return updateWidgetSettingsMetadata(accountId, metadata, baseUrl);
+    return updateWidgetSettingsMetadata(accountId, metadata, baseUrl).catch(
+      (err) => {
+        // No need to block on this
+        console.error('Failed to update widget metadata:', err);
+      }
+    );
   };
 
   handlers = (msg: any) => {
