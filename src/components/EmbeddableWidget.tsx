@@ -53,7 +53,13 @@ type Props = {
   defaultIsOpen?: boolean;
 };
 
-class EmbeddableWidget extends React.Component<Props, any> {
+type State = {
+  isOpen: boolean;
+  query: string;
+  config: WidgetConfig;
+};
+
+class EmbeddableWidget extends React.Component<Props, State> {
   iframeRef: any;
   storage: any;
   unsubscribe: any;
@@ -141,7 +147,7 @@ class EmbeddableWidget extends React.Component<Props, any> {
     // the demo and "Getting Started" page, where users can play around with
     // customizing the chat widget to suit their needs)
     if (shouldUpdate) {
-      this.send('config:update', {
+      this.handleConfigUpdated({
         accountId,
         title,
         subtitle,
@@ -152,6 +158,17 @@ class EmbeddableWidget extends React.Component<Props, any> {
       });
     }
   }
+
+  handleConfigUpdated = (updates: WidgetConfig) => {
+    this.setState({
+      config: {
+        ...this.state.config,
+        ...updates,
+      },
+    });
+
+    this.send('config:update', updates);
+  };
 
   fetchWidgetSettings = () => {
     const {accountId, baseUrl} = this.props;
