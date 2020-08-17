@@ -16,16 +16,12 @@ import getThemeConfig from '../theme';
 import store from '../storage';
 import {getUserInfo} from '../track/info';
 
-// const IFRAME_URL = 'http://localhost:8080';
-const IFRAME_URL = 'https://chat-window.vercel.app';
+// const DEFAULT_IFRAME_URL = 'http://localhost:8080';
+const DEFAULT_IFRAME_URL = 'https://chat-window.vercel.app';
 
 // TODO: set this up somewhere else
 const setup = (w: any, handlers: (msg?: any) => void) => {
   const cb = (msg: any) => {
-    if (msg.origin !== IFRAME_URL) {
-      return;
-    }
-
     handlers(msg);
   };
 
@@ -49,6 +45,7 @@ type Props = {
   greeting?: string;
   customer?: CustomerMetadata | null;
   newMessagePlaceholder?: string;
+  iframeUrlOverride?: string;
   requireEmailUpfront?: boolean;
   defaultIsOpen?: boolean;
 };
@@ -159,6 +156,10 @@ class EmbeddableWidget extends React.Component<Props, State> {
     }
   }
 
+  getIframeUrl = () => {
+    return this.props.iframeUrlOverride || DEFAULT_IFRAME_URL;
+  };
+
   handleConfigUpdated = (updates: WidgetConfig) => {
     this.setState({
       config: {
@@ -193,6 +194,13 @@ class EmbeddableWidget extends React.Component<Props, State> {
 
   handlers = (msg: any) => {
     console.debug('Handling in parent:', msg.data);
+    const iframeUrl = this.getIframeUrl();
+    const {origin} = new URL(iframeUrl);
+
+    if (msg.origin !== origin) {
+      return null;
+    }
+
     const {event, payload = {}} = msg.data;
 
     switch (event) {
@@ -261,6 +269,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
       return null;
     }
 
+    const iframeUrl = this.getIframeUrl();
     const theme = getThemeConfig({primary: primaryColor});
 
     return (
@@ -275,7 +284,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
             open: {opacity: 1, y: 0},
           }}
           transition={{duration: 0.2, ease: 'easeIn'}}
-          src={`${IFRAME_URL}?${query}`}
+          src={`${iframeUrl}?${query}`}
           style={isOpen ? {} : {bottom: -9999}}
           sx={{
             border: 'none',

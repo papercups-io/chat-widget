@@ -51,8 +51,10 @@ const App = ({disco}: Props) => {
           email: 'test@test.com',
           external_id: '123',
         }}
-        // TODO: default to point to production once that's working
+        // NB: we override these values during development -- note that the
+        // API runs on port 4000 by default, and the iframe on 8080
         baseUrl='http://localhost:4000'
+        iframeUrlOverride='http://localhost:8080'
         requireEmailUpfront
         defaultIsOpen
       />
