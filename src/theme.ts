@@ -205,9 +205,9 @@ export const getThemeConfig = (settings: ThemeSettings) => {
         right: '20px',
       },
       WidgetToggle: {
-        outline: 'none',
-        border: 'none',
-        userSelect: 'none',
+        outline: 'none !important',
+        border: 'none !important',
+        userSelect: 'none !important',
         cursor: 'pointer',
         width: '50px',
         height: '50px',
