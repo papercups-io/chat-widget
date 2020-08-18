@@ -224,7 +224,9 @@ class EmbeddableWidget extends React.Component<Props, State> {
 
   handleChatLoaded = () => {
     if (this.props.defaultIsOpen) {
-      this.setState({isOpen: true});
+      this.setState({isOpen: true}, () =>
+        this.send('papercups:toggle', {isOpen: true})
+      );
     }
 
     return this.send('papercups:ping'); // Just testing
@@ -258,7 +260,9 @@ class EmbeddableWidget extends React.Component<Props, State> {
   };
 
   handleToggleOpen = () => {
-    this.setState({isOpen: !this.state.isOpen});
+    const isOpen = !this.state.isOpen;
+
+    this.setState({isOpen}, () => this.send('papercups:toggle', {isOpen}));
   };
 
   render() {
