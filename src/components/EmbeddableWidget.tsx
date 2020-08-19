@@ -209,6 +209,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
       case 'chat:loaded':
         return this.handleChatLoaded();
       case 'customer:created':
+      case 'customer:updated':
         return this.handleCacheCustomerId(payload);
       case 'conversation:join':
         return this.sendCustomerUpdate(payload);
