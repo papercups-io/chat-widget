@@ -78,6 +78,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
       greeting,
       newMessagePlaceholder,
       requireEmailUpfront,
+      customer = {},
     } = this.props;
 
     this.unsubscribe = setup(window, this.handlers);
@@ -94,6 +95,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
         newMessagePlaceholder || settings.new_message_placeholder,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       customerId: this.storage.getCustomerId(),
+      metadata: JSON.stringify(customer),
     };
 
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
@@ -207,6 +209,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
       case 'chat:loaded':
         return this.handleChatLoaded();
       case 'customer:created':
+      case 'customer:updated':
         return this.handleCacheCustomerId(payload);
       case 'conversation:join':
         return this.sendCustomerUpdate(payload);
