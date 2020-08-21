@@ -43,6 +43,9 @@ Paste the code below between your `<head>` and `</head>` tags:
       },
       // Optionally specify the base URL
       baseUrl: 'https://app.papercups.io',
+      // Add this if you want to require the customer to enter
+      // their email before being able to send you a message
+      requireEmailUpfront: true,
     },
   };
 </script>
@@ -87,6 +90,9 @@ const ExamplePage = () => {
         }}
         // Optionally specify the base URL
         baseUrl='https://app.papercups.io'
+        // Add this if you want to require the customer to enter
+        // their email before being able to send you a message
+        requireEmailUpfront
       />
     </>
   );
