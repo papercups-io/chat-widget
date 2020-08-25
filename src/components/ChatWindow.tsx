@@ -5,7 +5,7 @@ import {motion} from 'framer-motion';
 import ChatMessage from './ChatMessage';
 import SendIcon from './SendIcon';
 import * as API from '../api';
-import {Message, now} from '../utils';
+import {now} from '../utils';
 import store from '../storage';
 import {getWebsocketUrl} from '../config';
 
@@ -20,7 +20,7 @@ type Props = {
 
 type State = {
   message: string;
-  messages: Array<Message>;
+  messages: Array<API.Message>;
   customerId: string | null;
   conversationId: string | null;
   isSending: boolean;
@@ -61,7 +61,7 @@ class ChatWindow extends React.Component<Props, State> {
     this.channel && this.channel.leave();
   }
 
-  getDefaultGreeting = (): Array<Message> => {
+  getDefaultGreeting = (): Array<API.Message> => {
     const {greeting} = this.props;
 
     if (!greeting) {
@@ -110,7 +110,7 @@ class ChatWindow extends React.Component<Props, State> {
       const [latest] = conversations;
       const {id: conversationId, messages = []} = latest;
       const formattedMessages = messages.sort(
-        (a: Message, b: Message) =>
+        (a: API.Message, b: API.Message) =>
           +new Date(a.created_at) - +new Date(b.created_at)
       );
 
@@ -201,7 +201,7 @@ class ChatWindow extends React.Component<Props, State> {
     this.scrollToEl.scrollIntoView();
   };
 
-  handleNewMessage = (message: Message) => {
+  handleNewMessage = (message: API.Message) => {
     this.setState({messages: [...this.state.messages, message]}, () => {
       this.scrollToEl.scrollIntoView();
     });

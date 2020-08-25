@@ -84,6 +84,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
     this.unsubscribe = setup(window, this.handlers);
     this.storage = store(window);
 
+    const metadata = {...getUserInfo(window), ...customer};
     const config: WidgetConfig = {
       accountId,
       baseUrl,
@@ -95,7 +96,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
         newMessagePlaceholder || settings.new_message_placeholder,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       customerId: this.storage.getCustomerId(),
-      metadata: JSON.stringify(customer),
+      metadata: JSON.stringify(metadata),
     };
 
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
@@ -278,6 +279,16 @@ class EmbeddableWidget extends React.Component<Props, State> {
 
     const iframeUrl = this.getIframeUrl();
     const theme = getThemeConfig({primary: primaryColor});
+    const sandbox = [
+      // Allow scripts to load in iframe
+      'allow-scripts',
+      // Allow opening links from iframe
+      'allow-popups',
+      // Needed to access localStorage
+      'allow-same-origin',
+      // Allow form for message input
+      'allow-forms',
+    ].join(' ');
 
     return (
       <ThemeProvider theme={theme}>
@@ -285,6 +296,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
         <motion.iframe
           ref={(el) => (this.iframeRef = el)}
           className='Papercups-chatWindowContainer'
+          sandbox={sandbox}
           animate={isOpen ? 'open' : 'closed'}
           variants={{
             closed: {opacity: 0, y: 4},
@@ -292,7 +304,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
           }}
           transition={{duration: 0.2, ease: 'easeIn'}}
           src={`${iframeUrl}?${query}`}
-          style={isOpen ? {} : {bottom: -9999}}
+          style={isOpen ? {} : {pointerEvents: 'none', minHeight: 0, height: 0}}
           sx={{
             border: 'none',
             bg: 'background',
