@@ -84,6 +84,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
     this.unsubscribe = setup(window, this.handlers);
     this.storage = store(window);
 
+    const metadata = {...getUserInfo(window), ...customer};
     const config: WidgetConfig = {
       accountId,
       baseUrl,
@@ -95,7 +96,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
         newMessagePlaceholder || settings.new_message_placeholder,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       customerId: this.storage.getCustomerId(),
-      metadata: JSON.stringify(customer),
+      metadata: JSON.stringify(metadata),
     };
 
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
