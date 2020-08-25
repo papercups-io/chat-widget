@@ -286,6 +286,8 @@ class EmbeddableWidget extends React.Component<Props, State> {
       'allow-popups',
       // Needed to access localStorage
       'allow-same-origin',
+      // Allow form for message input
+      'allow-forms',
     ].join(' ');
 
     return (
