@@ -304,7 +304,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
           }}
           transition={{duration: 0.2, ease: 'easeIn'}}
           src={`${iframeUrl}?${query}`}
-          style={isOpen ? {} : {pointerEvents: 'none', minHeight: 0, height: 0}}
+          style={isOpen ? {} : {pointerEvents: 'none'}}
           sx={{
             border: 'none',
             bg: 'background',
