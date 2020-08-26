@@ -322,7 +322,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
             variant: 'styles.WidgetToggleContainer',
           }}
         >
-          <WidgetToggle toggle={this.handleToggleOpen} />
+          <WidgetToggle isOpen={isOpen} toggle={this.handleToggleOpen} />
         </motion.div>
       </ThemeProvider>
     );

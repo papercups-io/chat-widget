@@ -54,7 +54,7 @@ const App = ({disco}: Props) => {
         // NB: we override these values during development -- note that the
         // API runs on port 4000 by default, and the iframe on 8080
         baseUrl='http://localhost:4000'
-        iframeUrlOverride='http://localhost:8080'
+        // iframeUrlOverride='http://localhost:8080'
         requireEmailUpfront
         defaultIsOpen
       />
