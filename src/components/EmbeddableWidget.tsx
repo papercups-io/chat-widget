@@ -16,8 +16,8 @@ import getThemeConfig from '../theme';
 import store from '../storage';
 import {getUserInfo} from '../track/info';
 
-// const DEFAULT_IFRAME_URL = 'http://localhost:8080';
-const DEFAULT_IFRAME_URL = 'https://chat-window.vercel.app';
+// const DEFAULT_IFRAME_URL = 'https://chat-window.vercel.app';
+const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
 
 // TODO: set this up somewhere else
 const setup = (w: any, handlers: (msg?: any) => void) => {
