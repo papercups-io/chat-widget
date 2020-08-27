@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ChatWidget from '@papercups-io/chat-widget';
+import {ChatWidget, ChatWindow} from '@papercups-io/chat-widget';
 
 type Props = {disco?: boolean};
 
@@ -34,6 +34,33 @@ const App = ({disco}: Props) => {
 
   return (
     <>
+      <div
+        style={{
+          padding: 32,
+          height: 400,
+          width: '50%',
+          minWidth: 320,
+        }}
+      >
+        <ChatWindow
+          title='Welcome to Papercups!'
+          subtitle='Ask us anything in the chat window 😊'
+          primaryColor={primaryColor}
+          accountId='eb504736-0f20-4978-98ff-1a82ae60b266'
+          greeting='Hi there! How can I help you?'
+          newMessagePlaceholder='Start typing...'
+          customer={{
+            name: 'Test User',
+            email: 'test@test.com',
+            external_id: '123',
+          }}
+          // NB: we override these values during development -- note that the
+          // API runs on port 4000 by default, and the iframe on 8080
+          baseUrl='http://localhost:4000'
+          // iframeUrlOverride='http://localhost:8080'
+          requireEmailUpfront
+        />
+      </div>
       {/*
         Put <ChatWidget /> at the bottom of whatever pages you would
         like to render the widget on, or in your root/router component

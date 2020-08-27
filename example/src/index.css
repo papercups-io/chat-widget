@@ -16,3 +16,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.Papercups-chatWindowContainer {
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 5px 24px;
+}

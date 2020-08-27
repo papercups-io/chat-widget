@@ -183,6 +183,12 @@ export const getThemeConfig = (settings: ThemeSettings) => {
           },
         },
       },
+      ChatWindowContainer: {
+        margin: 0,
+        height: '100%',
+        width: '100%',
+        minHeight: 320,
+      },
       WidgetContainer: {
         margin: 0,
         zIndex: 2147483000,

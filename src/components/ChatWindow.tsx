@@ -1,363 +1,304 @@
+/** @jsx jsx */
+
 import React from 'react';
-import {Box, Button, Flex, Heading, Text, Textarea} from 'theme-ui';
-import {Socket} from 'phoenix';
-import {motion} from 'framer-motion';
-import ChatMessage from './ChatMessage';
-import SendIcon from './SendIcon';
-import * as API from '../api';
-import {now} from '../utils';
+import {ThemeProvider, jsx} from 'theme-ui';
+import qs from 'query-string';
+import {
+  CustomerMetadata,
+  WidgetSettings,
+  fetchWidgetSettings,
+  updateWidgetSettingsMetadata,
+} from '../api';
+import {WidgetConfig} from '../utils';
+import getThemeConfig from '../theme';
 import store from '../storage';
-import {getWebsocketUrl} from '../config';
+import {getUserInfo} from '../track/info';
+
+// const DEFAULT_IFRAME_URL = 'https://chat-window.vercel.app';
+const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
+
+// TODO: set this up somewhere else
+const setup = (w: any, handlers: (msg?: any) => void) => {
+  const cb = (msg: any) => {
+    handlers(msg);
+  };
+
+  if (w.addEventListener) {
+    w.addEventListener('message', cb);
+
+    return () => w.removeEventListener('message', cb);
+  } else {
+    w.attachEvent('onmessage', cb);
+
+    return () => w.detachEvent('message', cb);
+  }
+};
 
 type Props = {
-  accountId: string;
   title?: string;
   subtitle?: string;
+  primaryColor?: string;
+  accountId: string;
   baseUrl?: string;
   greeting?: string;
-  customer?: API.CustomerMetadata;
+  customer?: CustomerMetadata | null;
+  newMessagePlaceholder?: string;
+  iframeUrlOverride?: string;
+  requireEmailUpfront?: boolean;
 };
 
 type State = {
-  message: string;
-  messages: Array<API.Message>;
-  customerId: string | null;
-  conversationId: string | null;
-  isSending: boolean;
+  isOpen: boolean;
+  query: string;
+  config: WidgetConfig;
 };
 
+// TODO: DRY things up with the EmbeddableWidget component
 class ChatWindow extends React.Component<Props, State> {
-  scrollToEl: any = null;
-
-  socket: any;
-  channel: any;
+  iframeRef: any;
   storage: any;
+  unsubscribe: any;
 
-  state: State = {
-    message: '',
-    messages: [],
-    // TODO: figure out how to determine these, either by IP or localStorage
-    // (eventually we will probably use cookies for this)
-    customerId: null,
-    conversationId: null,
-    isSending: false,
-  };
+  constructor(props: Props) {
+    super(props);
 
-  componentDidMount() {
-    const websocketUrl = getWebsocketUrl(this.props.baseUrl);
+    this.state = {isOpen: false, query: '', config: {} as WidgetConfig};
+  }
 
+  async componentDidMount() {
+    const settings = await this.fetchWidgetSettings();
+    const {
+      accountId,
+      title,
+      subtitle,
+      primaryColor,
+      baseUrl,
+      greeting,
+      newMessagePlaceholder,
+      requireEmailUpfront,
+      customer = {},
+    } = this.props;
+
+    this.unsubscribe = setup(window, this.handlers);
     this.storage = store(window);
-    this.socket = new Socket(websocketUrl);
-    this.socket.connect();
 
-    const customerId = this.storage.getCustomerId();
+    const metadata = {...getUserInfo(window), ...customer};
+    const config: WidgetConfig = {
+      accountId,
+      baseUrl,
+      title: title || settings.title,
+      subtitle: subtitle || settings.subtitle,
+      primaryColor: primaryColor || settings.color,
+      greeting: greeting || settings.greeting,
+      newMessagePlaceholder:
+        newMessagePlaceholder || settings.new_message_placeholder,
+      requireEmailUpfront: requireEmailUpfront ? 1 : 0,
+      customerId: this.storage.getCustomerId(),
+      metadata: JSON.stringify(metadata),
+    };
 
-    this.setState({customerId}, () => {
-      this.fetchLatestConversation(customerId);
-    });
+    const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
+
+    this.setState({config, query});
+
+    // Set some metadata on the widget to better understand usage
+    await this.updateWidgetSettingsMetadata();
   }
 
   componentWillUnmount() {
-    this.channel && this.channel.leave();
+    this.unsubscribe && this.unsubscribe();
   }
 
-  getDefaultGreeting = (): Array<API.Message> => {
-    const {greeting} = this.props;
-
-    if (!greeting) {
-      return [];
-    }
-
-    return [
-      {
-        type: 'bot',
-        body: greeting, // 'Hi there! How can I help you?',
-        created_at: now().toString(),
-      },
+  componentDidUpdate(prevProps: Props) {
+    const {
+      accountId,
+      title,
+      subtitle,
+      primaryColor,
+      baseUrl,
+      greeting,
+      newMessagePlaceholder,
+    } = this.props;
+    const current = [
+      accountId,
+      title,
+      subtitle,
+      primaryColor,
+      baseUrl,
+      greeting,
+      newMessagePlaceholder,
     ];
-  };
+    const prev = [
+      prevProps.accountId,
+      prevProps.title,
+      prevProps.subtitle,
+      prevProps.primaryColor,
+      prevProps.baseUrl,
+      prevProps.greeting,
+      prevProps.newMessagePlaceholder,
+    ];
+    const shouldUpdate = current.some((value, idx) => {
+      return value !== prev[idx];
+    });
 
-  fetchLatestConversation = async (customerId: string) => {
-    if (!customerId) {
-      // If there's no customerId, we haven't seen this customer before,
-      // so do nothing until they try to create a new message
-      this.setState({messages: [...this.getDefaultGreeting()]});
-
-      return;
-    }
-
-    const {accountId, baseUrl, customer: metadata} = this.props;
-
-    console.debug('Fetching conversations for customer:', customerId);
-
-    try {
-      const conversations = await API.fetchCustomerConversations(
-        customerId,
+    // Send updates to iframe if props change. (This is mainly for use in
+    // the demo and "Getting Started" page, where users can play around with
+    // customizing the chat widget to suit their needs)
+    if (shouldUpdate) {
+      this.handleConfigUpdated({
         accountId,
-        baseUrl
-      );
-
-      console.debug('Found existing conversations:', conversations);
-
-      if (!conversations || !conversations.length) {
-        // If there are no conversations yet, wait until the customer creates
-        // a new message to create the new conversation
-        this.setState({messages: [...this.getDefaultGreeting()]});
-
-        return;
-      }
-
-      const [latest] = conversations;
-      const {id: conversationId, messages = []} = latest;
-      const formattedMessages = messages.sort(
-        (a: API.Message, b: API.Message) =>
-          +new Date(a.created_at) - +new Date(b.created_at)
-      );
-
-      this.setState({
-        conversationId,
-        messages: [...this.getDefaultGreeting(), ...formattedMessages],
+        title,
+        subtitle,
+        primaryColor,
+        baseUrl,
+        greeting,
+        newMessagePlaceholder,
       });
-
-      this.joinConversationChannel(conversationId, customerId);
-
-      await this.updateExistingCustomer(customerId, metadata);
-    } catch (err) {
-      console.debug('Error fetching conversations!', err);
     }
+  }
+
+  getIframeUrl = () => {
+    return this.props.iframeUrlOverride || DEFAULT_IFRAME_URL;
   };
 
-  createNewCustomerId = async (accountId: string) => {
-    const {baseUrl, customer: metadata} = this.props;
-    const {id: customerId} = await API.createNewCustomer(
-      accountId,
-      metadata,
-      baseUrl
-    );
+  handleConfigUpdated = (updates: WidgetConfig) => {
+    this.setState({
+      config: {
+        ...this.state.config,
+        ...updates,
+      },
+    });
 
-    this.storage.setCustomerId(customerId);
-
-    return customerId;
+    this.send('config:update', updates);
   };
 
-  updateExistingCustomer = async (
-    customerId: string,
-    metadata?: API.CustomerMetadata
-  ) => {
-    if (!metadata) {
-      return;
-    }
-
-    try {
-      const {baseUrl} = this.props;
-
-      await API.updateCustomerMetadata(customerId, metadata, baseUrl);
-    } catch (err) {
-      console.debug('Error updating customer metadata!', err);
-    }
-  };
-
-  initializeNewConversation = async () => {
+  fetchWidgetSettings = () => {
     const {accountId, baseUrl} = this.props;
+    const empty = {} as WidgetSettings;
 
-    const customerId = await this.createNewCustomerId(accountId);
-    const {id: conversationId} = await API.createNewConversation(
-      accountId,
-      customerId,
-      baseUrl
+    return fetchWidgetSettings(accountId, baseUrl)
+      .then((settings) => settings || empty)
+      .catch(() => empty);
+  };
+
+  updateWidgetSettingsMetadata = () => {
+    const {accountId, baseUrl} = this.props;
+    const metadata = getUserInfo(window);
+
+    return updateWidgetSettingsMetadata(accountId, metadata, baseUrl).catch(
+      (err) => {
+        // No need to block on this
+        console.error('Failed to update widget metadata:', err);
+      }
     );
-
-    this.setState({customerId, conversationId});
-
-    this.joinConversationChannel(conversationId, customerId);
-
-    return {customerId, conversationId};
   };
 
-  joinConversationChannel = (conversationId: string, customerId?: string) => {
-    if (this.channel && this.channel.leave) {
-      this.channel.leave(); // TODO: what's the best practice here?
+  handlers = (msg: any) => {
+    console.debug('Handling in parent:', msg.data);
+    const iframeUrl = this.getIframeUrl();
+    const {origin} = new URL(iframeUrl);
+
+    if (msg.origin !== origin) {
+      return null;
     }
 
-    console.debug('Joining channel:', conversationId);
+    const {event, payload = {}} = msg.data;
 
-    this.channel = this.socket.channel(`conversation:${conversationId}`, {
-      customer_id: customerId,
-    });
-
-    this.channel.on('shout', (message: any) => {
-      this.handleNewMessage(message);
-    });
-
-    this.channel
-      .join()
-      .receive('ok', (res: any) => {
-        console.debug('Joined successfully!', res);
-      })
-      .receive('error', (err: any) => {
-        console.debug('Unable to join!', err);
-      });
-
-    this.scrollToEl.scrollIntoView();
-  };
-
-  handleNewMessage = (message: API.Message) => {
-    this.setState({messages: [...this.state.messages, message]}, () => {
-      this.scrollToEl.scrollIntoView();
-    });
-  };
-
-  handleMessageChange = (e: any) => {
-    this.setState({message: e.target.value});
-  };
-
-  handleKeyDown = (e: any) => {
-    if (e.key === 'Enter') {
-      this.handleSendMessage(e);
+    switch (event) {
+      case 'chat:loaded':
+        return this.handleChatLoaded();
+      case 'customer:created':
+      case 'customer:updated':
+        return this.handleCacheCustomerId(payload);
+      case 'conversation:join':
+        return this.sendCustomerUpdate(payload);
+      default:
+        return null;
     }
   };
 
-  handleSendMessage = async (e?: any) => {
-    e && e.preventDefault();
+  send = (event: string, payload?: any) => {
+    console.debug('Sending from parent:', {event, payload});
+    const el = this.iframeRef as any;
 
-    const {message, customerId, conversationId, isSending} = this.state;
+    el.contentWindow.postMessage({event, payload}, '*');
+  };
 
-    if (isSending || !message || message.trim().length === 0) {
-      return;
+  handleChatLoaded = () => {
+    return this.send('papercups:ping'); // Just testing
+  };
+
+  formatCustomerMetadata = () => {
+    const {customer = {}} = this.props;
+
+    if (!customer) {
+      return {};
     }
 
-    this.setState({isSending: true});
+    // Make sure all custom passed-in values are strings
+    return Object.keys(customer).reduce((acc, key) => {
+      return {...acc, [key]: String(customer[key])};
+    }, {});
+  };
 
-    if (!customerId || !conversationId) {
-      await this.initializeNewConversation();
-    }
+  sendCustomerUpdate = (payload: any) => {
+    const {customerId} = payload;
+    const customerBrowserInfo = getUserInfo(window);
+    const metadata = {...customerBrowserInfo, ...this.formatCustomerMetadata()};
 
-    // We should never hit this block, just adding to satisfy TypeScript
-    if (!this.channel) {
-      this.setState({isSending: false});
+    return this.send('customer:update', {customerId, metadata});
+  };
 
-      return;
-    }
+  handleCacheCustomerId = (payload: any) => {
+    const {customerId} = payload;
 
-    this.channel.push('shout', {
-      body: message,
-      customer_id: this.state.customerId,
-    });
+    return this.storage.setCustomerId(customerId);
+  };
 
-    this.setState({message: '', isSending: false});
+  handleToggleOpen = () => {
+    const isOpen = !this.state.isOpen;
+
+    this.setState({isOpen}, () => this.send('papercups:toggle', {isOpen}));
   };
 
   render() {
-    const {title = 'Welcome!', subtitle = 'How can we help you?'} = this.props;
-    const {customerId, message, messages = [], isSending} = this.state;
+    const {query, config} = this.state;
+    const {primaryColor} = config;
+
+    if (!query) {
+      return null;
+    }
+
+    const iframeUrl = this.getIframeUrl();
+    const theme = getThemeConfig({primary: primaryColor});
+    const sandbox = [
+      // Allow scripts to load in iframe
+      'allow-scripts',
+      // Allow opening links from iframe
+      'allow-popups',
+      // Needed to access localStorage
+      'allow-same-origin',
+      // Allow form for message input
+      'allow-forms',
+    ].join(' ');
 
     return (
-      <Flex
-        sx={{
-          bg: 'background',
-          flexDirection: 'column',
-          height: '100%',
-          width: '100%',
-        }}
-      >
-        <Box py={3} px={4} sx={{bg: 'primary'}}>
-          <Heading
-            as='h2'
-            className='Papercups-heading'
-            sx={{color: 'background', my: 1}}
-          >
-            {title}
-          </Heading>
-          <Text sx={{color: 'offset'}}>{subtitle}</Text>
-        </Box>
-        <Box
-          p={3}
+      <ThemeProvider theme={theme}>
+        {/* TODO: handle loading state better */}
+        <iframe
+          ref={(el) => (this.iframeRef = el)}
+          className='Papercups-chatWindowContainer'
+          sandbox={sandbox}
+          src={`${iframeUrl}?${query}`}
           sx={{
-            flex: 1,
-            boxShadow: 'rgba(0, 0, 0, 0.2) 0px 21px 4px -20px inset',
-            overflowY: 'scroll',
+            border: 'none',
+            bg: 'background',
+            variant: 'styles.ChatWindowContainer',
           }}
         >
-          {messages.map((msg, key) => {
-            // Slight hack
-            const next = messages[key + 1];
-            const isLastInGroup = next
-              ? msg.customer_id !== next.customer_id
-              : true;
-            const shouldDisplayTimestamp = key === messages.length - 1;
-            const isMe = msg.customer_id === customerId;
-
-            return (
-              <motion.div
-                key={key}
-                initial={{opacity: 0, x: isMe ? 2 : -2}}
-                animate={{opacity: 1, x: 0}}
-                transition={{duration: 0.2, ease: 'easeIn'}}
-              >
-                <ChatMessage
-                  key={key}
-                  message={msg}
-                  isMe={isMe}
-                  isLastInGroup={isLastInGroup}
-                  shouldDisplayTimestamp={shouldDisplayTimestamp}
-                />
-              </motion.div>
-            );
-          })}
-          <div ref={(el) => (this.scrollToEl = el)} />
-        </Box>
-        <Box
-          p={2}
-          sx={{
-            borderTop: '1px solid rgb(230, 230, 230)',
-            // TODO: only show shadow on focus TextArea below
-            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 0px 100px 0px',
-          }}
-        >
-          <Flex sx={{alignItems: 'center'}}>
-            <Box mr={3} sx={{flex: 1}}>
-              <Textarea
-                sx={{
-                  fontFamily: 'body',
-                  color: 'input',
-                  variant: 'styles.textarea.transparent',
-                }}
-                className='TextArea--transparent'
-                placeholder='Start typing...'
-                rows={1}
-                autoFocus
-                value={message}
-                onKeyDown={this.handleKeyDown}
-                onChange={this.handleMessageChange}
-              />
-            </Box>
-            <Box pl={3}>
-              <Button
-                variant='primary'
-                type='submit'
-                disabled={isSending}
-                onClick={this.handleSendMessage}
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: '50%',
-                  height: '36px',
-                  width: '36px',
-                  padding: 0,
-                }}
-              >
-                <SendIcon width={16} height={16} fill='background' />
-              </Button>
-            </Box>
-          </Flex>
-        </Box>
-        <img
-          src='https://papercups.s3.us-east-2.amazonaws.com/papercups-logo.svg'
-          width='0'
-          height='0'
-        />
-      </Flex>
+          Loading...
+        </iframe>
+      </ThemeProvider>
     );
   }
 }

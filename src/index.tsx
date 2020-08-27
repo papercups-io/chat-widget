@@ -1,3 +1,4 @@
 import ChatWidget from './components/EmbeddableWidget';
+import ChatWindow from './components/ChatWindow';
 
-export default ChatWidget;
+export {ChatWidget, ChatWindow};
