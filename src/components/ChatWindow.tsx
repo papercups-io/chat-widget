@@ -48,7 +48,6 @@ type Props = {
 };
 
 type State = {
-  isOpen: boolean;
   query: string;
   config: WidgetConfig;
 };
@@ -62,7 +61,7 @@ class ChatWindow extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.state = {isOpen: false, query: '', config: {} as WidgetConfig};
+    this.state = {query: '', config: {} as WidgetConfig};
   }
 
   async componentDidMount() {
@@ -255,12 +254,6 @@ class ChatWindow extends React.Component<Props, State> {
     return this.storage.setCustomerId(customerId);
   };
 
-  handleToggleOpen = () => {
-    const isOpen = !this.state.isOpen;
-
-    this.setState({isOpen}, () => this.send('papercups:toggle', {isOpen}));
-  };
-
   render() {
     const {query, config} = this.state;
     const {primaryColor} = config;
@@ -284,7 +277,7 @@ class ChatWindow extends React.Component<Props, State> {
 
     return (
       <ThemeProvider theme={theme}>
-        {/* TODO: handle loading state better */}
+        {/* TODO: handle loading state better? */}
         <iframe
           ref={(el) => (this.iframeRef = el)}
           className='Papercups-chatWindowContainer'
