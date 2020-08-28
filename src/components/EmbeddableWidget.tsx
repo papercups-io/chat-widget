@@ -223,7 +223,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
     console.debug('Sending from parent:', {event, payload});
     const el = this.iframeRef as any;
 
-    el.contentWindow.postMessage({event, payload}, '*');
+    el.contentWindow.postMessage({event, payload}, this.getIframeUrl());
   };
 
   handleChatLoaded = () => {
