@@ -301,7 +301,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
           this.setState({isOpen, isTransitioning: false}, () =>
             this.send('papercups:toggle', {isOpen})
           );
-        }, 400);
+        }, 200);
       });
     } else {
       this.setState({isOpen}, () => this.send('papercups:toggle', {isOpen}));
@@ -371,7 +371,10 @@ class EmbeddableWidget extends React.Component<Props, State> {
             variant: 'styles.WidgetToggleContainer',
           }}
         >
-          <WidgetToggle toggle={this.handleToggleOpen} />
+          <WidgetToggle
+            isDisabled={isTransitioning}
+            toggle={this.handleToggleOpen}
+          />
         </motion.div>
       </ThemeProvider>
     );
