@@ -198,6 +198,7 @@ export const getThemeConfig = (settings: ThemeSettings) => {
         borderRadius: 8,
         overflow: 'hidden',
         notifications: {
+          background: 'transparent',
           margin: 0,
           zIndex: 2147483000,
           position: 'fixed',

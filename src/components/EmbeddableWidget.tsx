@@ -344,13 +344,16 @@ class EmbeddableWidget extends React.Component<Props, State> {
           className='Papercups-chatWindowContainer'
           sandbox={sandbox}
           animate={isActive ? 'open' : 'closed'}
+          initial='closed'
           variants={{
             closed: {opacity: 0, y: 4},
             open: {opacity: 1, y: 0},
           }}
           transition={{duration: 0.2, ease: 'easeIn'}}
           src={`${iframeUrl}?${query}`}
-          style={isActive ? {} : {pointerEvents: 'none'}}
+          style={
+            isActive ? {} : {pointerEvents: 'none', height: 0, minHeight: 0}
+          }
           sx={{
             border: 'none',
             bg: 'background',
