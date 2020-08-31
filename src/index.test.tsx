@@ -1,7 +1,7 @@
-import {ExampleComponent} from '.';
+import ChatWidget from '.';
 
-describe('ExampleComponent', () => {
+describe('ChatWidget', () => {
   it('is truthy', () => {
-    expect(ExampleComponent).toBeTruthy();
+    expect(ChatWidget).toBeTruthy();
   });
 });
