@@ -12,7 +12,13 @@ const Path = (props: any) => (
   />
 );
 
-export const WidgetToggle = ({toggle}: {toggle: () => void}) => {
+export const WidgetToggle = ({
+  isDisabled,
+  toggle,
+}: {
+  isDisabled?: boolean;
+  toggle: () => void;
+}) => {
   return (
     <Flex
       sx={{
@@ -29,6 +35,7 @@ export const WidgetToggle = ({toggle}: {toggle: () => void}) => {
         sx={{
           variant: 'styles.WidgetToggle',
         }}
+        disabled={isDisabled}
         onClick={toggle}
       >
         <svg width='27' height='27' viewBox='0 0 27 27'>

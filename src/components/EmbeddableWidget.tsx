@@ -54,6 +54,8 @@ type State = {
   isOpen: boolean;
   query: string;
   config: WidgetConfig;
+  shouldDisplayNotifications: boolean;
+  isTransitioning: boolean;
 };
 
 class EmbeddableWidget extends React.Component<Props, State> {
@@ -64,7 +66,13 @@ class EmbeddableWidget extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.state = {isOpen: false, query: '', config: {} as WidgetConfig};
+    this.state = {
+      isOpen: false,
+      query: '',
+      config: {} as WidgetConfig,
+      shouldDisplayNotifications: false,
+      isTransitioning: false,
+    };
   }
 
   async componentDidMount() {
@@ -214,6 +222,12 @@ class EmbeddableWidget extends React.Component<Props, State> {
         return this.handleCacheCustomerId(payload);
       case 'conversation:join':
         return this.sendCustomerUpdate(payload);
+      case 'messages:unseen':
+        return this.handleUnseenMessages(payload);
+      case 'messages:seen':
+        return this.handleMessagesSeen();
+      case 'papercups:open':
+        return this.handleToggleOpen();
       default:
         return null;
     }
@@ -224,6 +238,20 @@ class EmbeddableWidget extends React.Component<Props, State> {
     const el = this.iframeRef as any;
 
     el.contentWindow.postMessage({event, payload}, this.getIframeUrl());
+  };
+
+  handleUnseenMessages = (payload: any) => {
+    console.debug('Handling unseen messages:', payload);
+
+    this.setState({shouldDisplayNotifications: true});
+    this.send('notifications:display', {shouldDisplayNotifications: true});
+  };
+
+  handleMessagesSeen = () => {
+    console.debug('Handling messages seen');
+
+    this.setState({shouldDisplayNotifications: false});
+    this.send('notifications:display', {shouldDisplayNotifications: false});
   };
 
   handleChatLoaded = () => {
@@ -264,13 +292,30 @@ class EmbeddableWidget extends React.Component<Props, State> {
   };
 
   handleToggleOpen = () => {
-    const isOpen = !this.state.isOpen;
+    const {isOpen: wasOpen, shouldDisplayNotifications} = this.state;
+    const isOpen = !wasOpen;
 
-    this.setState({isOpen}, () => this.send('papercups:toggle', {isOpen}));
+    if (!wasOpen && shouldDisplayNotifications) {
+      this.setState({isTransitioning: true}, () => {
+        setTimeout(() => {
+          this.setState({isOpen, isTransitioning: false}, () =>
+            this.send('papercups:toggle', {isOpen})
+          );
+        }, 200);
+      });
+    } else {
+      this.setState({isOpen}, () => this.send('papercups:toggle', {isOpen}));
+    }
   };
 
   render() {
-    const {isOpen, query, config} = this.state;
+    const {
+      isOpen,
+      query,
+      config,
+      shouldDisplayNotifications,
+      isTransitioning,
+    } = this.state;
     const {primaryColor} = config;
 
     if (!query) {
@@ -278,6 +323,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
     }
 
     const iframeUrl = this.getIframeUrl();
+    const isActive = (isOpen || shouldDisplayNotifications) && !isTransitioning;
     const theme = getThemeConfig({primary: primaryColor});
     const sandbox = [
       // Allow scripts to load in iframe
@@ -297,18 +343,24 @@ class EmbeddableWidget extends React.Component<Props, State> {
           ref={(el) => (this.iframeRef = el)}
           className='Papercups-chatWindowContainer'
           sandbox={sandbox}
-          animate={isOpen ? 'open' : 'closed'}
+          animate={isActive ? 'open' : 'closed'}
+          initial='closed'
           variants={{
             closed: {opacity: 0, y: 4},
             open: {opacity: 1, y: 0},
           }}
           transition={{duration: 0.2, ease: 'easeIn'}}
           src={`${iframeUrl}?${query}`}
-          style={isOpen ? {} : {pointerEvents: 'none', minHeight: 0, height: 0}}
+          style={
+            isActive ? {} : {pointerEvents: 'none', height: 0, minHeight: 0}
+          }
           sx={{
             border: 'none',
             bg: 'background',
-            variant: 'styles.WidgetContainer',
+            variant:
+              !isOpen && shouldDisplayNotifications
+                ? 'styles.WidgetContainer.notifications'
+                : 'styles.WidgetContainer',
           }}
         >
           Loading...
@@ -322,7 +374,10 @@ class EmbeddableWidget extends React.Component<Props, State> {
             variant: 'styles.WidgetToggleContainer',
           }}
         >
-          <WidgetToggle toggle={this.handleToggleOpen} />
+          <WidgetToggle
+            isDisabled={isTransitioning}
+            toggle={this.handleToggleOpen}
+          />
         </motion.div>
       </ThemeProvider>
     );

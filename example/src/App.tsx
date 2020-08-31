@@ -56,7 +56,7 @@ const App = ({disco}: Props) => {
         baseUrl='http://localhost:4000'
         iframeUrlOverride='http://localhost:8080'
         requireEmailUpfront
-        defaultIsOpen
+        defaultIsOpen={false}
       />
     </>
   );
