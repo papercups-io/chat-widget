@@ -43,7 +43,7 @@ const DefaultToggleIcon = () => {
   );
 };
 
-const DefaultClosedIcon = () => {
+const DefaultCloseIcon = () => {
   return (
     <svg width='27' height='27' viewBox='0 0 27 27'>
       <Path
@@ -77,7 +77,7 @@ const ToggleIcon = ({
   }
 
   if (isOpen) {
-    return <DefaultClosedIcon />;
+    return <DefaultCloseIcon />;
   } else {
     return <Image src={customIconUrl} style={{maxHeight: 40, maxWidth: 40}} />;
   }
