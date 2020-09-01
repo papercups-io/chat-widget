@@ -53,6 +53,7 @@ type Props = {
 
 type State = {
   isOpen: boolean;
+  isLoaded: boolean;
   query: string;
   config: WidgetConfig;
   shouldDisplayNotifications: boolean;
@@ -69,6 +70,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
 
     this.state = {
       isOpen: false,
+      isLoaded: false,
       query: '',
       config: {} as WidgetConfig,
       shouldDisplayNotifications: false,
@@ -256,6 +258,8 @@ class EmbeddableWidget extends React.Component<Props, State> {
   };
 
   handleChatLoaded = () => {
+    this.setState({isLoaded: true});
+
     if (this.props.defaultIsOpen) {
       this.setState({isOpen: true}, () =>
         this.send('papercups:toggle', {isOpen: true})
@@ -293,8 +297,13 @@ class EmbeddableWidget extends React.Component<Props, State> {
   };
 
   handleToggleOpen = () => {
-    const {isOpen: wasOpen, shouldDisplayNotifications} = this.state;
+    const {isOpen: wasOpen, isLoaded, shouldDisplayNotifications} = this.state;
     const isOpen = !wasOpen;
+
+    // Prevent opening the widget until everything has loaded
+    if (!isLoaded) {
+      return;
+    }
 
     if (!wasOpen && shouldDisplayNotifications) {
       this.setState({isTransitioning: true}, () => {
@@ -312,6 +321,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
   render() {
     const {
       isOpen,
+      isLoaded,
       query,
       config,
       shouldDisplayNotifications,
@@ -368,21 +378,23 @@ class EmbeddableWidget extends React.Component<Props, State> {
           Loading...
         </motion.iframe>
 
-        <motion.div
-          className='Papercups-toggleButtonContainer'
-          initial={false}
-          animate={isOpen ? 'open' : 'closed'}
-          sx={{
-            variant: 'styles.WidgetToggleContainer',
-          }}
-        >
-          <WidgetToggle
-            isDisabled={isTransitioning}
-            isOpen={isOpen}
-            customIconUrl={customIconUrl}
-            toggle={this.handleToggleOpen}
-          />
-        </motion.div>
+        {isLoaded && (
+          <motion.div
+            className='Papercups-toggleButtonContainer'
+            initial={false}
+            animate={isOpen ? 'open' : 'closed'}
+            sx={{
+              variant: 'styles.WidgetToggleContainer',
+            }}
+          >
+            <WidgetToggle
+              isDisabled={isTransitioning}
+              isOpen={isOpen}
+              customIconUrl={customIconUrl}
+              toggle={this.handleToggleOpen}
+            />
+          </motion.div>
+        )}
       </ThemeProvider>
     );
   }
