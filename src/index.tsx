@@ -1,3 +1,3 @@
-import ChatWidget from './components/EmbeddableWidget';
+import ChatWidget from './components/ChatWidget';
 
 export default ChatWidget;
