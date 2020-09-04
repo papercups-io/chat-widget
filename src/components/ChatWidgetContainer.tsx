@@ -1,10 +1,8 @@
 /** @jsx jsx */
 
 import React from 'react';
-import {motion} from 'framer-motion';
 import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
-import WidgetToggle from './WidgetToggle';
 import {
   CustomerMetadata,
   WidgetSettings,
@@ -16,7 +14,6 @@ import getThemeConfig from '../theme';
 import store from '../storage';
 import {getUserInfo} from '../track/info';
 
-// const DEFAULT_IFRAME_URL = 'https://chat-window.vercel.app';
 const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
 
 // TODO: set this up somewhere else
@@ -49,6 +46,7 @@ type Props = {
   requireEmailUpfront?: boolean;
   defaultIsOpen?: boolean;
   customIconUrl?: string;
+  children: (data: any) => any;
 };
 
 type State = {
@@ -60,7 +58,7 @@ type State = {
   isTransitioning: boolean;
 };
 
-class EmbeddableWidget extends React.Component<Props, State> {
+class ChatWidgetContainer extends React.Component<Props, State> {
   iframeRef: any;
   storage: any;
   unsubscribe: any;
@@ -169,6 +167,10 @@ class EmbeddableWidget extends React.Component<Props, State> {
       });
     }
   }
+
+  setIframeRef = (el: HTMLIFrameElement) => {
+    this.iframeRef = el;
+  };
 
   getIframeUrl = () => {
     return this.props.iframeUrlOverride || DEFAULT_IFRAME_URL;
@@ -327,7 +329,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
       shouldDisplayNotifications,
       isTransitioning,
     } = this.state;
-    const {customIconUrl} = this.props;
+    const {customIconUrl, children} = this.props;
     const {primaryColor} = config;
 
     if (!query) {
@@ -350,54 +352,22 @@ class EmbeddableWidget extends React.Component<Props, State> {
 
     return (
       <ThemeProvider theme={theme}>
-        {/* TODO: handle loading state better */}
-        <motion.iframe
-          ref={(el) => (this.iframeRef = el)}
-          className='Papercups-chatWindowContainer'
-          sandbox={sandbox}
-          animate={isActive ? 'open' : 'closed'}
-          initial='closed'
-          variants={{
-            closed: {opacity: 0, y: 4},
-            open: {opacity: 1, y: 0},
-          }}
-          transition={{duration: 0.2, ease: 'easeIn'}}
-          src={`${iframeUrl}?${query}`}
-          style={
-            isActive ? {} : {pointerEvents: 'none', height: 0, minHeight: 0}
-          }
-          sx={{
-            border: 'none',
-            bg: 'background',
-            variant:
-              !isOpen && shouldDisplayNotifications
-                ? 'styles.WidgetContainer.notifications'
-                : 'styles.WidgetContainer',
-          }}
-        >
-          Loading...
-        </motion.iframe>
-
-        {isLoaded && (
-          <motion.div
-            className='Papercups-toggleButtonContainer'
-            initial={false}
-            animate={isOpen ? 'open' : 'closed'}
-            sx={{
-              variant: 'styles.WidgetToggleContainer',
-            }}
-          >
-            <WidgetToggle
-              isDisabled={isTransitioning}
-              isOpen={isOpen}
-              customIconUrl={customIconUrl}
-              toggle={this.handleToggleOpen}
-            />
-          </motion.div>
-        )}
+        {children({
+          sandbox,
+          isLoaded,
+          isActive,
+          isOpen,
+          isTransitioning,
+          customIconUrl,
+          iframeUrl,
+          query,
+          shouldDisplayNotifications,
+          setIframeRef: this.setIframeRef,
+          onToggleOpen: this.handleToggleOpen,
+        })}
       </ThemeProvider>
     );
   }
 }
 
-export default EmbeddableWidget;
+export default ChatWidgetContainer;
