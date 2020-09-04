@@ -48,6 +48,7 @@ type Props = {
   iframeUrlOverride?: string;
   requireEmailUpfront?: boolean;
   defaultIsOpen?: boolean;
+  customIconUrl?: string;
 };
 
 type State = {
@@ -316,6 +317,7 @@ class EmbeddableWidget extends React.Component<Props, State> {
       shouldDisplayNotifications,
       isTransitioning,
     } = this.state;
+    const {customIconUrl} = this.props;
     const {primaryColor} = config;
 
     if (!query) {
@@ -376,6 +378,8 @@ class EmbeddableWidget extends React.Component<Props, State> {
         >
           <WidgetToggle
             isDisabled={isTransitioning}
+            isOpen={isOpen}
+            customIconUrl={customIconUrl}
             toggle={this.handleToggleOpen}
           />
         </motion.div>
