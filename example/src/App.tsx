@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ChatWidget, ChatWindow} from '@papercups-io/chat-widget';
+import ChatWidget, {ChatWindow} from '@papercups-io/chat-widget';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 

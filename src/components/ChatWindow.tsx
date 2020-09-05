@@ -1,6 +1,7 @@
 /** @jsx jsx */
 
 import {jsx} from 'theme-ui';
+import {motion} from 'framer-motion';
 import ChatWidgetContainer from './ChatWidgetContainer';
 import {CustomerMetadata, Message} from '../api';
 
@@ -31,22 +32,30 @@ const ChatWindow = (props: Props) => {
   return (
     <ChatWidgetContainer {...props} defaultIsOpen>
       {(config) => {
-        const {sandbox, iframeUrl, query, setIframeRef} = config;
+        const {sandbox, isLoaded, iframeUrl, query, setIframeRef} = config;
 
         return (
-          <iframe
+          <motion.iframe
             ref={setIframeRef}
             className='Papercups-chatWindowContainer'
             sandbox={sandbox}
+            animate={isLoaded ? 'open' : 'closed'}
+            initial='closed'
+            variants={{
+              closed: {opacity: 0},
+              open: {opacity: 1},
+            }}
+            transition={{duration: 0.2, ease: 'easeIn'}}
             src={`${iframeUrl}?${query}`}
             sx={{
+              opacity: isLoaded ? 1 : 0,
               border: 'none',
               bg: 'background',
               variant: 'styles.ChatWindowContainer',
             }}
           >
             Loading...
-          </iframe>
+          </motion.iframe>
         );
       }}
     </ChatWidgetContainer>
