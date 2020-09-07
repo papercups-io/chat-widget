@@ -16,6 +16,9 @@ type Props = {
   greeting?: string;
   customer?: CustomerMetadata | null;
   newMessagePlaceholder?: string;
+  agentAvailableText?: string;
+  agentUnavailableText?: string;
+  showAgentAvailability?: boolean;
   iframeUrlOverride?: string;
   requireEmailUpfront?: boolean;
   defaultIsOpen?: boolean;
