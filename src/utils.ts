@@ -6,6 +6,9 @@ export type WidgetConfig = {
   primaryColor?: string;
   greeting?: string;
   newMessagePlaceholder?: string;
+  agentAvailableText?: string;
+  agentUnavailableText?: string;
+  showAgentAvailability?: 1 | 0;
   requireEmailUpfront?: 1 | 0;
   customerId?: string;
   metadata?: string; // stringified JSON

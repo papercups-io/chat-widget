@@ -46,6 +46,9 @@ const App = ({disco}: Props) => {
         accountId='eb504736-0f20-4978-98ff-1a82ae60b266'
         greeting='Hi there! How can I help you?'
         newMessagePlaceholder='Start typing...'
+        agentAvailableText='Agents are online!'
+        agentUnavailableText='Agents are not available at the moment.'
+        showAgentAvailability
         customer={{
           name: 'Test User',
           email: 'test@test.com',

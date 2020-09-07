@@ -42,6 +42,9 @@ type Props = {
   greeting?: string;
   customer?: CustomerMetadata | null;
   newMessagePlaceholder?: string;
+  agentAvailableText?: string;
+  agentUnavailableText?: string;
+  showAgentAvailability?: boolean;
   iframeUrlOverride?: string;
   requireEmailUpfront?: boolean;
   defaultIsOpen?: boolean;
@@ -86,6 +89,9 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       baseUrl,
       greeting,
       newMessagePlaceholder,
+      agentAvailableText,
+      agentUnavailableText,
+      showAgentAvailability,
       requireEmailUpfront,
       customer = {},
     } = this.props;
@@ -97,6 +103,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const config: WidgetConfig = {
       accountId,
       baseUrl,
+      agentAvailableText,
+      agentUnavailableText,
       title: title || settings.title,
       subtitle: subtitle || settings.subtitle,
       primaryColor: primaryColor || settings.color,
@@ -104,6 +112,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       newMessagePlaceholder:
         newMessagePlaceholder || settings.new_message_placeholder,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
+      showAgentAvailability: showAgentAvailability ? 1 : 0,
       customerId: this.storage.getCustomerId(),
       metadata: JSON.stringify(metadata),
     };
