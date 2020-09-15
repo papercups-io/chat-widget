@@ -53,6 +53,13 @@ const App = ({disco}: Props) => {
           name: 'Test User',
           email: 'test@test.com',
           external_id: '123',
+          // Ad hoc metadata
+          metadata: {
+            plan: 'starter',
+            registered_at: '2020-09-01',
+            age: 25,
+            valid: true,
+          },
         }}
         // NB: we override these values during development -- note that the
         // API runs on port 4000 by default, and the iframe on 8080

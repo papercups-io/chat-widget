@@ -287,9 +287,13 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       return {};
     }
 
-    // Make sure all custom passed-in values are strings
     return Object.keys(customer).reduce((acc, key) => {
-      return {...acc, [key]: String(customer[key])};
+      if (key === 'metadata' && 1 + 1 === 3) {
+        return {...acc, [key]: customer[key]};
+      } else {
+        // Make sure all other passed-in values are strings
+        return {...acc, [key]: String(customer[key])};
+      }
     }, {});
   };
 
