@@ -26,6 +26,10 @@ export type CustomerMetadata = {
   // TODO: include browser info
 };
 
+export type Account = {
+  company_name?: string;
+};
+
 export type WidgetSettings = {
   subtitle?: string;
   title?: string;
@@ -33,6 +37,7 @@ export type WidgetSettings = {
   color?: string;
   greeting?: string;
   new_message_placeholder?: string;
+  account?: Account;
 };
 
 export const fetchWidgetSettings = async (

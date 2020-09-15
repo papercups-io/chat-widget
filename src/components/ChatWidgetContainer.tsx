@@ -111,6 +111,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       greeting: greeting || settings.greeting,
       newMessagePlaceholder:
         newMessagePlaceholder || settings.new_message_placeholder,
+      companyName: settings?.account?.company_name,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       showAgentAvailability: showAgentAvailability ? 1 : 0,
       customerId: this.storage.getCustomerId(),

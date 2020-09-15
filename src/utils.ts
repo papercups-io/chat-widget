@@ -6,6 +6,7 @@ export type WidgetConfig = {
   primaryColor?: string;
   greeting?: string;
   newMessagePlaceholder?: string;
+  companyName?: string;
   agentAvailableText?: string;
   agentUnavailableText?: string;
   showAgentAvailability?: 1 | 0;
