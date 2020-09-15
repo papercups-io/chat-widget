@@ -288,7 +288,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     }
 
     return Object.keys(customer).reduce((acc, key) => {
-      if (key === 'metadata' && 1 + 1 === 3) {
+      if (key === 'metadata') {
         return {...acc, [key]: customer[key]};
       } else {
         // Make sure all other passed-in values are strings
