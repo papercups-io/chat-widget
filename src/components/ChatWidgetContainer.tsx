@@ -5,11 +5,12 @@ import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
 import {
   CustomerMetadata,
+  Message,
   WidgetSettings,
   fetchWidgetSettings,
   updateWidgetSettingsMetadata,
 } from '../api';
-import {WidgetConfig} from '../utils';
+import {WidgetConfig, noop} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {getUserInfo} from '../track/info';
@@ -33,6 +34,7 @@ const setup = (w: any, handlers: (msg?: any) => void) => {
   }
 };
 
+// TODO: DRY up props with ChatWidget component
 type Props = {
   title?: string;
   subtitle?: string;
@@ -49,6 +51,10 @@ type Props = {
   requireEmailUpfront?: boolean;
   defaultIsOpen?: boolean;
   customIconUrl?: string;
+  onChatOpened?: () => void;
+  onChatClosed?: () => void;
+  onMessageSent?: (message: Message) => void;
+  onMessageReceived?: (message: Message) => void;
   children: (data: any) => any;
 };
 
@@ -237,6 +243,10 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         return this.handleCacheCustomerId(payload);
       case 'conversation:join':
         return this.sendCustomerUpdate(payload);
+      case 'message:received':
+        return this.handleMessageReceived(payload);
+      case 'message:sent':
+        return this.handleMessageSent(payload);
       case 'messages:unseen':
         return this.handleUnseenMessages(payload);
       case 'messages:seen':
@@ -253,6 +263,24 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const el = this.iframeRef as any;
 
     el.contentWindow.postMessage({event, payload}, this.getIframeUrl());
+  };
+
+  handleMessageReceived = (message: Message) => {
+    const {onMessageReceived = noop} = this.props;
+    const {user_id: userId, customer_id: customerId} = message;
+    const isFromAgent = !!userId && !customerId;
+
+    // Only invoke callback if message is from agent, because we currently track
+    // `message:received` events to know if a message went through successfully
+    if (isFromAgent) {
+      onMessageReceived && onMessageReceived(message);
+    }
+  };
+
+  handleMessageSent = (message: Message) => {
+    const {onMessageSent = noop} = this.props;
+
+    onMessageSent && onMessageSent(message);
   };
 
   handleUnseenMessages = (payload: any) => {
@@ -273,9 +301,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     this.setState({isLoaded: true});
 
     if (this.props.defaultIsOpen) {
-      this.setState({isOpen: true}, () =>
-        this.send('papercups:toggle', {isOpen: true})
-      );
+      this.setState({isOpen: true}, () => this.emitToggleEvent(true));
     }
 
     return this.send('papercups:ping'); // Just testing
@@ -312,6 +338,18 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     return this.storage.setCustomerId(customerId);
   };
 
+  emitToggleEvent = (isOpen: boolean) => {
+    this.send('papercups:toggle', {isOpen});
+
+    const {onChatOpened = noop, onChatClosed = noop} = this.props;
+
+    if (isOpen) {
+      onChatOpened && onChatOpened();
+    } else {
+      onChatClosed && onChatClosed();
+    }
+  };
+
   handleToggleOpen = () => {
     const {isOpen: wasOpen, isLoaded, shouldDisplayNotifications} = this.state;
     const isOpen = !wasOpen;
@@ -325,12 +363,12 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       this.setState({isTransitioning: true}, () => {
         setTimeout(() => {
           this.setState({isOpen, isTransitioning: false}, () =>
-            this.send('papercups:toggle', {isOpen})
+            this.emitToggleEvent(isOpen)
           );
         }, 200);
       });
     } else {
-      this.setState({isOpen}, () => this.send('papercups:toggle', {isOpen}));
+      this.setState({isOpen}, () => this.emitToggleEvent(isOpen));
     }
   };
 

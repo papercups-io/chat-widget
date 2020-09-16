@@ -67,6 +67,12 @@ const App = ({disco}: Props) => {
         iframeUrlOverride='http://localhost:8080'
         requireEmailUpfront
         defaultIsOpen={false}
+        onChatClosed={() => console.log('Chat closed!')}
+        onChatOpened={() => console.log('Chat opened!')}
+        onMessageReceived={(message) =>
+          console.log('Message received!', message)
+        }
+        onMessageSent={(message) => console.log('Message sent!', message)}
       />
     </>
   );

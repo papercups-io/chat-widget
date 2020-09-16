@@ -15,6 +15,8 @@ export type WidgetConfig = {
   metadata?: string; // stringified JSON
 };
 
+export function noop() {}
+
 // TODO: handle this on the server instead
 export function now() {
   const date = new Date();
