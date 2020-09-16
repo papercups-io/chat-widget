@@ -126,7 +126,10 @@ These are the props you can pass into your `<ChatWidget />` React component, or 
 | **`requireEmailUpfront`** | `boolean` | If you want to require unidentified customers to provide their email before they can message you | `false` |
 | **`defaultIsOpen`** | `boolean` | If you want the chat widget to open as soon as it loads | `false` |
 | **`customIconUrl`** | `string` | A link to a custom icon image URL | N/A |
-
+| **`onChatOpened`** | `() => void` | Callback fired when chat is opened | N/A |
+| **`onChatClosed`** | `() => void` | Callback fired when chat is closed | N/A |
+| **`onMessageSent`** | `(message: Message) => void` | Callback fired when message is sent | N/A |
+| **`onMessageReceived`** | `(message: Message) => void` | Callback fired when message is received | N/A |
 
 ## Development
 
