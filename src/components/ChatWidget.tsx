@@ -5,7 +5,7 @@ import {motion} from 'framer-motion';
 import {jsx} from 'theme-ui';
 import WidgetToggle from './WidgetToggle';
 import ChatWidgetContainer from './ChatWidgetContainer';
-import {CustomerMetadata} from '../api';
+import {CustomerMetadata, Message} from '../api';
 
 type Props = {
   title?: string;
@@ -23,6 +23,10 @@ type Props = {
   requireEmailUpfront?: boolean;
   defaultIsOpen?: boolean;
   customIconUrl?: string;
+  onChatOpened?: () => void;
+  onChatClosed?: () => void;
+  onMessageSent?: (message: Message) => void;
+  onMessageReceived?: (message: Message) => void;
 };
 
 const ChatWidget = (props: Props) => {

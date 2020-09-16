@@ -10,8 +10,11 @@ export type User = {
 };
 
 export type Message = {
+  id?: string;
   body: string;
-  created_at: string;
+  sent_at?: string;
+  seen_at?: string;
+  created_at?: string;
   customer_id?: string;
   user_id?: number;
   user?: User;
@@ -26,6 +29,10 @@ export type CustomerMetadata = {
   // TODO: include browser info
 };
 
+export type Account = {
+  company_name?: string;
+};
+
 export type WidgetSettings = {
   subtitle?: string;
   title?: string;
@@ -33,6 +40,7 @@ export type WidgetSettings = {
   color?: string;
   greeting?: string;
   new_message_placeholder?: string;
+  account?: Account;
 };
 
 export const fetchWidgetSettings = async (

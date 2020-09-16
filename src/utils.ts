@@ -6,6 +6,7 @@ export type WidgetConfig = {
   primaryColor?: string;
   greeting?: string;
   newMessagePlaceholder?: string;
+  companyName?: string;
   agentAvailableText?: string;
   agentUnavailableText?: string;
   showAgentAvailability?: 1 | 0;
@@ -13,6 +14,8 @@ export type WidgetConfig = {
   customerId?: string;
   metadata?: string; // stringified JSON
 };
+
+export function noop() {}
 
 // TODO: handle this on the server instead
 export function now() {
