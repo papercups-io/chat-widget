@@ -13,6 +13,8 @@ import {
 import {WidgetConfig, noop} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
+import {isDev} from '../config';
+import Logger from '../logger';
 import {getUserInfo} from '../track/info';
 
 const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
@@ -71,6 +73,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   iframeRef: any;
   storage: any;
   unsubscribe: any;
+  logger: Logger;
 
   constructor(props: Props) {
     super(props);
@@ -101,7 +104,10 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       requireEmailUpfront,
       customer = {},
     } = this.props;
+    // TODO: make it possible to opt into debug mode via props
+    const debugModeEnabled = isDev(window);
 
+    this.logger = new Logger(debugModeEnabled);
     this.unsubscribe = setup(window, this.handlers);
     this.storage = store(window);
 
@@ -219,13 +225,13 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     return updateWidgetSettingsMetadata(accountId, metadata, baseUrl).catch(
       (err) => {
         // No need to block on this
-        console.error('Failed to update widget metadata:', err);
+        this.logger.error('Failed to update widget metadata:', err);
       }
     );
   };
 
   handlers = (msg: any) => {
-    console.debug('Handling in parent:', msg.data);
+    this.logger.debug('Handling in parent:', msg.data);
     const iframeUrl = this.getIframeUrl();
     const {origin} = new URL(iframeUrl);
 
@@ -259,8 +265,16 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   send = (event: string, payload?: any) => {
-    console.debug('Sending from parent:', {event, payload});
+    this.logger.debug('Sending from parent:', {event, payload});
     const el = this.iframeRef as any;
+
+    if (!el) {
+      throw new Error(
+        `Attempted to send event ${event} with payload ${JSON.stringify(
+          payload
+        )} before iframeRef was ready`
+      );
+    }
 
     el.contentWindow.postMessage({event, payload}, this.getIframeUrl());
   };
@@ -284,14 +298,14 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   handleUnseenMessages = (payload: any) => {
-    console.debug('Handling unseen messages:', payload);
+    this.logger.debug('Handling unseen messages:', payload);
 
     this.setState({shouldDisplayNotifications: true});
     this.send('notifications:display', {shouldDisplayNotifications: true});
   };
 
   handleMessagesSeen = () => {
-    console.debug('Handling messages seen');
+    this.logger.debug('Handling messages seen');
 
     this.setState({shouldDisplayNotifications: false});
     this.send('notifications:display', {shouldDisplayNotifications: false});
