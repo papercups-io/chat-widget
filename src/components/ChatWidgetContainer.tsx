@@ -106,7 +106,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     } = this.props;
     const debugModeEnabled = isDev(window);
 
-    this.logger = new Logger(debugModeEnabled && false);
+    this.logger = new Logger(debugModeEnabled);
     this.unsubscribe = setup(window, this.handlers);
     this.storage = store(window);
 
