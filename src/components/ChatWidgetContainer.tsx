@@ -104,6 +104,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       requireEmailUpfront,
       customer = {},
     } = this.props;
+    // TODO: make it possible to opt into debug mode via props
     const debugModeEnabled = isDev(window);
 
     this.logger = new Logger(debugModeEnabled);
