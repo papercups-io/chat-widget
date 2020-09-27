@@ -70,6 +70,7 @@ const App = ({disco, displayChatWindow}: Props) => {
             baseUrl='http://localhost:4000'
             iframeUrlOverride='http://localhost:8080'
             requireEmailUpfront
+            showAgentAvailability
             onChatClosed={() => console.log('Chat closed!')}
             onChatOpened={() => console.log('Chat opened!')}
             onMessageReceived={(message) =>
@@ -108,6 +109,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           baseUrl='http://localhost:4000'
           iframeUrlOverride='http://localhost:8080'
           requireEmailUpfront
+          showAgentAvailability
           defaultIsOpen={false}
           onChatClosed={() => console.log('Chat closed!')}
           onChatOpened={() => console.log('Chat opened!')}
