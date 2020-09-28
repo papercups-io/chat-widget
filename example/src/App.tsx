@@ -1,11 +1,6 @@
 import React from 'react';
 
-import ChatWidget, {
-  ChatWindow,
-  toggle,
-  open,
-  close,
-} from '@papercups-io/chat-widget';
+import ChatWidget, {ChatWindow, Papercups} from '@papercups-io/chat-widget';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
@@ -125,9 +120,9 @@ const App = ({disco, displayChatWindow}: Props) => {
         />
       )}
 
-      <button onClick={open}>Open</button>
-      <button onClick={close}>Close</button>
-      <button onClick={toggle}>Toggle</button>
+      <button onClick={Papercups.open}>Open</button>
+      <button onClick={Papercups.close}>Close</button>
+      <button onClick={Papercups.toggle}>Toggle</button>
     </>
   );
 };
