@@ -20,7 +20,7 @@ import {getUserInfo} from '../track/info';
 const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
 
 // TODO: set this up somewhere else
-const setup = (w: any, handlers: (msg?: any) => void) => {
+const setupPostMessageHandlers = (w: any, handlers: (msg?: any) => void) => {
   const cb = (msg: any) => {
     handlers(msg);
   };
@@ -32,7 +32,25 @@ const setup = (w: any, handlers: (msg?: any) => void) => {
   } else {
     w.attachEvent('onmessage', cb);
 
-    return () => w.detachEvent('message', cb);
+    return () => w.detachEvent('onmessage', cb);
+  }
+};
+
+const setupCustomEventHandlers = (
+  w: any,
+  events: Array<string>,
+  handlers: (e: any) => void
+) => {
+  if (w.addEventListener) {
+    for (const event of events) {
+      w.addEventListener(event, handlers);
+    }
+
+    return () => events.map((event) => w.removeEventListener(event, handlers));
+  } else {
+    console.error('Custom events are not supported in your browser!');
+
+    return noop;
   }
 };
 
@@ -72,8 +90,15 @@ type State = {
 class ChatWidgetContainer extends React.Component<Props, State> {
   iframeRef: any;
   storage: any;
-  unsubscribe: any;
+  subscriptions: Array<() => void>;
   logger: Logger;
+
+  EVENTS = [
+    'papercups:open',
+    'papercups:close',
+    'papercups:toggle',
+    'papercups:identify',
+  ];
 
   constructor(props: Props) {
     super(props);
@@ -108,7 +133,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const debugModeEnabled = isDev(window);
 
     this.logger = new Logger(debugModeEnabled);
-    this.unsubscribe = setup(window, this.handlers);
+    this.subscriptions = [
+      setupPostMessageHandlers(window, this.postMessageHandlers),
+      setupCustomEventHandlers(window, this.EVENTS, this.customEventHandlers),
+    ];
+
     this.storage = store(window);
 
     const metadata = {...getUserInfo(window), ...customer};
@@ -139,7 +168,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this.unsubscribe && this.unsubscribe();
+    this.subscriptions.forEach((unsubscribe) => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    });
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -230,7 +263,22 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     );
   };
 
-  handlers = (msg: any) => {
+  customEventHandlers = (event: any) => {
+    const type = event && event.type;
+
+    switch (type) {
+      case 'papercups:open':
+        return this.handleOpenWidget();
+      case 'papercups:close':
+        return this.handleCloseWidget();
+      case 'papercups:toggle':
+        return this.handleToggleOpen();
+      default:
+        return null;
+    }
+  };
+
+  postMessageHandlers = (msg: any) => {
     this.logger.debug('Handling in parent:', msg.data);
     const iframeUrl = this.getIframeUrl();
     const {origin} = new URL(iframeUrl);
@@ -362,6 +410,14 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     } else {
       onChatClosed && onChatClosed();
     }
+  };
+
+  handleOpenWidget = () => {
+    this.setState({isOpen: true}, () => this.emitToggleEvent(true));
+  };
+
+  handleCloseWidget = () => {
+    this.setState({isOpen: false}, () => this.emitToggleEvent(false));
   };
 
   handleToggleOpen = () => {

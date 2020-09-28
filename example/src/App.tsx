@@ -1,6 +1,11 @@
 import React from 'react';
 
-import ChatWidget, {ChatWindow} from '@papercups-io/chat-widget';
+import ChatWidget, {
+  ChatWindow,
+  toggle,
+  open,
+  close,
+} from '@papercups-io/chat-widget';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
@@ -119,6 +124,10 @@ const App = ({disco, displayChatWindow}: Props) => {
           onMessageSent={(message) => console.log('Message sent!', message)}
         />
       )}
+
+      <button onClick={open}>Open</button>
+      <button onClick={close}>Close</button>
+      <button onClick={toggle}>Toggle</button>
     </>
   );
 };
