@@ -31,7 +31,7 @@ type Props = {
 
 const ChatWidget = (props: Props) => {
   return (
-    <ChatWidgetContainer {...props}>
+    <ChatWidgetContainer {...props} canToggle>
       {(config) => {
         const {
           sandbox,

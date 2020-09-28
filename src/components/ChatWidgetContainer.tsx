@@ -71,6 +71,7 @@ type Props = {
   requireEmailUpfront?: boolean;
   defaultIsOpen?: boolean;
   customIconUrl?: string;
+  canToggle?: boolean;
   onChatOpened?: () => void;
   onChatClosed?: () => void;
   onMessageSent?: (message: Message) => void;
@@ -362,7 +363,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   handleChatLoaded = () => {
     this.setState({isLoaded: true});
 
-    if (this.props.defaultIsOpen) {
+    if (this.props.defaultIsOpen || !this.props.canToggle) {
       this.setState({isOpen: true}, () => this.emitToggleEvent(true));
     }
 
@@ -413,10 +414,18 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   handleOpenWidget = () => {
+    if (!this.props.canToggle || this.state.isOpen) {
+      return;
+    }
+
     this.setState({isOpen: true}, () => this.emitToggleEvent(true));
   };
 
   handleCloseWidget = () => {
+    if (!this.props.canToggle || !this.state.isOpen) {
+      return;
+    }
+
     this.setState({isOpen: false}, () => this.emitToggleEvent(false));
   };
 
@@ -425,7 +434,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const isOpen = !wasOpen;
 
     // Prevent opening the widget until everything has loaded
-    if (!isLoaded) {
+    if (!isLoaded || !this.props.canToggle) {
       return;
     }
 

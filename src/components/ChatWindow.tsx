@@ -30,7 +30,7 @@ const ChatWindow = (props: Props) => {
   // TODO: add a prop to `ChatWidgetContainer` to indicate when component is not
   // the widget (e.g. it is never toggled open/closed, no need to show notifications)
   return (
-    <ChatWidgetContainer {...props} defaultIsOpen>
+    <ChatWidgetContainer {...props} canToggle={false}>
       {(config) => {
         const {sandbox, isLoaded, iframeUrl, query, setIframeRef} = config;
 
