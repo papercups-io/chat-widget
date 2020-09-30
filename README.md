@@ -143,7 +143,29 @@ npm install
 npm start
 ```
 
-This will start a development server on localhost:3000 by default, and open up the example app in your browser.
+This will start a development server on [http://localhost:3000](http://localhost:3000) by default, and open up the example app in your browser.
+
+### Important notes
+
+By default, the example widget points at development servers for the [Papercups API](https://github.com/papercups-io/papercups) (which runs at http://localhost:4000) and the [Papercups chat window](https://github.com/papercups-io/chat-window) (which runs at http://localhost:8080). These values are set with the [`baseUrl`](https://github.com/papercups-io/chat-widget/blob/master/example/src/App.tsx#L66) and [`iframeUrlOverride`](https://github.com/papercups-io/chat-widget/blob/master/example/src/App.tsx#L67) props respectively. 
+
+If you want to develop against your account in production, you can update these values to the following:
+- `baseUrl: http://app.papercups.io`
+- `iframeUrlOverride: https://chat-widget.papercups.io`
+
+_(Note that you can also simply remove these props, since the values above are the defaults.)_
+
+You'll also want to update your account token to point to your own account. If you haven't already, create a free account at https://app.papercups.io/register to get started. 
+
+Once you have your account token, update the [`accountId`](https://github.com/papercups-io/chat-widget/blob/master/example/src/App.tsx#L46) prop to point at yours.
+
+## Questions?
+
+If you're having any trouble getting started or just want to say hi, join us on [Slack](https://join.slack.com/t/papercups-io/shared_invite/zt-h0c3fxmd-hZi1Zp8~D61S6GD16aMqmg)! :wave:
+
+### Submitting a PR
+
+We welcome any contributions! Please create an issue before submitting a pull request.
 
 When creating a pull request, be sure to include a screenshot! 🎨
 
