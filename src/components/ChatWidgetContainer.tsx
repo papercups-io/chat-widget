@@ -118,6 +118,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
+    // TODO: use `subscription_plan` from settings.account to determine
+    // whether to display the Papercups branding or not in the chat window
     const settings = await this.fetchWidgetSettings();
     const {
       accountId,
