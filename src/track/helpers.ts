@@ -10,6 +10,7 @@ export const helpers = (win: any) => {
   const windowOpera = (win as any).opera;
   const screen = win.screen;
   const userAgent = navigator.userAgent;
+  const intl = win.Intl;
 
   const nativeBind = FuncProto.bind;
   const nativeForEach = ArrayProto.forEach;
@@ -677,6 +678,7 @@ export const helpers = (win: any) => {
     windowOpera,
     screen,
     userAgent,
+    intl,
     nativeBind,
     nativeForEach,
     nativeIndexOf,

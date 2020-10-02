@@ -54,8 +54,7 @@ const setupCustomEventHandlers = (
   }
 };
 
-// TODO: DRY up props with ChatWidget component
-type Props = {
+export type SharedProps = {
   title?: string;
   subtitle?: string;
   primaryColor?: string;
@@ -69,13 +68,17 @@ type Props = {
   showAgentAvailability?: boolean;
   iframeUrlOverride?: string;
   requireEmailUpfront?: boolean;
-  defaultIsOpen?: boolean;
   customIconUrl?: string;
-  canToggle?: boolean;
+  onChatLoaded?: () => void;
   onChatOpened?: () => void;
   onChatClosed?: () => void;
   onMessageSent?: (message: Message) => void;
   onMessageReceived?: (message: Message) => void;
+};
+
+type Props = SharedProps & {
+  defaultIsOpen?: boolean;
+  canToggle?: boolean;
   children: (data: any) => any;
 };
 
@@ -362,12 +365,13 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   handleChatLoaded = () => {
     this.setState({isLoaded: true});
+    const {defaultIsOpen, canToggle, onChatLoaded = noop} = this.props;
 
-    if (this.props.defaultIsOpen || !this.props.canToggle) {
+    if (defaultIsOpen || !canToggle) {
       this.setState({isOpen: true}, () => this.emitToggleEvent(true));
     }
 
-    return this.send('papercups:ping'); // Just testing
+    return onChatLoaded && onChatLoaded();
   };
 
   formatCustomerMetadata = () => {

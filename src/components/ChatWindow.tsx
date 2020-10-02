@@ -2,29 +2,9 @@
 
 import {jsx} from 'theme-ui';
 import {motion} from 'framer-motion';
-import ChatWidgetContainer from './ChatWidgetContainer';
-import {CustomerMetadata, Message} from '../api';
+import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 
-type Props = {
-  title?: string;
-  subtitle?: string;
-  primaryColor?: string;
-  accountId: string;
-  baseUrl?: string;
-  greeting?: string;
-  customer?: CustomerMetadata | null;
-  newMessagePlaceholder?: string;
-  agentAvailableText?: string;
-  agentUnavailableText?: string;
-  showAgentAvailability?: boolean;
-  iframeUrlOverride?: string;
-  requireEmailUpfront?: boolean;
-  customIconUrl?: string;
-  onChatOpened?: () => void;
-  onChatClosed?: () => void;
-  onMessageSent?: (message: Message) => void;
-  onMessageReceived?: (message: Message) => void;
-};
+type Props = SharedProps & {};
 
 const ChatWindow = (props: Props) => {
   // TODO: add a prop to `ChatWidgetContainer` to indicate when component is not

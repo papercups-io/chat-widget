@@ -5,6 +5,7 @@ export function getUserInfo(win: any) {
     navigator,
     userAgent,
     windowOpera,
+    intl,
     each,
     extend,
     includes,
@@ -212,6 +213,14 @@ export function getUserInfo(win: any) {
       return '';
     },
 
+    timezone: function (intl: any) {
+      try {
+        return intl.DateTimeFormat().resolvedOptions().timeZone;
+      } catch (e) {
+        return null;
+      }
+    },
+
     properties: function () {
       return extend(
         stripEmptyProperties({
@@ -220,6 +229,7 @@ export function getUserInfo(win: any) {
           referrer: document.referrer,
           referring_domain: info.referringDomain(document.referrer),
           device: info.device(userAgent),
+          time_zone: info.timezone(intl),
         }),
         {
           current_url: win.location.href,

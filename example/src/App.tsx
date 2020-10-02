@@ -71,6 +71,7 @@ const App = ({disco, displayChatWindow}: Props) => {
             iframeUrlOverride='http://localhost:8080'
             requireEmailUpfront
             showAgentAvailability
+            onChatLoaded={() => console.log('Chat loaded!')}
             onChatClosed={() => console.log('Chat closed!')}
             onChatOpened={() => console.log('Chat opened!')}
             onMessageReceived={(message) =>
@@ -111,6 +112,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           requireEmailUpfront
           showAgentAvailability
           defaultIsOpen={false}
+          onChatLoaded={() => console.log('Chat loaded!')}
           onChatClosed={() => console.log('Chat closed!')}
           onChatOpened={() => console.log('Chat opened!')}
           onMessageReceived={(message) =>
