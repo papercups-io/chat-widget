@@ -162,6 +162,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       showAgentAvailability: showAgentAvailability ? 1 : 0,
       customerId: this.storage.getCustomerId(),
+      subscriptionPlan: settings?.account?.subscription_plan,
       metadata: JSON.stringify(metadata),
     };
 
@@ -367,13 +368,20 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   handleChatLoaded = () => {
     this.setState({isLoaded: true});
+
+    const {config = {} as WidgetConfig} = this.state;
+    const {subscriptionPlan = null} = config;
     const {defaultIsOpen, canToggle, onChatLoaded = noop} = this.props;
+
+    if (onChatLoaded && typeof onChatLoaded === 'function') {
+      onChatLoaded();
+    }
 
     if (defaultIsOpen || !canToggle) {
       this.setState({isOpen: true}, () => this.emitToggleEvent(true));
     }
 
-    return onChatLoaded && onChatLoaded();
+    this.send('papercups:plan', {plan: subscriptionPlan});
   };
 
   formatCustomerMetadata = () => {
