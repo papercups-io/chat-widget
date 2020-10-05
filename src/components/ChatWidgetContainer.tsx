@@ -20,7 +20,7 @@ import {getUserInfo} from '../track/info';
 const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
 
 // TODO: set this up somewhere else
-const setup = (w: any, handlers: (msg?: any) => void) => {
+const setupPostMessageHandlers = (w: any, handlers: (msg?: any) => void) => {
   const cb = (msg: any) => {
     handlers(msg);
   };
@@ -32,12 +32,29 @@ const setup = (w: any, handlers: (msg?: any) => void) => {
   } else {
     w.attachEvent('onmessage', cb);
 
-    return () => w.detachEvent('message', cb);
+    return () => w.detachEvent('onmessage', cb);
   }
 };
 
-// TODO: DRY up props with ChatWidget component
-type Props = {
+const setupCustomEventHandlers = (
+  w: any,
+  events: Array<string>,
+  handlers: (e: any) => void
+) => {
+  if (w.addEventListener) {
+    for (const event of events) {
+      w.addEventListener(event, handlers);
+    }
+
+    return () => events.map((event) => w.removeEventListener(event, handlers));
+  } else {
+    console.error('Custom events are not supported in your browser!');
+
+    return noop;
+  }
+};
+
+export type SharedProps = {
   title?: string;
   subtitle?: string;
   primaryColor?: string;
@@ -51,12 +68,17 @@ type Props = {
   showAgentAvailability?: boolean;
   iframeUrlOverride?: string;
   requireEmailUpfront?: boolean;
-  defaultIsOpen?: boolean;
   customIconUrl?: string;
+  onChatLoaded?: () => void;
   onChatOpened?: () => void;
   onChatClosed?: () => void;
   onMessageSent?: (message: Message) => void;
   onMessageReceived?: (message: Message) => void;
+};
+
+type Props = SharedProps & {
+  defaultIsOpen?: boolean;
+  canToggle?: boolean;
   children: (data: any) => any;
 };
 
@@ -72,8 +94,15 @@ type State = {
 class ChatWidgetContainer extends React.Component<Props, State> {
   iframeRef: any;
   storage: any;
-  unsubscribe: any;
+  subscriptions: Array<() => void>;
   logger: Logger;
+
+  EVENTS = [
+    'papercups:open',
+    'papercups:close',
+    'papercups:toggle',
+    'papercups:identify',
+  ];
 
   constructor(props: Props) {
     super(props);
@@ -89,6 +118,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
+    // TODO: use `subscription_plan` from settings.account to determine
+    // whether to display the Papercups branding or not in the chat window
     const settings = await this.fetchWidgetSettings();
     const {
       accountId,
@@ -108,7 +139,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const debugModeEnabled = isDev(window);
 
     this.logger = new Logger(debugModeEnabled);
-    this.unsubscribe = setup(window, this.handlers);
+    this.subscriptions = [
+      setupPostMessageHandlers(window, this.postMessageHandlers),
+      setupCustomEventHandlers(window, this.EVENTS, this.customEventHandlers),
+    ];
+
     this.storage = store(window);
 
     const metadata = {...getUserInfo(window), ...customer};
@@ -127,6 +162,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       showAgentAvailability: showAgentAvailability ? 1 : 0,
       customerId: this.storage.getCustomerId(),
+      subscriptionPlan: settings?.account?.subscription_plan,
       metadata: JSON.stringify(metadata),
     };
 
@@ -139,7 +175,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this.unsubscribe && this.unsubscribe();
+    this.subscriptions.forEach((unsubscribe) => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    });
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -230,7 +270,22 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     );
   };
 
-  handlers = (msg: any) => {
+  customEventHandlers = (event: any) => {
+    const type = event && event.type;
+
+    switch (type) {
+      case 'papercups:open':
+        return this.handleOpenWidget();
+      case 'papercups:close':
+        return this.handleCloseWidget();
+      case 'papercups:toggle':
+        return this.handleToggleOpen();
+      default:
+        return null;
+    }
+  };
+
+  postMessageHandlers = (msg: any) => {
     this.logger.debug('Handling in parent:', msg.data);
     const iframeUrl = this.getIframeUrl();
     const {origin} = new URL(iframeUrl);
@@ -314,11 +369,19 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   handleChatLoaded = () => {
     this.setState({isLoaded: true});
 
-    if (this.props.defaultIsOpen) {
+    const {config = {} as WidgetConfig} = this.state;
+    const {subscriptionPlan = null} = config;
+    const {defaultIsOpen, canToggle, onChatLoaded = noop} = this.props;
+
+    if (onChatLoaded && typeof onChatLoaded === 'function') {
+      onChatLoaded();
+    }
+
+    if (defaultIsOpen || !canToggle) {
       this.setState({isOpen: true}, () => this.emitToggleEvent(true));
     }
 
-    return this.send('papercups:ping'); // Just testing
+    this.send('papercups:plan', {plan: subscriptionPlan});
   };
 
   formatCustomerMetadata = () => {
@@ -364,12 +427,28 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     }
   };
 
+  handleOpenWidget = () => {
+    if (!this.props.canToggle || this.state.isOpen) {
+      return;
+    }
+
+    this.setState({isOpen: true}, () => this.emitToggleEvent(true));
+  };
+
+  handleCloseWidget = () => {
+    if (!this.props.canToggle || !this.state.isOpen) {
+      return;
+    }
+
+    this.setState({isOpen: false}, () => this.emitToggleEvent(false));
+  };
+
   handleToggleOpen = () => {
     const {isOpen: wasOpen, isLoaded, shouldDisplayNotifications} = this.state;
     const isOpen = !wasOpen;
 
     // Prevent opening the widget until everything has loaded
-    if (!isLoaded) {
+    if (!isLoaded || !this.props.canToggle) {
       return;
     }
 

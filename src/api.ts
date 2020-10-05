@@ -31,6 +31,7 @@ export type CustomerMetadata = {
 
 export type Account = {
   company_name?: string;
+  subscription_plan?: string;
 };
 
 export type WidgetSettings = {

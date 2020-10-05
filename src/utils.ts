@@ -12,6 +12,7 @@ export type WidgetConfig = {
   showAgentAvailability?: 1 | 0;
   requireEmailUpfront?: 1 | 0;
   customerId?: string;
+  subscriptionPlan?: string;
   metadata?: string; // stringified JSON
 };
 

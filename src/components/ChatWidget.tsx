@@ -4,34 +4,15 @@ import React from 'react';
 import {motion} from 'framer-motion';
 import {jsx} from 'theme-ui';
 import WidgetToggle from './WidgetToggle';
-import ChatWidgetContainer from './ChatWidgetContainer';
-import {CustomerMetadata, Message} from '../api';
+import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 
-type Props = {
-  title?: string;
-  subtitle?: string;
-  primaryColor?: string;
-  accountId: string;
-  baseUrl?: string;
-  greeting?: string;
-  customer?: CustomerMetadata | null;
-  newMessagePlaceholder?: string;
-  agentAvailableText?: string;
-  agentUnavailableText?: string;
-  showAgentAvailability?: boolean;
-  iframeUrlOverride?: string;
-  requireEmailUpfront?: boolean;
+type Props = SharedProps & {
   defaultIsOpen?: boolean;
-  customIconUrl?: string;
-  onChatOpened?: () => void;
-  onChatClosed?: () => void;
-  onMessageSent?: (message: Message) => void;
-  onMessageReceived?: (message: Message) => void;
 };
 
 const ChatWidget = (props: Props) => {
   return (
-    <ChatWidgetContainer {...props}>
+    <ChatWidgetContainer {...props} canToggle>
       {(config) => {
         const {
           sandbox,
