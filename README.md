@@ -69,6 +69,17 @@ import React from 'react';
 
 import ChatWidget from '@papercups-io/chat-widget';
 
+// You can also import the following in v1.1.0 and above:
+// import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget'; 
+//
+// The `ChatWindow` component allows you to embed the chat however you want,
+// and the `Papercups` object provides access to functions that can programmatically
+// open/close the chat widget, e.g.:
+//
+// `Papercups.open()` // => opens the chat widget
+// `Papercups.close()` // => closes the chat widget
+// `Papercups.toggle()` // => toggles (opens or closes) the chat widget
+
 const ExamplePage = () => {
   return (
     <>
@@ -126,6 +137,7 @@ These are the props you can pass into your `<ChatWidget />` React component, or 
 | **`requireEmailUpfront`** | `boolean` | If you want to require unidentified customers to provide their email before they can message you | `false` |
 | **`defaultIsOpen`** | `boolean` | If you want the chat widget to open as soon as it loads | `false` |
 | **`customIconUrl`** | `string` | A link to a custom icon image URL | N/A |
+| **`onChatLoaded`** | `() => void` | Callback fired when chat is loaded | N/A |
 | **`onChatOpened`** | `() => void` | Callback fired when chat is opened | N/A |
 | **`onChatClosed`** | `() => void` | Callback fired when chat is closed | N/A |
 | **`onMessageSent`** | `(message: Message) => void` | Callback fired when message is sent | N/A |
