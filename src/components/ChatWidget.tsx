@@ -51,6 +51,7 @@ const ChatWidget = (props: Props) => {
           <React.Fragment>
             <motion.iframe
               ref={setIframeRef}
+              title='Papercups Chat Widget Container'
               className='Papercups-chatWindowContainer'
               sandbox={sandbox}
               animate={isActive ? 'open' : 'closed'}
