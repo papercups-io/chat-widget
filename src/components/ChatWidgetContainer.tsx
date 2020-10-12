@@ -94,7 +94,7 @@ type State = {
 class ChatWidgetContainer extends React.Component<Props, State> {
   iframeRef: any;
   storage: any;
-  subscriptions: Array<() => void>;
+  subscriptions: Array<() => void> = [];
   logger: Logger;
 
   EVENTS = [
