@@ -30,8 +30,6 @@ const ChatWidget = (props: Props) => {
             onToggleOpen,
           } = config;
 
-          throw new Error('shit!');
-
           return (
             <React.Fragment>
               <motion.iframe
