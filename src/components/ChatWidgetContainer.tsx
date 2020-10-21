@@ -259,6 +259,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       config,
       query: qs.stringify(config, {skipEmptyString: true, skipNull: true}),
     });
+
+    this.logger.debug('Updated customer ID:', customerId);
   };
 
   fetchWidgetSettings = () => {
