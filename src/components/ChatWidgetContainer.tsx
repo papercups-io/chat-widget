@@ -102,6 +102,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     'papercups:close',
     'papercups:toggle',
     'papercups:identify',
+    'papercups:customer:cached',
   ];
 
   constructor(props: Props) {
@@ -249,6 +250,17 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     this.send('config:update', updates);
   };
 
+  handleCustomerIdUpdated = () => {
+    const customerId = this.storage.getCustomerId();
+    const config = {...this.state.config, customerId};
+
+    // TODO: this is a slight hack to force a refresh of the chat window
+    this.setState({
+      config,
+      query: qs.stringify(config, {skipEmptyString: true, skipNull: true}),
+    });
+  };
+
   fetchWidgetSettings = () => {
     const {accountId, baseUrl} = this.props;
     const empty = {} as WidgetSettings;
@@ -280,6 +292,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         return this.handleCloseWidget();
       case 'papercups:toggle':
         return this.handleToggleOpen();
+      case 'papercups:customer:cached':
+        return this.handleCustomerIdUpdated(); // TODO: test this!
       default:
         return null;
     }
