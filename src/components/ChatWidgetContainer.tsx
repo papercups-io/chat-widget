@@ -102,7 +102,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     'papercups:close',
     'papercups:toggle',
     'papercups:identify',
-    'papercups:customer:cached',
+    'storytime:customer:set',
   ];
 
   constructor(props: Props) {
@@ -250,8 +250,9 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     this.send('config:update', updates);
   };
 
-  handleCustomerIdUpdated = () => {
-    const customerId = this.storage.getCustomerId();
+  handleCustomerIdUpdated = (id?: any) => {
+    const cachedCustomerId = this.storage.getCustomerId();
+    const customerId = id || cachedCustomerId;
     const config = {...this.state.config, customerId};
 
     // TODO: this is a slight hack to force a refresh of the chat window
@@ -285,7 +286,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   customEventHandlers = (event: any) => {
-    const type = event && event.type;
+    if (!event || !event.type) {
+      return null;
+    }
+
+    const {type, detail} = event;
 
     switch (type) {
       case 'papercups:open':
@@ -294,8 +299,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         return this.handleCloseWidget();
       case 'papercups:toggle':
         return this.handleToggleOpen();
-      case 'papercups:customer:cached':
-        return this.handleCustomerIdUpdated(); // TODO: test this!
+      case 'storytime:customer:set':
+        return this.handleCustomerIdUpdated(detail); // TODO: test this!
       default:
         return null;
     }
@@ -428,7 +433,15 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   handleCacheCustomerId = (payload: any) => {
     const {customerId} = payload;
 
-    return this.storage.setCustomerId(customerId);
+    // Let other modules know that the customer has been set
+    this.logger.debug('Caching customer ID:', customerId);
+    window.dispatchEvent(
+      new CustomEvent('papercups:customer:set', {
+        detail: customerId,
+      })
+    );
+
+    this.storage.setCustomerId(customerId);
   };
 
   emitToggleEvent = (isOpen: boolean) => {
