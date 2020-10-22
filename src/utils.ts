@@ -14,6 +14,7 @@ export type WidgetConfig = {
   customerId?: string;
   subscriptionPlan?: string;
   metadata?: string; // stringified JSON
+  version?: string;
 };
 
 export function noop() {}
