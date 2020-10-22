@@ -28,6 +28,7 @@ Paste the code below between your `<head>` and `</head>` tags:
 <script>
   window.Papercups = {
     config: {
+      // Pass in your Papercups account token here after signing up 
       accountId: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx',
       title: 'Welcome to Papercups!',
       subtitle: 'Ask us anything in the chat window below 😊',
@@ -89,6 +90,7 @@ const ExamplePage = () => {
         if you would like it to render on every page
       */}
       <ChatWidget
+        // Pass in your Papercups account token here after signing up 
         accountId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'
         title='Welcome to Papercups!'
         subtitle='Ask us anything in the chat window below 😊'
