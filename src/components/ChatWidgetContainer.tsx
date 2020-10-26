@@ -167,7 +167,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       customerId: this.storage.getCustomerId(),
       subscriptionPlan: settings?.account?.subscription_plan,
       metadata: JSON.stringify(metadata),
-      version: '1.1.1',
+      version: '1.1.2',
     };
 
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
