@@ -11,6 +11,7 @@ export type WidgetConfig = {
   agentUnavailableText?: string;
   showAgentAvailability?: 1 | 0;
   requireEmailUpfront?: 1 | 0;
+  closeable?: 1 | 0;
   customerId?: string;
   subscriptionPlan?: string;
   metadata?: string; // stringified JSON

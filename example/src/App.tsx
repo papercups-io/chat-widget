@@ -111,6 +111,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           iframeUrlOverride='http://localhost:8080'
           requireEmailUpfront
           showAgentAvailability
+          hideToggleButton={false}
           defaultIsOpen={false}
           onChatLoaded={() => console.log('Chat loaded!')}
           onChatClosed={() => console.log('Chat closed!')}

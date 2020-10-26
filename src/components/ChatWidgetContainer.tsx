@@ -134,6 +134,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       agentUnavailableText,
       showAgentAvailability,
       requireEmailUpfront,
+      canToggle,
       customer = {},
     } = this.props;
     // TODO: make it possible to opt into debug mode via props
@@ -162,6 +163,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       companyName: settings?.account?.company_name,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       showAgentAvailability: showAgentAvailability ? 1 : 0,
+      closeable: canToggle ? 1 : 0,
       customerId: this.storage.getCustomerId(),
       subscriptionPlan: settings?.account?.subscription_plan,
       metadata: JSON.stringify(metadata),
@@ -335,6 +337,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       case 'messages:seen':
         return this.handleMessagesSeen();
       case 'papercups:open':
+      case 'papercups:close':
         return this.handleToggleOpen();
       default:
         return null;
