@@ -9,6 +9,7 @@ import ErrorBoundary from './ErrorBoundary';
 
 type Props = SharedProps & {
   defaultIsOpen?: boolean;
+  hideToggleButton?: boolean;
 };
 
 const ChatWidget = (props: Props) => {
@@ -29,6 +30,7 @@ const ChatWidget = (props: Props) => {
             setIframeRef,
             onToggleOpen,
           } = config;
+          const {hideToggleButton} = props;
 
           return (
             <React.Fragment>
@@ -62,7 +64,7 @@ const ChatWidget = (props: Props) => {
                 Loading...
               </motion.iframe>
 
-              {isLoaded && (
+              {isLoaded && !hideToggleButton && (
                 <motion.div
                   className='Papercups-toggleButtonContainer'
                   initial={false}
