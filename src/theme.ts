@@ -122,6 +122,7 @@ export const getThemeConfig = (settings: ThemeSettings) => {
         '&:hover': {
           background: overrides.light,
           borderColor: overrides.light,
+          boxShadow: 'rgba(0, 0, 0, 0.16) 0px 4px 12px',
         },
         '&:active': {
           background: overrides.dark,
