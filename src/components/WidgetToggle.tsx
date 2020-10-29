@@ -70,7 +70,7 @@ export const ToggleIconFilled = () => {
           closed: {opacity: 1},
           open: {opacity: 0},
         }}
-        transition={{duration: 0.1}}
+        transition={{duration: 0.2}}
       />
       <motion.path
         fillRule='evenodd'
@@ -81,7 +81,7 @@ export const ToggleIconFilled = () => {
           closed: {opacity: 1},
           open: {opacity: 0},
         }}
-        transition={{duration: 0.1}}
+        transition={{duration: 0.2}}
       />
     </svg>
   );
@@ -112,12 +112,18 @@ const DefaultCloseIcon = () => {
 const ToggleIcon = ({
   isOpen,
   customIconUrl,
+  iconVariant,
 }: {
   isOpen?: boolean;
   customIconUrl?: string;
+  iconVariant?: 'outlined' | 'filled';
 }) => {
   if (!customIconUrl) {
-    return <DefaultToggleIcon />;
+    return iconVariant === 'filled' ? (
+      <ToggleIconFilled />
+    ) : (
+      <DefaultToggleIcon />
+    );
   }
 
   if (isOpen) {
@@ -131,11 +137,13 @@ export const WidgetToggle = ({
   isOpen,
   isDisabled,
   customIconUrl,
+  iconVariant,
   toggle,
 }: {
   isOpen?: boolean;
   isDisabled?: boolean;
   customIconUrl?: string;
+  iconVariant?: 'outlined' | 'filled';
   toggle: () => void;
 }) => {
   return (
@@ -157,7 +165,11 @@ export const WidgetToggle = ({
         disabled={isDisabled}
         onClick={toggle}
       >
-        <ToggleIcon customIconUrl={customIconUrl} isOpen={isOpen} />
+        <ToggleIcon
+          customIconUrl={customIconUrl}
+          iconVariant={iconVariant}
+          isOpen={isOpen}
+        />
       </Button>
     </Flex>
   );
