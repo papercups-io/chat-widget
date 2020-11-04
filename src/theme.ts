@@ -118,11 +118,12 @@ export const getThemeConfig = (settings: ThemeSettings) => {
       primary: {
         cursor: 'pointer',
         outline: 0,
+        boxShadow: 'rgba(0, 0, 0, 0.08) 0 2px 4px',
         transition: '0.2s',
         '&:hover': {
           background: overrides.light,
           borderColor: overrides.light,
-          boxShadow: 'rgba(0, 0, 0, 0.16) 0px 4px 12px',
+          boxShadow: 'rgba(0, 0, 0, 0.12) 0px 2px 8px',
         },
         '&:active': {
           background: overrides.dark,
