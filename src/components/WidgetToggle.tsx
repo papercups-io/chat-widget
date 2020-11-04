@@ -43,6 +43,50 @@ const DefaultToggleIcon = () => {
   );
 };
 
+export const ToggleIconFilled = () => {
+  return (
+    <svg width='24' height='25' viewBox='0 0 24 25' fill='none'>
+      <Path
+        variants={{
+          closed: {opacity: 0, d: 'M 7.5 14.5 L 19 14.5'},
+          open: {opacity: 1, d: 'M 5 5 L 20 20'},
+        }}
+        transition={{duration: 0.2}}
+      />
+
+      <Path
+        variants={{
+          closed: {opacity: 0, d: 'M 7.5 8.5 L 19 8.5'},
+          open: {opacity: 1, d: 'M 5 20 L 20 5'},
+        }}
+        transition={{duration: 0.2}}
+      />
+
+      <motion.path
+        d='M20.5 21.1453C20.5 19.5 21.5 19 21.5 19C21.5 19 24 18.5 24 13.5V8.5C24 3.5 21.5 1 16.5 1H7.5C2.5 1 0 3.5 0 8.5V13.5C0 18.5 2.5 20.5 7.5 20.5H12C12.5 20.5 12.5 20.5 13.5 21L18.75 24.3572L19.3517 24.7118C20.0184 25.1046 20.5 25.131 20.5 24.3572V23.5287V22.2858V21.1453Z'
+        fill='white'
+        fillOpacity='0.7'
+        variants={{
+          closed: {opacity: 1},
+          open: {opacity: 0},
+        }}
+        transition={{duration: 0.2}}
+      />
+      <motion.path
+        fillRule='evenodd'
+        clipRule='evenodd'
+        d='M21.5 18C21.5 18 20.5 18.5 20.5 20.1453V21.2858V22.5287V23.3572C20.5 24.131 20.0184 24.1046 19.3517 23.7118L18.75 23.3572L13.5 20C12.8174 19.6587 12.6007 19.5504 12.3729 19.516C12.267 19.5 12.1587 19.5 12 19.5H7.5C2.5 19.5 0 17.5 0 12.5V7.5C0 2.5 2.5 0 7.5 0H16.5C21.5 0 24 2.5 24 7.5V12.5C24 17.5 21.5 18 21.5 18ZM21 17.557C21.8581 17.557 24 13.557 23 13.057C22.3869 12.7505 21.8801 13.7414 21.4646 14.554C21.2023 15.0668 20.9764 15.5086 20.783 15.5086C20.283 15.5086 20 16.0554 20 16.7568C20 17.4582 20.1419 17.557 21 17.557Z'
+        fill='white'
+        variants={{
+          closed: {opacity: 1},
+          open: {opacity: 0},
+        }}
+        transition={{duration: 0.2}}
+      />
+    </svg>
+  );
+};
+
 const DefaultCloseIcon = () => {
   return (
     <svg width='27' height='27' viewBox='0 0 27 27'>
@@ -68,12 +112,18 @@ const DefaultCloseIcon = () => {
 const ToggleIcon = ({
   isOpen,
   customIconUrl,
+  iconVariant,
 }: {
   isOpen?: boolean;
   customIconUrl?: string;
+  iconVariant?: 'outlined' | 'filled';
 }) => {
   if (!customIconUrl) {
-    return <DefaultToggleIcon />;
+    return iconVariant === 'filled' ? (
+      <ToggleIconFilled />
+    ) : (
+      <DefaultToggleIcon />
+    );
   }
 
   if (isOpen) {
@@ -87,11 +137,13 @@ export const WidgetToggle = ({
   isOpen,
   isDisabled,
   customIconUrl,
+  iconVariant,
   toggle,
 }: {
   isOpen?: boolean;
   isDisabled?: boolean;
   customIconUrl?: string;
+  iconVariant?: 'outlined' | 'filled';
   toggle: () => void;
 }) => {
   return (
@@ -113,7 +165,11 @@ export const WidgetToggle = ({
         disabled={isDisabled}
         onClick={toggle}
       >
-        <ToggleIcon customIconUrl={customIconUrl} isOpen={isOpen} />
+        <ToggleIcon
+          customIconUrl={customIconUrl}
+          iconVariant={iconVariant}
+          isOpen={isOpen}
+        />
       </Button>
     </Flex>
   );

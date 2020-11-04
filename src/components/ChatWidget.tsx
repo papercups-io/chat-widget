@@ -10,6 +10,7 @@ import ErrorBoundary from './ErrorBoundary';
 type Props = SharedProps & {
   defaultIsOpen?: boolean;
   hideToggleButton?: boolean;
+  iconVariant?: 'outlined' | 'filled';
 };
 
 const ChatWidget = (props: Props) => {
@@ -30,7 +31,7 @@ const ChatWidget = (props: Props) => {
             setIframeRef,
             onToggleOpen,
           } = config;
-          const {hideToggleButton} = props;
+          const {hideToggleButton, iconVariant} = props;
 
           return (
             <React.Fragment>
@@ -77,6 +78,7 @@ const ChatWidget = (props: Props) => {
                     isDisabled={isTransitioning}
                     isOpen={isOpen}
                     customIconUrl={customIconUrl}
+                    iconVariant={iconVariant}
                     toggle={onToggleOpen}
                   />
                 </motion.div>

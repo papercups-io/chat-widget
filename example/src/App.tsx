@@ -113,6 +113,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           showAgentAvailability
           hideToggleButton={false}
           defaultIsOpen={false}
+          iconVariant='filled'
           onChatLoaded={() => console.log('Chat loaded!')}
           onChatClosed={() => console.log('Chat closed!')}
           onChatOpened={() => console.log('Chat opened!')}
