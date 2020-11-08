@@ -1,8 +1,8 @@
 /** @jsx jsx */
 
 import React from 'react';
-import {motion} from 'framer-motion';
 import {jsx} from 'theme-ui';
+import {motion} from '../motion';
 import WidgetToggle from './WidgetToggle';
 import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 import ErrorBoundary from './ErrorBoundary';

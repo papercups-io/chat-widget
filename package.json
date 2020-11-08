@@ -65,7 +65,7 @@
     "dist"
   ],
   "dependencies": {
-    "framer-motion": "^2.0.1",
+    "framer-motion": "^2.9.4",
     "phoenix": "^1.5.3",
     "query-string": "^6.13.1",
     "superagent": "^5.3.1",

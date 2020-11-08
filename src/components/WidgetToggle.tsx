@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Flex, Image} from 'theme-ui';
-import {motion} from 'framer-motion';
+import {motion} from '../motion';
 
 const Path = (props: any) => (
   <motion.path
