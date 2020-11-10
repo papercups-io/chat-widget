@@ -1,7 +1,7 @@
 /** @jsx jsx */
 
 import {jsx} from 'theme-ui';
-import {motion} from '../motion';
+// import {motion} from '../motion';
 import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 import ErrorBoundary from './ErrorBoundary';
 
@@ -17,17 +17,17 @@ const ChatWindow = (props: Props) => {
           const {sandbox, isLoaded, iframeUrl, query, setIframeRef} = config;
 
           return (
-            <motion.iframe
+            <iframe
               ref={setIframeRef}
               className='Papercups-chatWindowContainer'
               sandbox={sandbox}
-              animate={isLoaded ? 'open' : 'closed'}
-              initial='closed'
-              variants={{
-                closed: {opacity: 0},
-                open: {opacity: 1},
-              }}
-              transition={{duration: 0.2, ease: 'easeIn'}}
+              // animate={isLoaded ? 'open' : 'closed'}
+              // initial='closed'
+              // variants={{
+              //   closed: {opacity: 0},
+              //   open: {opacity: 1},
+              // }}
+              // transition={{duration: 0.2, ease: 'easeIn'}}
               src={`${iframeUrl}?${query}`}
               sx={{
                 opacity: isLoaded ? 1 : 0,
@@ -37,7 +37,7 @@ const ChatWindow = (props: Props) => {
               }}
             >
               Loading...
-            </motion.iframe>
+            </iframe>
           );
         }}
       </ChatWidgetContainer>

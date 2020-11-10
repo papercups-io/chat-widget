@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {jsx} from 'theme-ui';
-import {motion} from '../motion';
+// import {motion} from '../motion';
 import WidgetToggle from './WidgetToggle';
 import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 import ErrorBoundary from './ErrorBoundary';
@@ -35,18 +35,18 @@ const ChatWidget = (props: Props) => {
 
           return (
             <React.Fragment>
-              <motion.iframe
+              <iframe
                 ref={setIframeRef}
                 title='Papercups Chat Widget Container'
                 className='Papercups-chatWindowContainer'
                 sandbox={sandbox}
-                animate={isActive ? 'open' : 'closed'}
-                initial='closed'
-                variants={{
-                  closed: {opacity: 0, y: 4},
-                  open: {opacity: 1, y: 0},
-                }}
-                transition={{duration: 0.2, ease: 'easeIn'}}
+                // animate={isActive ? 'open' : 'closed'}
+                // initial='closed'
+                // variants={{
+                //   closed: {opacity: 0, y: 4},
+                //   open: {opacity: 1, y: 0},
+                // }}
+                // transition={{duration: 0.2, ease: 'easeIn'}}
                 src={`${iframeUrl}?${query}`}
                 style={
                   isActive
@@ -63,13 +63,13 @@ const ChatWidget = (props: Props) => {
                 }}
               >
                 Loading...
-              </motion.iframe>
+              </iframe>
 
               {isLoaded && !hideToggleButton && (
-                <motion.div
+                <div
                   className='Papercups-toggleButtonContainer'
-                  initial={false}
-                  animate={isOpen ? 'open' : 'closed'}
+                  // initial={false}
+                  // animate={isOpen ? 'open' : 'closed'}
                   sx={{
                     variant: 'styles.WidgetToggleContainer',
                   }}
@@ -81,7 +81,7 @@ const ChatWidget = (props: Props) => {
                     iconVariant={iconVariant}
                     toggle={onToggleOpen}
                   />
-                </motion.div>
+                </div>
               )}
             </React.Fragment>
           );
