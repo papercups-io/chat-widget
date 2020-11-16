@@ -33,6 +33,7 @@
     "@types/jest": "^25.1.4",
     "@types/node": "^12.12.38",
     "@types/phoenix": "^1.4.4",
+    "@types/qs": "^6.9.5",
     "@types/react": "^16.9.27",
     "@types/react-dom": "^16.9.7",
     "@types/superagent": "^4.1.8",
@@ -66,7 +67,7 @@
   ],
   "dependencies": {
     "phoenix": "^1.5.3",
-    "query-string": "^6.13.1",
+    "qs": "^6.9.4",
     "superagent": "^5.3.1",
     "theme-ui": "^0.3.1",
     "tinycolor2": "^1.4.1"

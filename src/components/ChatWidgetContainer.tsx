@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {ThemeProvider, jsx} from 'theme-ui';
-import qs from 'query-string';
+import qs from 'qs';
 import {
   CustomerMetadata,
   Message,
@@ -164,13 +164,13 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       showAgentAvailability: showAgentAvailability ? 1 : 0,
       closeable: canToggle ? 1 : 0,
-      customerId: this.storage.getCustomerId(),
+      customerId: this.storage.getCustomerId() || null,
       subscriptionPlan: settings?.account?.subscription_plan,
       metadata: JSON.stringify(metadata),
       version: '1.1.2',
     };
 
-    const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
+    const query = qs.stringify(config, {skipNulls: true});
 
     this.setState({config, query});
 
@@ -255,13 +255,13 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   handleCustomerIdUpdated = (id?: any) => {
     const cachedCustomerId = this.storage.getCustomerId();
-    const customerId = id || cachedCustomerId;
+    const customerId = id || cachedCustomerId || null;
     const config = {...this.state.config, customerId};
 
     // TODO: this is a slight hack to force a refresh of the chat window
     this.setState({
       config,
-      query: qs.stringify(config, {skipEmptyString: true, skipNull: true}),
+      query: qs.stringify(config, {skipNulls: true}),
     });
 
     this.logger.debug('Updated customer ID:', customerId);
