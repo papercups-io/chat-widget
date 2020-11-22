@@ -108,6 +108,10 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
+    if (!props.accountId) {
+      throw new Error('An `accountId` is required to run the Papercups chat!');
+    }
+
     this.state = {
       isOpen: false,
       isLoaded: false,
