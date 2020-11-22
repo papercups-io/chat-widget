@@ -1,6 +1,7 @@
 import React from 'react';
 import {Button, Flex, Image} from 'theme-ui';
 // import {motion} from '../motion';
+import {colors} from '../theme';
 
 const Path = (props: any) => (
   <path
@@ -147,6 +148,7 @@ export const WidgetToggle = ({
         variant='primary'
         p={0}
         sx={{
+          bg: colors.primary,
           variant: 'styles.WidgetToggle',
         }}
         disabled={isDisabled}

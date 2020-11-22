@@ -2,6 +2,18 @@ import tinycolor from 'tinycolor2';
 
 type ThemeSettings = {primary?: string};
 
+export const colors = {
+  text: '#141414',
+  background: '#fff',
+  primary: '#1890ff',
+  secondary: '#722ed1',
+  muted: '#f0f0f0',
+  gray: 'rgba(0, 0, 0, 0.45)',
+  // TODO: come up with better names!
+  input: 'rgba(0, 0, 0, 0.65)',
+  offset: 'rgba(255, 255, 255, 0.8)',
+};
+
 const styles: {[key: string]: any} = {
   ChatWindowContainer: {
     margin: 0,
@@ -120,6 +132,8 @@ export const getThemeConfig = (settings: ThemeSettings) => {
         outline: 0,
         boxShadow: 'rgba(0, 0, 0, 0.08) 0 2px 4px',
         transition: '0.2s',
+        background: overrides.primary,
+        borderColor: overrides.primary,
         '&:hover': {
           background: overrides.light,
           borderColor: overrides.light,

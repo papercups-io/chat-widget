@@ -4,6 +4,7 @@ import {jsx} from 'theme-ui';
 // import {motion} from '../motion';
 import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 import ErrorBoundary from './ErrorBoundary';
+import {colors} from '../theme';
 
 type Props = SharedProps & {};
 
@@ -32,7 +33,7 @@ const ChatWindow = (props: Props) => {
               sx={{
                 opacity: isLoaded ? 1 : 0,
                 border: 'none',
-                bg: 'background',
+                bg: colors.background,
                 variant: 'styles.ChatWindowContainer',
               }}
             >

@@ -6,6 +6,7 @@ import {jsx} from 'theme-ui';
 import WidgetToggle from './WidgetToggle';
 import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 import ErrorBoundary from './ErrorBoundary';
+import {colors} from '../theme';
 
 type Props = SharedProps & {
   defaultIsOpen?: boolean;
@@ -55,7 +56,7 @@ const ChatWidget = (props: Props) => {
                 }
                 sx={{
                   border: 'none',
-                  bg: 'background',
+                  bg: colors.background,
                   variant:
                     !isOpen && shouldDisplayNotifications
                       ? 'styles.WidgetContainer.notifications'
