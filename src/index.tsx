@@ -1,5 +1,6 @@
 import ChatWidget from './components/ChatWidget';
 import ChatWindow from './components/ChatWindow';
+import * as API from './api';
 
 export const open = () => window.dispatchEvent(new Event('papercups:open'));
 export const close = () => window.dispatchEvent(new Event('papercups:close'));
@@ -15,6 +16,8 @@ export const Papercups = {
   close,
   toggle,
 };
+
+export {API};
 
 export {ChatWidget, ChatWindow};
 

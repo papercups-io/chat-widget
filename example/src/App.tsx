@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ChatWidget, {ChatWindow, Papercups} from '@papercups-io/chat-widget';
+import ChatWidget, {ChatWindow, Papercups, API} from '@papercups-io/chat-widget';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
@@ -16,6 +16,43 @@ const App = ({disco, displayChatWindow}: Props) => {
   ];
 
   const [primaryColor, setPrimaryColor] = React.useState(colors[0]);
+
+  const commonProps = {
+    // props shared between the open/closed widgets
+    title: 'Welcome to Papercups!',
+    subtitle: 'Ask us anything in the chat window 😊',
+    primaryColor: primaryColor,
+    accountId: 'eb504736-0f20-4978-98ff-1a82ae60b266',
+    greeting: 'Hi there! How can I help you?',
+    newMessagePlaceholder: 'Start typing...',
+    agentAvailableText: 'Agents are online!',
+    agentUnavailableText: 'Agents are not available at the moment.',
+    customer: {
+      name: 'Test User',
+      email: 'test@test.com',
+      external_id: '123',
+      // Ad hoc metadata
+      metadata: {
+        plan: 'starter',
+        registered_at: '2020-09-01',
+        age: 25,
+        valid: true,
+      },
+    },
+    // NB: we override these values during development -- note that the
+    // API runs on port 4000 by default, and the iframe on 8080
+    baseUrl: 'http://localhost:4000',
+    iframeUrlOverride: 'http://localhost:8080',
+    requireEmailUpfront: true,
+    showAgentAvailability: true,
+    onChatLoaded: () => console.log('Chat loaded!'),
+    onChatClosed: () => console.log('Chat closed!'),
+    onChatOpened: () => console.log('Chat opened!'),
+    onMessageReceived: (message: API.Message) => {
+      console.log('Message received!', message)
+    },
+    onMessageSent: (message: API.Message) => console.log('Message sent!', message),
+  }
 
   React.useEffect(() => {
     if (!disco) {
@@ -45,39 +82,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           }}
         >
           <ChatWindow
-            title='Welcome to Papercups!'
-            subtitle='Ask us anything in the chat window 😊'
-            primaryColor={primaryColor}
-            accountId='eb504736-0f20-4978-98ff-1a82ae60b266'
-            greeting='Hi there! How can I help you?'
-            newMessagePlaceholder='Start typing...'
-            agentAvailableText='Agents are online!'
-            agentUnavailableText='Agents are not available at the moment.'
-            customer={{
-              name: 'Test User',
-              email: 'test@test.com',
-              external_id: '123',
-              // Ad hoc metadata
-              metadata: {
-                plan: 'starter',
-                registered_at: '2020-09-01',
-                age: 25,
-                valid: true,
-              },
-            }}
-            // NB: we override these values during development -- note that the
-            // API runs on port 4000 by default, and the iframe on 8080
-            baseUrl='http://localhost:4000'
-            iframeUrlOverride='http://localhost:8080'
-            requireEmailUpfront
-            showAgentAvailability
-            onChatLoaded={() => console.log('Chat loaded!')}
-            onChatClosed={() => console.log('Chat closed!')}
-            onChatOpened={() => console.log('Chat opened!')}
-            onMessageReceived={(message) =>
-              console.log('Message received!', message)
-            }
-            onMessageSent={(message) => console.log('Message sent!', message)}
+            {...commonProps}
           />
         </div>
       ) : (
@@ -85,42 +90,10 @@ const App = ({disco, displayChatWindow}: Props) => {
         // like to render the widget on, or in your root/router component
         // if you would like it to render on every page
         <ChatWidget
-          title='Welcome to Papercups!'
-          subtitle='Ask us anything in the chat window 😊'
-          primaryColor={primaryColor}
-          accountId='eb504736-0f20-4978-98ff-1a82ae60b266'
-          greeting='Hi there! How can I help you?'
-          newMessagePlaceholder='Start typing...'
-          agentAvailableText='Agents are online!'
-          agentUnavailableText='Agents are not available at the moment.'
-          customer={{
-            name: 'Test User',
-            email: 'test@test.com',
-            external_id: '123',
-            // Ad hoc metadata
-            metadata: {
-              plan: 'starter',
-              registered_at: '2020-09-01',
-              age: 25,
-              valid: true,
-            },
-          }}
-          // NB: we override these values during development -- note that the
-          // API runs on port 4000 by default, and the iframe on 8080
-          baseUrl='http://localhost:4000'
-          iframeUrlOverride='http://localhost:8080'
-          requireEmailUpfront
-          showAgentAvailability
+          {...commonProps}
           hideToggleButton={false}
           defaultIsOpen={false}
           iconVariant='filled'
-          onChatLoaded={() => console.log('Chat loaded!')}
-          onChatClosed={() => console.log('Chat closed!')}
-          onChatOpened={() => console.log('Chat opened!')}
-          onMessageReceived={(message) =>
-            console.log('Message received!', message)
-          }
-          onMessageSent={(message) => console.log('Message sent!', message)}
         />
       )}
 
