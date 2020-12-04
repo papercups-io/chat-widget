@@ -1,23 +1,3 @@
-export type WidgetConfig = {
-  accountId?: string;
-  baseUrl?: string;
-  title?: string;
-  subtitle?: string;
-  primaryColor?: string;
-  greeting?: string;
-  newMessagePlaceholder?: string;
-  companyName?: string;
-  agentAvailableText?: string;
-  agentUnavailableText?: string;
-  showAgentAvailability?: 1 | 0;
-  requireEmailUpfront?: 1 | 0;
-  closeable?: 1 | 0;
-  customerId?: string;
-  subscriptionPlan?: string;
-  metadata?: string; // stringified JSON
-  version?: string;
-};
-
 export function noop() {}
 
 // TODO: handle this on the server instead
@@ -31,5 +11,18 @@ export function now() {
     date.getUTCHours(),
     date.getUTCMinutes(),
     date.getUTCSeconds()
+  );
+}
+
+export function today() {
+  const date = new Date();
+
+  return new Date(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    0,
+    0,
+    0,
   );
 }

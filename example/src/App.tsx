@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ChatWidget, {ChatWindow, Papercups, API} from '@papercups-io/chat-widget';
+import ChatWidget, {ChatWindow, Papercups, Types} from '@papercups-io/chat-widget';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
@@ -18,11 +18,13 @@ const App = ({disco, displayChatWindow}: Props) => {
   const [primaryColor, setPrimaryColor] = React.useState(colors[0]);
 
   const commonProps = {
+    // dev: update to the account_id in your target DB
+    accountId: 'b69b0bac-0ab5-4469-9f6b-c3dcecceefe5',
+
     // props shared between the open/closed widgets
     title: 'Welcome to Papercups!',
     subtitle: 'Ask us anything in the chat window 😊',
     primaryColor: primaryColor,
-    accountId: 'eb504736-0f20-4978-98ff-1a82ae60b266',
     greeting: 'Hi there! How can I help you?',
     newMessagePlaceholder: 'Start typing...',
     agentAvailableText: 'Agents are online!',
@@ -48,10 +50,10 @@ const App = ({disco, displayChatWindow}: Props) => {
     onChatLoaded: () => console.log('Chat loaded!'),
     onChatClosed: () => console.log('Chat closed!'),
     onChatOpened: () => console.log('Chat opened!'),
-    onMessageReceived: (message: API.Message) => {
+    onMessageReceived: (message: Types.Message) => {
       console.log('Message received!', message)
     },
-    onMessageSent: (message: API.Message) => console.log('Message sent!', message),
+    onMessageSent: (message: Types.Message) => console.log('Message sent!', message),
   }
 
   React.useEffect(() => {

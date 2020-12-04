@@ -4,20 +4,26 @@ import React from 'react';
 import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
 import {
-  CustomerMetadata,
-  Message,
-  WidgetSettings,
   fetchWidgetSettings,
   updateWidgetSettingsMetadata,
 } from '../api';
-import {WidgetConfig, noop} from '../utils';
+import {noop, now, today} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {isDev} from '../config';
 import Logger from '../logger';
 import {getUserInfo} from '../track/info';
 
+import {
+  CustomerMetadata,
+  Message,
+  WidgetSettings,
+  WidgetConfig,
+  WorkingHours,
+} from '../types';
+
 const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
+const TEN_MINUTES = 1000 * 60 * 10
 
 // TODO: set this up somewhere else
 const setupPostMessageHandlers = (w: any, handlers: (msg?: any) => void) => {
@@ -89,6 +95,7 @@ type State = {
   config: WidgetConfig;
   shouldDisplayNotifications: boolean;
   isTransitioning: boolean;
+  lastSeenAt: number | null;  // valueOf the lastSeenAt Date
 };
 
 class ChatWidgetContainer extends React.Component<Props, State> {
@@ -119,6 +126,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       config: {} as WidgetConfig,
       shouldDisplayNotifications: false,
       isTransitioning: false,
+      lastSeenAt: null,
+      //lastSeenAt: new Date().valueOf(),
     };
   }
 
@@ -151,6 +160,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     ];
 
     this.storage = store(window);
+    this.logger.info('account', settings);
 
     const metadata = {...getUserInfo(window), ...customer};
     const config: WidgetConfig = {
@@ -164,15 +174,19 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       greeting: greeting || settings.greeting,
       newMessagePlaceholder:
         newMessagePlaceholder || settings.new_message_placeholder,
-      companyName: settings?.account?.company_name,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       showAgentAvailability: showAgentAvailability ? 1 : 0,
       closeable: canToggle ? 1 : 0,
       customerId: this.storage.getCustomerId(),
+      companyName: settings?.account?.company_name,
       subscriptionPlan: settings?.account?.subscription_plan,
+      workingHours: settings?.account?.working_hours?.[0] || null,
+      hideOutsideWorkingHours: settings?.hide_outside_working_hours,
       metadata: JSON.stringify(metadata),
       version: '1.1.2',
     };
+
+    this.logger.info('hide outside working hrs?', config);
 
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
 
@@ -349,6 +363,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   send = (event: string, payload?: any) => {
+    if (this.shouldHideWidget()) {
+      this.logger.debug('iframe hidden, not sending event', {event, payload});
+      return;
+    }
+
     this.logger.debug('Sending from parent:', {event, payload});
     const el = this.iframeRef as any;
 
@@ -378,6 +397,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   handleMessageSent = (message: Message) => {
     const {onMessageSent = noop} = this.props;
 
+    this.send('notifications:display', {shouldDisplayNotifications: false});
     onMessageSent && onMessageSent(message);
   };
 
@@ -393,6 +413,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     this.setState({shouldDisplayNotifications: false});
     this.send('notifications:display', {shouldDisplayNotifications: false});
+    this.recordLastSeen()
   };
 
   handleChatLoaded = () => {
@@ -502,7 +523,59 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     }
   };
 
+  recordLastSeen = () => {
+    this.setState({lastSeenAt: new Date().valueOf()})
+  }
+
+  minutesFromMidnight = () => {
+    return (now().valueOf() - today().valueOf()) / 1000 / 60
+  }
+
+  isOutsideWorkingHours = () => {
+    const workingHours = this.state.config?.workingHours
+    if (!workingHours) {
+      return false;
+    }
+
+    const mins = this.minutesFromMidnight()
+    // TODO: verify start_minute and end_minute are in UTC as well (they are prob in timezone time, -> need to convert today() to take a timezone)
+    if (mins <= workingHours.start_minute || mins >= workingHours.end_minute ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  hasRecentAction = () => {
+    if (!this.state.lastSeenAt) {
+      return false
+    }
+    // last action > 10m ago
+    return (new Date().valueOf() - this.state.lastSeenAt) <= TEN_MINUTES
+  }
+
+  shouldHideWidget = () => {
+    return this.state.config?.hideOutsideWorkingHours &&
+      this.isOutsideWorkingHours() &&
+      !this.hasRecentAction();
+  }
+
   render() {
+    // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
+    const wh: WorkingHours = this.state.config?.workingHours || {day: "weekdays", start_minute: 0, end_minute: 0}
+
+    if (this.shouldHideWidget()) {
+      return <div style={{position: "fixed", bottom: 10, right: 10}}>
+        widget is hidden
+        <br />
+        hide? {String(this.state.config?.hideOutsideWorkingHours)}
+        after? {String(this.isOutsideWorkingHours())}
+        inactive ? {String(!this.hasRecentAction())}
+        lastSeen ? {this.state.lastSeenAt}
+        working hrs? {wh.start_minute} - {wh.end_minute}, now: {this.minutesFromMidnight()}
+      </div>;
+    }
+
     const {
       isOpen,
       isLoaded,
@@ -534,6 +607,13 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     return (
       <ThemeProvider theme={theme}>
+      widget is showing
+        <br />
+        hide? {String(this.state.config?.hideOutsideWorkingHours)}
+        after? {String(this.isOutsideWorkingHours())}
+        inactive ? {String(!this.hasRecentAction())}
+        lastSeen ? {this.state.lastSeenAt}
+        working hrs? {wh.start_minute} - {wh.end_minute}, now: {this.minutesFromMidnight()}
         {children({
           sandbox,
           isLoaded,
