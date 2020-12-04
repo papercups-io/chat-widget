@@ -154,6 +154,10 @@ To build the project, run `npm start` in the root directory. (If you're running 
 To test it out, use the `/example` directory:
 
 ```
+# from the root
+npm install
+npm start
+
 cd example
 npm install
 npm start
