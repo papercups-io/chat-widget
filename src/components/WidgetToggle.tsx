@@ -156,6 +156,7 @@ export const WidgetToggle = ({
       }}
     >
       <Button
+        data-testid="widget-toggle"
         className='Papercups-toggleButton'
         variant='primary'
         p={0}

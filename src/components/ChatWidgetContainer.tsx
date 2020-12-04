@@ -152,6 +152,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const debugModeEnabled = isDev(window);
 
     this.logger = new Logger(debugModeEnabled);
+    this.logger.info('got settings', settings)
+
     this.subscriptions = [
       setupPostMessageHandlers(window, this.postMessageHandlers),
       setupCustomEventHandlers(window, this.EVENTS, this.customEventHandlers),
@@ -189,7 +191,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
 
     this.setState({config, query}, () => {
-      this.hideIfAfterHours()
+      this.hideIfOutsideHours()
     });
 
     // Set some metadata on the widget to better understand usage
@@ -542,12 +544,12 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     return false;
   }
 
-  hideIfAfterHours = () => {
+  hideIfOutsideHours = () => {
     this.logger.info("checking for hide")
     if (this.state.config?.hideOutsideWorkingHours && this.isOutsideWorkingHours()) {
       this.logger.info("hiding widget")
       this.setState({
-        hideWidget: true,
+        //hideWidget: true,
       })
     }
   }
@@ -557,7 +559,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const wh: WorkingHours = this.state.config?.workingHours || {day: "weekdays", start_minute: 0, end_minute: 0}
 
     if (this.state.hideWidget) {
-      return <div style={{position: "fixed", bottom: 10, right: 10}}>
+      return <div data-testid="widget-null" style={{position: "fixed", bottom: 10, right: 10}}>
         widget is hidden
         <br />
         hide? {String(this.state.config?.hideOutsideWorkingHours)}
