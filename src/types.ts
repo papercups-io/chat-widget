@@ -67,7 +67,6 @@ export type WidgetConfig = {
   version?: string;
 };
 
-
 export type WorkingHours = {
   day: string;
   start_minute: number;

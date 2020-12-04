@@ -1,10 +1,7 @@
 import request from 'superagent';
 import {DEFAULT_BASE_URL} from './config';
 
-import {
-  WidgetSettings,
-} from './types';
-
+import {WidgetSettings} from './types';
 
 export const fetchWidgetSettings = async (
   accountId: string,

@@ -23,6 +23,6 @@ export function today() {
     date.getUTCDate(),
     0,
     0,
-    0,
+    0
   );
 }

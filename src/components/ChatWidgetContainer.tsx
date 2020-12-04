@@ -3,10 +3,7 @@
 import React from 'react';
 import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
-import {
-  fetchWidgetSettings,
-  updateWidgetSettingsMetadata,
-} from '../api';
+import {fetchWidgetSettings, updateWidgetSettingsMetadata} from '../api';
 import {noop, now, today} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
@@ -152,7 +149,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const debugModeEnabled = isDev(window);
 
     this.logger = new Logger(debugModeEnabled);
-    this.logger.info('got settings', settings)
+    this.logger.info('got settings', settings);
 
     this.subscriptions = [
       setupPostMessageHandlers(window, this.postMessageHandlers),
@@ -191,7 +188,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
 
     this.setState({config, query}, () => {
-      this.hideIfOutsideHours()
+      this.hideIfOutsideHours();
     });
 
     // Set some metadata on the widget to better understand usage
@@ -525,47 +522,60 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   minutesFromMidnight = () => {
-    return (now().valueOf() - today().valueOf()) / 1000 / 60
-  }
+    return (now().valueOf() - today().valueOf()) / 1000 / 60;
+  };
 
   isOutsideWorkingHours = () => {
-    const workingHours = this.state.config?.workingHours
+    const workingHours = this.state.config?.workingHours;
     if (!workingHours) {
       return false;
     }
 
     // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
-    const mins = this.minutesFromMidnight()
+    const mins = this.minutesFromMidnight();
     // TODO: verify start_minute and end_minute are in UTC as well (they are prob in timezone time, -> need to convert today() to take a timezone)
-    if (mins <= workingHours.start_minute || mins >= workingHours.end_minute ) {
+    if (mins <= workingHours.start_minute || mins >= workingHours.end_minute) {
       return true;
     }
 
     return false;
-  }
+  };
 
   hideIfOutsideHours = () => {
-    this.logger.info("checking for hide")
-    if (this.state.config?.hideOutsideWorkingHours && this.isOutsideWorkingHours()) {
-      this.logger.info("hiding widget")
+    this.logger.info('checking for hide');
+    if (
+      this.state.config?.hideOutsideWorkingHours &&
+      this.isOutsideWorkingHours()
+    ) {
+      this.logger.info('hiding widget');
       this.setState({
         //hideWidget: true,
-      })
+      });
     }
-  }
+  };
 
   render() {
     // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
-    const wh: WorkingHours = this.state.config?.workingHours || {day: "weekdays", start_minute: 0, end_minute: 0}
+    const wh: WorkingHours = this.state.config?.workingHours || {
+      day: 'weekdays',
+      start_minute: 0,
+      end_minute: 0,
+    };
 
     if (this.state.hideWidget) {
-      return <div data-testid="widget-null" style={{position: "fixed", bottom: 10, right: 10}}>
-        widget is hidden
-        <br />
-        hide? {String(this.state.config?.hideOutsideWorkingHours)}
-        after? {String(this.isOutsideWorkingHours())}
-        working hrs? {wh.start_minute} - {wh.end_minute}, now: {this.minutesFromMidnight()}
-      </div>;
+      return (
+        <div
+          data-testid='widget-null'
+          style={{position: 'fixed', bottom: 10, right: 10}}
+        >
+          widget is hidden
+          <br />
+          hide? {String(this.state.config?.hideOutsideWorkingHours)}
+          after? {String(this.isOutsideWorkingHours())}
+          working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
+          {this.minutesFromMidnight()}
+        </div>
+      );
     }
 
     const {
@@ -599,11 +609,12 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     return (
       <ThemeProvider theme={theme}>
-      widget is showing
+        widget is showing
         <br />
         hide? {String(this.state.config?.hideOutsideWorkingHours)}
         after? {String(this.isOutsideWorkingHours())}
-        working hrs? {wh.start_minute} - {wh.end_minute}, now: {this.minutesFromMidnight()}
+        working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
+        {this.minutesFromMidnight()}
         {children({
           sandbox,
           isLoaded,
