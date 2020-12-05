@@ -29,7 +29,7 @@ export type CustomerMetadata = {
 export type Account = {
   company_name?: string;
   subscription_plan?: string;
-  working_hours?: WorkingHours;
+  working_hours?: Array<WorkingHours>;
 };
 
 export type WidgetSettings = {
@@ -62,7 +62,7 @@ export type WidgetConfig = {
   companyName?: string;
   subscriptionPlan?: string;
   hideOutsideWorkingHours?: boolean;
-  workingHours?: WorkingHours | null;
+  workingHours?: string;  // stringified Array<WorkingHours>
   metadata?: string; // stringified JSON
   version?: string;
 };

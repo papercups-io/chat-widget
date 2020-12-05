@@ -177,22 +177,25 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       customerId: this.storage.getCustomerId(),
       companyName: settings?.account?.company_name,
       subscriptionPlan: settings?.account?.subscription_plan,
-      workingHours: settings?.account?.working_hours?.[0] || null,
       hideOutsideWorkingHours: settings?.hide_outside_working_hours,
+      workingHours: JSON.stringify(settings?.account?.working_hours || []),
       metadata: JSON.stringify(metadata),
       version: '1.1.2',
     };
 
     this.logger.info('hide outside working hrs?', config);
 
-    const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
-
-    this.setState({config, query}, () => {
+    this.setState({config, query: this.queryString(config)}, () => {
       this.hideIfOutsideHours();
     });
 
     // Set some metadata on the widget to better understand usage
     await this.updateWidgetSettingsMetadata();
+  }
+
+  queryString = (config: WidgetConfig) => {
+    const dup = {...config}
+    return qs.stringify(dup, {skipEmptyString: true, skipNull: true});
   }
 
   componentWillUnmount() {
@@ -525,8 +528,12 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     return (now().valueOf() - today().valueOf()) / 1000 / 60;
   };
 
+  getWorkingHours = () => {
+    return JSON.parse(this.state.config?.workingHours || "[]")
+  }
+
   isOutsideWorkingHours = () => {
-    const workingHours = this.state.config?.workingHours;
+    const workingHours = this.getWorkingHours();
     if (!workingHours) {
       return false;
     }
@@ -556,11 +563,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   render() {
     // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
-    const wh: WorkingHours = this.state.config?.workingHours || {
+    const wh: WorkingHours = this.getWorkingHours() || [{
       day: 'weekdays',
       start_minute: 0,
       end_minute: 0,
-    };
+    }];
 
     if (this.state.hideWidget) {
       return (
@@ -615,7 +622,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         after? {String(this.isOutsideWorkingHours())}
         working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
         {this.minutesFromMidnight()}
-        {children({
+        {children && children({
           sandbox,
           isLoaded,
           isActive,

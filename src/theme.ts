@@ -1,4 +1,5 @@
 import tinycolor from 'tinycolor2';
+import {Theme} from 'theme-ui';
 
 type ThemeSettings = {primary?: string};
 
@@ -59,7 +60,7 @@ const styles: {[key: string]: any} = {
   },
 };
 
-export const getThemeConfig = (settings: ThemeSettings) => {
+export const getThemeConfig = (settings: ThemeSettings): Theme => {
   const {primary = '#1890ff'} = settings;
   const base = tinycolor(primary);
   const overrides = {

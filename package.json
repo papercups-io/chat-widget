@@ -18,8 +18,8 @@
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
     "test:lint": "eslint src/**/*.ts*",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
+    "test:unit": "cross-env CI=1 react-scripts test --env=jest-environment-jsdom-fourteen",
+    "test:watch": "react-scripts test --env=jest-environment-jsdom-fourteen",
     "predeploy": "cd example && npm install && npm run build",
     "deploy": "gh-pages -d example/build"
   },
@@ -69,7 +69,7 @@
     "phoenix": "^1.5.3",
     "query-string": "^6.13.1",
     "superagent": "^5.3.1",
-    "theme-ui": "^0.3.1",
+    "theme-ui": "^0.3.4",
     "tinycolor2": "^1.4.1"
   }
 }
