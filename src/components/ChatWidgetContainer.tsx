@@ -20,6 +20,7 @@ import {
 } from '../types';
 
 const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
+const WORKING_HOURS_SORT_ORDER = ['everyday', 'weekdays', 'weekends', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
 // TODO: set this up somewhere else
 const setupPostMessageHandlers = (w: any, handlers: (msg?: any) => void) => {
@@ -149,7 +150,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const debugModeEnabled = isDev(window);
 
     this.logger = new Logger(debugModeEnabled);
-    this.logger.info('got settings', settings);
 
     this.subscriptions = [
       setupPostMessageHandlers(window, this.postMessageHandlers),
@@ -157,7 +157,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     ];
 
     this.storage = store(window);
-    this.logger.info('account', settings);
 
     const metadata = {...getUserInfo(window), ...customer};
     const config: WidgetConfig = {
@@ -182,8 +181,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       metadata: JSON.stringify(metadata),
       version: '1.1.2',
     };
-
-    this.logger.info('hide outside working hrs?', config);
 
     this.setState({config, query: this.queryString(config)}, () => {
       this.hideIfOutsideHours();
@@ -528,13 +525,48 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     return (now().valueOf() - today().valueOf()) / 1000 / 60;
   };
 
-  getWorkingHours = () => {
-    return JSON.parse(this.state.config?.workingHours || "[]")
+  workingHoursAsDays = (wh) => {
+    console.log("CONVERTING WH")
+    console.log(wh)
+    if (wh.day === 'everyday') {
+      return [...Array(7)].map((el, idx) => ({day: idx, start_minute: wh.start_minute, end_minute: wh.end_minute}))
+    }
+    if (wh.day === 'weekdays') {
+      return [...Array(5)].map((el, idx) => ({day: idx+1, start_minute: wh.start_minute, end_minute: wh.end_minute}))
+    }
+    if (wh.day === 'weekends') {
+      return [...Array(2)].map((el, idx) => ({day: idx+5, start_minute: wh.start_minute, end_minute: wh.end_minute}))
+    }
+    else {
+      return [{day: WORKING_HOURS_SORT_ORDER.indexOf(wh.day)-3, start_minute: wh.start_minute, end_minute: wh.end_minute}]
+    }
+  }
+
+  workingHoursByDay = (sortedDays) => {
+    console.log("SORTED DAYS")
+    console.log(sortedDays)
+    return sortedDays.reduce((acc, wh) => {
+      this.workingHoursAsDays(wh).forEach(asDay => {
+        console.log("processing wh:", wh)
+        console.log("processing day:", asDay)
+        acc[asDay.day] = asDay
+        delete acc[asDay.day]["day"]
+      })
+      return acc
+    }, {})
+  }
+
+  getWorkingHours = (widgetConfig) => {
+    const hoursArray = JSON.parse(widgetConfig.workingHours || "[]")
+    hoursArray.sort(wh => WORKING_HOURS_SORT_ORDER.indexOf(wh.day))
+    console.log("hrsarray")
+    console.log(hoursArray)
+    return this.workingHoursByDay(hoursArray)
   }
 
   isOutsideWorkingHours = () => {
-    const workingHours = this.getWorkingHours();
-    if (!workingHours) {
+    const workingHours = this.getWorkingHours(this.state.config);
+    if (!workingHours || workingHours.length === 0) {
       return false;
     }
 
@@ -549,25 +581,25 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   hideIfOutsideHours = () => {
-    this.logger.info('checking for hide');
     if (
       this.state.config?.hideOutsideWorkingHours &&
       this.isOutsideWorkingHours()
     ) {
-      this.logger.info('hiding widget');
       this.setState({
-        //hideWidget: true,
+        hideWidget: true,
       });
     }
   };
 
   render() {
     // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
-    const wh: WorkingHours = this.getWorkingHours() || [{
+    /*
+    const wh: WorkingHours = this.getWorkingHours(this.state.config) || [{
       day: 'weekdays',
       start_minute: 0,
       end_minute: 0,
     }];
+    */
 
     if (this.state.hideWidget) {
       return (
@@ -575,12 +607,14 @@ class ChatWidgetContainer extends React.Component<Props, State> {
           data-testid='widget-null'
           style={{position: 'fixed', bottom: 10, right: 10}}
         >
+        {/*
           widget is hidden
           <br />
           hide? {String(this.state.config?.hideOutsideWorkingHours)}
           after? {String(this.isOutsideWorkingHours())}
           working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
           {this.minutesFromMidnight()}
+          */}
         </div>
       );
     }
@@ -616,12 +650,14 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     return (
       <ThemeProvider theme={theme}>
+      {/*
         widget is showing
         <br />
         hide? {String(this.state.config?.hideOutsideWorkingHours)}
         after? {String(this.isOutsideWorkingHours())}
         working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
         {this.minutesFromMidnight()}
+        */}
         {children && children({
           sandbox,
           isLoaded,

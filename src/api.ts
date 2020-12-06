@@ -18,6 +18,7 @@ export const updateWidgetSettingsMetadata = async (
   metadata: any,
   baseUrl = DEFAULT_BASE_URL
 ): Promise<WidgetSettings> => {
+  console.log("called actual update??")
   return request
     .put(`${baseUrl}/api/widget_settings/metadata`)
     .send({account_id: accountId, metadata})
