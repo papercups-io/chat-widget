@@ -5,6 +5,7 @@ import {render, fireEvent, waitFor, screen} from '@testing-library/react';
 // unit tests (instance tests)
 import renderer from 'react-test-renderer';
 import request from 'superagent';
+import {tzDate} from '../utils';
 import 'jest';
 
 import {
@@ -50,7 +51,7 @@ const WORKING_HOURS_EVERYDAY = {
 }
 
 describe('ChatWidgetContainer unit', () => {
-  describe.only('getWorkingHours', () => {
+  describe('getWorkingHours', () => {
     it('converts a single workingHour to day-of-week dicts', () => {
       const config = {
         workingHours: JSON.stringify([WORKING_HOURS_MONDAY])
@@ -255,11 +256,120 @@ describe('ChatWidgetContainer unit', () => {
 
       expect(widgetContainer.getInstance().getWorkingHours(config)).toEqual(convertedHours)
     })
+  })
 
-    it('converts to desired timezone', () => {
+  describe.only('isWorkingHours', () => {
+    let widgetContainer = renderer.create(
+      <ChatWidgetContainer
+        accountId={1}
+      />
+    )
+
+    beforeEach(() => {
+      // https://github.com/facebook/jest/issues/2234
+      const mondayDec7 = tzDate({
+        year: 2020,
+        month: 12,
+        day: 7,
+        hour: 8,
+        tz: "America/New_York"
+      })
+      jest.useFakeTimers('modern');
+      jest.setSystemTime(mondayDec7.valueOf())
+    });
+    afterAll(() => {
+      jest.useRealTimers();
+    });
+
+    describe('when there are no working hours for the day', () => {
+      it('returns false', () => {
+        const config = {
+          workingHours: JSON.stringify([WORKING_HOURS_TUESDAY]),
+          timezone: "America/New_York",
+        }
+
+        expect(widgetContainer.getInstance().isWorkingHours(config)).toEqual(false)
+      })
+    })
+
+    describe('when there are working hours for the day', () => {
+      describe('and it is within the working hours', () => {
+        it('returns true', () => {
+          const config = {
+            workingHours: JSON.stringify([WORKING_HOURS_MONDAY]),
+            timezone: "America/New_York",
+          }
+          expect(widgetContainer.getInstance().isWorkingHours(config)).toEqual(true)
+        })
+      })
+
+      describe('and it is outside the working hours', () => {
+        beforeEach(() => {
+          const mondayDec7 = tzDate({
+            year: 2020,
+            month: 12,
+            day: 7,
+            hour: 5,
+            tz: "America/New_York"
+          })
+      jest.useFakeTimers('modern');
+          jest.setSystemTime(mondayDec7.valueOf())
+        })
+
+        it('returns false', () => {
+          const config = {
+            workingHours: JSON.stringify([WORKING_HOURS_MONDAY]),
+            timezone: "America/New_York",
+          }
+          expect(widgetContainer.getInstance().isWorkingHours(config)).toEqual(false)
+        })
+      })
+
+      describe('when the timezone puts it into working hours', () => {
+        beforeEach(() => {
+          const eightAmInNY = tzDate({
+            year: 2020,
+            month: 12,
+            day: 7,
+            hour: 5,
+            tz: "America/Los_Angeles"
+          })
+      jest.useFakeTimers('modern');
+          jest.setSystemTime(eightAmInNY.valueOf())
+        })
+
+        it('returns true', () => {
+          const config = {
+            workingHours: JSON.stringify([WORKING_HOURS_MONDAY]),
+            timezone: "America/New_York",
+          }
+          expect(widgetContainer.getInstance().isWorkingHours(config)).toEqual(true)
+        })
+      })
+
+      describe('when the timezone puts it outside working hours', () => {
+        beforeEach(() => {
+          const tenPmInNY = tzDate({
+            year: 2020,
+            month: 12,
+            day: 7,
+            hour: 19,  // 7pm in LA
+            tz: "America/Los_Angeles"
+          })
+      jest.useFakeTimers('modern');
+          jest.setSystemTime(tenPmInNY.valueOf())
+        })
+
+        it('returns false', () => {
+          const config = {
+            workingHours: JSON.stringify([WORKING_HOURS_MONDAY]),
+            timezone: "America/New_York",
+          }
+          expect(widgetContainer.getInstance().isWorkingHours(config)).toEqual(false)
+        })
+      })
     })
   })
-  describe('hideIfOutsideHours', () => {});
 })
 
 describe('ChatWidgetContainer scenario', () => {

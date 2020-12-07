@@ -4,7 +4,7 @@ import React from 'react';
 import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
 import {fetchWidgetSettings, updateWidgetSettingsMetadata} from '../api';
-import {noop, now, today} from '../utils';
+import {noop, now, today, offsetFromTo} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {isDev} from '../config';
@@ -176,6 +176,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       customerId: this.storage.getCustomerId(),
       companyName: settings?.account?.company_name,
       subscriptionPlan: settings?.account?.subscription_plan,
+      timezone: settings?.account?.time_zone,
       hideOutsideWorkingHours: settings?.hide_outside_working_hours,
       workingHours: JSON.stringify(settings?.account?.working_hours || []),
       metadata: JSON.stringify(metadata),
@@ -522,27 +523,28 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   minutesFromMidnight = () => {
+    // minutes in client's local time
     return (now().valueOf() - today().valueOf()) / 1000 / 60;
   };
 
-  workingHoursAsDays = (wh) => {
+  workingHoursAsDays = (wh: WorkingHours) => {
     console.log("CONVERTING WH")
     console.log(wh)
     if (wh.day === 'everyday') {
-      return [...Array(7)].map((el, idx) => ({day: idx, start_minute: wh.start_minute, end_minute: wh.end_minute}))
+      return [...Array(7)].map((_, idx) => ({day: idx, start_minute: wh.start_minute, end_minute: wh.end_minute}))
     }
     if (wh.day === 'weekdays') {
-      return [...Array(5)].map((el, idx) => ({day: idx+1, start_minute: wh.start_minute, end_minute: wh.end_minute}))
+      return [...Array(5)].map((_, idx) => ({day: idx+1, start_minute: wh.start_minute, end_minute: wh.end_minute}))
     }
     if (wh.day === 'weekends') {
-      return [...Array(2)].map((el, idx) => ({day: idx+5, start_minute: wh.start_minute, end_minute: wh.end_minute}))
+      return [...Array(2)].map((_, idx) => ({day: idx+5, start_minute: wh.start_minute, end_minute: wh.end_minute}))
     }
     else {
       return [{day: WORKING_HOURS_SORT_ORDER.indexOf(wh.day)-3, start_minute: wh.start_minute, end_minute: wh.end_minute}]
     }
   }
 
-  workingHoursByDay = (sortedDays) => {
+  workingHoursByDay = (sortedDays: Array<WorkingHours>) => {
     console.log("SORTED DAYS")
     console.log(sortedDays)
     return sortedDays.reduce((acc, wh) => {
@@ -556,34 +558,40 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     }, {})
   }
 
-  getWorkingHours = (widgetConfig) => {
+  getWorkingHours = (widgetConfig: WidgetConfig) => {
     const hoursArray = JSON.parse(widgetConfig.workingHours || "[]")
-    hoursArray.sort(wh => WORKING_HOURS_SORT_ORDER.indexOf(wh.day))
-    console.log("hrsarray")
-    console.log(hoursArray)
+    hoursArray.sort((wh: WorkingHours) => WORKING_HOURS_SORT_ORDER.indexOf(wh.day))
     return this.workingHoursByDay(hoursArray)
   }
 
-  isOutsideWorkingHours = () => {
-    const workingHours = this.getWorkingHours(this.state.config);
-    if (!workingHours || workingHours.length === 0) {
+  isWorkingHours = (config: WidgetConfig) => {
+    const workingHours = this.getWorkingHours(config);
+    const currentWorkingHours = workingHours[now().getDay()]
+    const agentTimezone = config.timezone;
+
+    if (!currentWorkingHours) {
       return false;
     }
 
-    // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
-    const mins = this.minutesFromMidnight();
-    // TODO: verify start_minute and end_minute are in UTC as well (they are prob in timezone time, -> need to convert today() to take a timezone)
-    if (mins <= workingHours.start_minute || mins >= workingHours.end_minute) {
+    // TODO: needs check for has working hours for current day
+
+    let mins = this.minutesFromMidnight();
+    mins =  mins + offsetFromTo('local', agentTimezone)
+    if (mins <= currentWorkingHours.start_minute || mins >= currentWorkingHours.end_minute) {
       return true;
     }
 
     return false;
+  }
+
+  isOutsideWorkingHours = (config: WidgetConfig) => {
+    return !this.isWorkingHours(config)
   };
 
   hideIfOutsideHours = () => {
     if (
       this.state.config?.hideOutsideWorkingHours &&
-      this.isOutsideWorkingHours()
+      this.isOutsideWorkingHours(this.state.config)
     ) {
       this.setState({
         hideWidget: true,
@@ -611,7 +619,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
           widget is hidden
           <br />
           hide? {String(this.state.config?.hideOutsideWorkingHours)}
-          after? {String(this.isOutsideWorkingHours())}
+          after? {String(this.isOutsideWorkingHours(this.state.config))}
           working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
           {this.minutesFromMidnight()}
           */}
@@ -654,7 +662,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         widget is showing
         <br />
         hide? {String(this.state.config?.hideOutsideWorkingHours)}
-        after? {String(this.isOutsideWorkingHours())}
+        after? {String(this.isOutsideWorkingHours(this.state.config))}
         working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
         {this.minutesFromMidnight()}
         */}
