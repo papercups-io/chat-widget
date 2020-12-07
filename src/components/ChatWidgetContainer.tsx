@@ -604,7 +604,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   render() {
     // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
-    const wh = this.workingHoursToday(this.state.config)
+    const wh = this.workingHoursToday(this.state.config) || {}
 
     console.log("WIDGERT HIDE STATE: ", this.state.hideWidget)
     if (this.state.hideWidget) {

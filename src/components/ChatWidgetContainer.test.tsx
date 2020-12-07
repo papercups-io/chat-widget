@@ -1,23 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// functional tests
-import {render, fireEvent, waitFor, screen} from '@testing-library/react';
-// unit tests (instance tests)
 import renderer from 'react-test-renderer';
-import request from 'superagent';
 import {tzDate} from '../utils';
 import 'jest';
 
-import {
-  WidgetSettings,
-  WorkingHours,
-} from '../types';
-
-jest.mock('../api', () => ({
-  fetchWidgetSettings: jest.fn(() => Promise.resolve({})),
-  updateWidgetSettingsMetadata: jest.fn(() => Promise.resolve({}))
-}))
-import * as mockApi from '../api';
 import ChatWidgetContainer from './ChatWidgetContainer';
 
 const WORKING_HOURS_MONDAY = {
@@ -40,11 +26,16 @@ const WORKING_HOURS_WEEKENDS = {
   start_minute: 8 * 60,
   end_minute: 20 * 60,
 }
-const WORKING_HOURS_EVERYDAY = {
+export const WORKING_HOURS_EVERYDAY = {
   day: 'everyday',
   start_minute: 8 * 60,
   end_minute: 20 * 60,
 }
+
+jest.mock('../api', () => ({
+  fetchWidgetSettings: jest.fn(() => Promise.resolve({})),
+  updateWidgetSettingsMetadata: jest.fn(() => Promise.resolve({}))
+}))
 
 describe('ChatWidgetContainer unit', () => {
   describe('getWorkingHours', () => {
@@ -367,96 +358,3 @@ describe('ChatWidgetContainer unit', () => {
     })
   })
 })
-
-describe('ChatWidgetContainer scenario', () => {
-
-  beforeEach(() => {
-    mockApi.fetchWidgetSettings.mockReturnValue(Promise.resolve({}))
-    mockApi.updateWidgetSettingsMetadata.mockReturnValue(Promise.resolve({}))
-  })
-
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
-
-  it('renders without crashing', () => {
-    render(
-      <ChatWidgetContainer
-        accountId={1}
-      />
-    );
-  });
-
-  describe('when hideOutsideWorkingHours is turned on', () => {
-    beforeEach(() => {
-      const widgetSettings: WidgetSettings = {
-        hide_outside_working_hours: true,
-        account: {
-          working_hours: [WORKING_HOURS_EVERYDAY],
-          time_zone: "America/New_York",
-        },
-      }
-
-      mockApi.fetchWidgetSettings.mockReturnValue(Promise.resolve(widgetSettings))
-    });
-
-    describe('when outside working hours', () => {
-      beforeAll(() => {
-        const fourAM = tzDate({
-          year: 2020,
-          month: 0,
-          day: 1,
-          hour: 4,
-          tz: "America/New_York"
-        })
-        jest.useFakeTimers('modern');
-        jest.setSystemTime(fourAM.valueOf())
-      });
-      afterAll(() => {
-        jest.useRealTimers();
-      });
-
-      it('renders null widget', async () => {
-        render(
-          <ChatWidgetContainer
-            accountId={1}
-          >
-          </ChatWidgetContainer>
-        );
-        await waitFor(() => screen.getByTestId('widget-null'));
-
-        expect(screen.getByTestId('widget-null')).toBeTruthy();
-      });
-    });
-
-    describe('when during working hours', () => {
-      beforeAll(() => {
-        // https://github.com/facebook/jest/issues/2234
-        const eightAM = tzDate({
-          year: 2020,
-          month: 0,
-          day: 1,
-          hour: 8,
-          tz: "America/New_York"
-        })
-        jest.useFakeTimers('modern');
-        jest.setSystemTime(eightAM.valueOf())
-      });
-      afterAll(() => {
-        jest.useRealTimers();
-      });
-
-      it.only('renders widget', async () => {
-        render(
-          <ChatWidgetContainer
-            accountId={1}
-          >
-          </ChatWidgetContainer>
-        );
-        await waitFor(() => screen.getByTestId('widget-iframewrapper'), 3000);
-
-        expect(screen.getByTestId('widget-iframewrapper')).toBeTruthy();
-      });
-    });
-  });
-});
