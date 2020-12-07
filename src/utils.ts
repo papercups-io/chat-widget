@@ -9,6 +9,9 @@ dayjs.extend(dayjsUtc);
 dayjs.extend(dayjsTz);
 dayjs.extend(objectSupport);
 
+// re-export extended dayjs
+export {dayjs as dayjs};
+
 export function noop() {}
 
 // TODO: handle this on the server instead
@@ -59,5 +62,3 @@ export function tzDate({
   // @ts-ignore
   return dayjs.tz({year, month, day, hour, minute, second, millisecond}, tz);
 }
-
-export {dayjs as dayjs};
