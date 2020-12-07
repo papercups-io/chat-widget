@@ -569,8 +569,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   isWorkingHours = (config: WidgetConfig) => {
     const currentWorkingHours = this.workingHoursToday(config)
-    console.log("CURR WORK HRS")
-    console.log(currentWorkingHours)
     const agentTimezone: any = config.timezone;
 
     if (!currentWorkingHours) {
@@ -579,7 +577,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     let mins = this.minutesFromMidnight();
     mins =  mins + offsetFromTo('local', agentTimezone)
-    console.log('offset mins', mins)
     if (mins >= currentWorkingHours.start_minute && mins <= currentWorkingHours.end_minute) {
       return true;
     }
@@ -606,9 +603,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
     const wh = this.workingHoursToday(this.state.config) || {}
 
-    console.log("WIDGERT HIDE STATE: ", this.state.hideWidget)
     if (this.state.hideWidget) {
-      console.log("HIDING WIDGET")
       return (
         <div
           data-testid='widget-null'
@@ -636,7 +631,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const {primaryColor} = config;
 
     if (!query) {
-      console.log("no query")
       return null;
     }
 
@@ -654,7 +648,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       'allow-forms',
     ].join(' ');
 
-    console.log("WH", wh)
     return (
       <React.Fragment>
       <div>
