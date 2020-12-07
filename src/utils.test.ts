@@ -26,9 +26,6 @@ describe('utils', () => {
       expect(Utils.offsetFromTo('America/Los_Angeles', 'Asia/Jakarta')).toEqual(
         900
       );
-      // just for local
-      expect(Utils.offsetFromTo('local', 'America/New_York')).toEqual(0);
-      expect(Utils.offsetFromTo('local', 'America/Los_Angeles')).toEqual(-180);
     });
   });
 
