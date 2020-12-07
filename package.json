@@ -18,8 +18,8 @@
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
     "test:lint": "eslint src/**/*.ts*",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jest-environment-jsdom-fourteen",
-    "test:watch": "react-scripts test --env=jest-environment-jsdom-fourteen",
+    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
+    "test:watch": "react-scripts test --env=jsdom",
     "predeploy": "cd example && npm install && npm run build",
     "deploy": "gh-pages -d example/build"
   },
@@ -43,7 +43,7 @@
     "@typescript-eslint/parser": "^2.26.0",
     "babel-eslint": "^10.0.3",
     "cross-env": "^7.0.2",
-    "eslint": "^6.8.0",
+    "eslint": "^7.11.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-config-standard-react": "^9.2.0",
@@ -59,7 +59,7 @@
     "prettier": "^2.0.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "4.0.1",
     "react-test-renderer": "^17.0.1",
     "typescript": "^3.7.5"
   },
