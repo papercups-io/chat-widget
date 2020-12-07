@@ -50,7 +50,7 @@ describe('ChatWidgetContainer unit', () => {
   });
 
   describe('getWorkingHours', () => {
-    it.only('converts a single workingHour to day-of-week dicts', () => {
+    it('converts a single workingHour to day-of-week dicts', () => {
       const config = {
         workingHours: JSON.stringify([WORKING_HOURS_MONDAY]),
       };

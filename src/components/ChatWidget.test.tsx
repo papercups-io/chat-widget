@@ -85,7 +85,7 @@ describe('ChatWidget behavior', () => {
         jest.useRealTimers();
       });
 
-      it.only('renders widget', async () => {
+      it('renders widget', async () => {
         render(<ChatWidget accountId={1}></ChatWidget>);
         await waitFor(() => screen.getByTestId('widget-iframewrapper'));
 
