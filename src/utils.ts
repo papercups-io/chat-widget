@@ -42,6 +42,8 @@ export function tzDate({
 }: {
   year: number, month: number, day: number, hour: number, minute?: number, second?: number, millisecond?: number, tz: string,
 }) {
+  // dayjs types don't apply to extended constructors it seems like
+  // @ts-ignore
   return dayjs.tz({year, month, day, hour, minute, second, millisecond}, tz)
 }
 

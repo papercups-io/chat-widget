@@ -453,9 +453,9 @@ describe('ChatWidgetContainer scenario', () => {
           >
           </ChatWidgetContainer>
         );
-        await waitFor(() => screen.getByTestId('widget-toggle'), 3000);
+        await waitFor(() => screen.getByTestId('widget-iframewrapper'), 3000);
 
-        expect(screen.getByTestId('widget-null')).toExist();
+        expect(screen.getByTestId('widget-iframewrapper')).toBeTruthy();
       });
     });
   });

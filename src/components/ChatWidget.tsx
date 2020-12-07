@@ -37,8 +37,8 @@ const ChatWidget = (props: Props) => {
 
           return (
             <React.Fragment>
+              <span data-testid="widget-iframewrapper" style={{width: 0}}></span>
               <motion.iframe
-                data-testid='widget-iframe'
                 ref={setIframeRef}
                 title='Papercups Chat Widget Container'
                 className='Papercups-chatWindowContainer'

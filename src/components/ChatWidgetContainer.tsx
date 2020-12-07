@@ -6,7 +6,7 @@ import React from 'react';
 import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
 import {fetchWidgetSettings, updateWidgetSettingsMetadata} from '../api';
-import {noop, now, dayjs, offsetFromTo} from '../utils';
+import {noop, dayjs, offsetFromTo} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {isDev} from '../config';
@@ -132,8 +132,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   async componentDidMount() {
     // TODO: use `subscription_plan` from settings.account to determine
     // whether to display the Papercups branding or not in the chat window
-    console.log("ABOUT TO FETCH")
-    console.log(fetchWidgetSettings())
     const settings = await this.fetchWidgetSettings();
     const {
       accountId,
@@ -558,15 +556,19 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     }, {})
   }
 
-  getWorkingHours = (widgetConfig: WidgetConfig) => {
-    const hoursArray = JSON.parse(widgetConfig.workingHours || "[]")
+  getWorkingHours = (config: WidgetConfig) => {
+    const hoursArray = JSON.parse(config.workingHours || "[]")
     hoursArray.sort((wh: WorkingHours) => WORKING_HOURS_SORT_ORDER.indexOf(wh.day))
     return this.workingHoursByDay(hoursArray)
   }
 
-  isWorkingHours = (config: WidgetConfig) => {
+  workingHoursToday = (config: WidgetConfig) => {
     const workingHours = this.getWorkingHours(config);
-    const currentWorkingHours = workingHours[dayjs().day().toString()]
+    return workingHours[dayjs().day().toString()]
+  }
+
+  isWorkingHours = (config: WidgetConfig) => {
+    const currentWorkingHours = this.workingHoursToday(config)
     console.log("CURR WORK HRS")
     console.log(currentWorkingHours)
     const agentTimezone: any = config.timezone;
@@ -602,14 +604,9 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   render() {
     // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
-    /*
-    const wh: WorkingHours = this.getWorkingHours(this.state.config) || [{
-      day: 'weekdays',
-      start_minute: 0,
-      end_minute: 0,
-    }];
-    */
+    const wh = this.workingHoursToday(this.state.config)
 
+    console.log("WIDGERT HIDE STATE: ", this.state.hideWidget)
     if (this.state.hideWidget) {
       console.log("HIDING WIDGET")
       return (
@@ -617,14 +614,12 @@ class ChatWidgetContainer extends React.Component<Props, State> {
           data-testid='widget-null'
           style={{position: 'fixed', bottom: 10, right: 10}}
         >
-        {/*
-          widget is hidden
+          <span>widget is hidden</span>
           <br />
           hide? {String(this.state.config?.hideOutsideWorkingHours)}
           after? {String(this.isOutsideWorkingHours(this.state.config))}
           working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
           {this.minutesFromMidnight()}
-          */}
         </div>
       );
     }
@@ -659,16 +654,19 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       'allow-forms',
     ].join(' ');
 
+    console.log("WH", wh)
     return (
-      <ThemeProvider theme={theme}>
-      {/*
-        widget is showing
+      <React.Fragment>
+      <div>
+        <span>widget is showing</span>
         <br />
         hide? {String(this.state.config?.hideOutsideWorkingHours)}
         after? {String(this.isOutsideWorkingHours(this.state.config))}
         working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
         {this.minutesFromMidnight()}
-        */}
+
+      </div>
+      <ThemeProvider theme={theme}>
         {children && children({
           sandbox,
           isLoaded,
@@ -683,6 +681,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
           onToggleOpen: this.handleToggleOpen,
         })}
       </ThemeProvider>
+      </React.Fragment>
     );
   }
 }
