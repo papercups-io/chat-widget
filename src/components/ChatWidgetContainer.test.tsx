@@ -96,7 +96,7 @@ describe('ChatWidgetContainer unit', () => {
       expect(widgetContainer.getInstance().getWorkingHours(config)).toEqual(convertedHours)
     })
 
-    it.only('converts "everyday" to days-of-week', () => {
+    it('converts "everyday" to days-of-week', () => {
       const config = {
         workingHours: JSON.stringify([WORKING_HOURS_EVERYDAY])
       }
@@ -151,10 +151,6 @@ describe('ChatWidgetContainer unit', () => {
       )
 
       const convertedHours = {
-        0: {
-          start_minute: 8*60,
-          end_minute: 20*60,
-        },
         1: {
           start_minute: 8*60,
           end_minute: 20*60,
@@ -175,10 +171,6 @@ describe('ChatWidgetContainer unit', () => {
           start_minute: 8*60,
           end_minute: 20*60,
         },
-        6: {
-          start_minute: 8*60,
-          end_minute: 20*60,
-        }
       }
 
       expect(widgetContainer.getInstance().getWorkingHours(config)).toEqual(convertedHours)
