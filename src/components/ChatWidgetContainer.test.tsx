@@ -352,7 +352,7 @@ describe('ChatWidgetContainer unit', () => {
             hour: 8,
             tz: "America/New_York"
           })
-      jest.useFakeTimers('modern');
+          jest.useFakeTimers('modern');
           jest.setSystemTime(eightAmInNY.valueOf())
         })
 
@@ -392,7 +392,7 @@ describe('ChatWidgetContainer scenario', () => {
       const widgetSettings: WidgetSettings = {
         hide_outside_working_hours: true,
         account: {
-          working_hours: [],
+          working_hours: [WORKING_HOURS_EVERYDAY],
           time_zone: "America/New_York",
         },
       }
@@ -402,7 +402,6 @@ describe('ChatWidgetContainer scenario', () => {
 
     describe('when outside working hours', () => {
       beforeAll(() => {
-        // https://github.com/facebook/jest/issues/2234
         const fourAM = tzDate({
           year: 2020,
           month: 0,
@@ -426,7 +425,7 @@ describe('ChatWidgetContainer scenario', () => {
         );
         await waitFor(() => screen.getByTestId('widget-null'));
 
-        expect(screen.getByTestId('widget-null')).toExist();
+        expect(screen.getByTestId('widget-null')).toBeTruthy();
       });
     });
 
@@ -447,14 +446,14 @@ describe('ChatWidgetContainer scenario', () => {
         jest.useRealTimers();
       });
 
-      it('renders widget', async () => {
+      it.only('renders widget', async () => {
         render(
           <ChatWidgetContainer
             accountId={1}
           >
           </ChatWidgetContainer>
         );
-        await waitFor(() => screen.getByTestId('widget-null'));
+        await waitFor(() => screen.getByTestId('widget-toggle'), 3000);
 
         expect(screen.getByTestId('widget-null')).toExist();
       });

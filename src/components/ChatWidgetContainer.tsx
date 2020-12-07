@@ -567,6 +567,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   isWorkingHours = (config: WidgetConfig) => {
     const workingHours = this.getWorkingHours(config);
     const currentWorkingHours = workingHours[dayjs().day().toString()]
+    console.log("CURR WORK HRS")
+    console.log(currentWorkingHours)
     const agentTimezone: any = config.timezone;
 
     if (!currentWorkingHours) {
@@ -575,6 +577,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     let mins = this.minutesFromMidnight();
     mins =  mins + offsetFromTo('local', agentTimezone)
+    console.log('offset mins', mins)
     if (mins >= currentWorkingHours.start_minute && mins <= currentWorkingHours.end_minute) {
       return true;
     }
@@ -608,6 +611,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     */
 
     if (this.state.hideWidget) {
+      console.log("HIDING WIDGET")
       return (
         <div
           data-testid='widget-null'
@@ -637,6 +641,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const {primaryColor} = config;
 
     if (!query) {
+      console.log("no query")
       return null;
     }
 
