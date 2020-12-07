@@ -104,7 +104,7 @@ describe('ChatWidget behavior', () => {
           >
           </ChatWidget>
         );
-        await waitFor(() => screen.getByTestId('widget-iframewrapper'), 3000);
+        await waitFor(() => screen.getByTestId('widget-iframewrapper') );
 
         expect(screen.getByTestId('widget-iframewrapper')).toBeTruthy();
       });

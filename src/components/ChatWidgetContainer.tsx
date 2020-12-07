@@ -600,22 +600,13 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   render() {
-    // TODO: needs differentiating types of `day`s - translate to int range && check if Date.day+1 is in range
-    const wh = this.workingHoursToday(this.state.config) || {}
-
     if (this.state.hideWidget) {
       return (
-        <div
+        <span
           data-testid='widget-null'
-          style={{position: 'fixed', bottom: 10, right: 10}}
+          style={{width: 0}}
         >
-          <span>widget is hidden</span>
-          <br />
-          hide? {String(this.state.config?.hideOutsideWorkingHours)}
-          after? {String(this.isOutsideWorkingHours(this.state.config))}
-          working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
-          {this.minutesFromMidnight()}
-        </div>
+        </span>
       );
     }
 
@@ -649,16 +640,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     ].join(' ');
 
     return (
-      <React.Fragment>
-      <div>
-        <span>widget is showing</span>
-        <br />
-        hide? {String(this.state.config?.hideOutsideWorkingHours)}
-        after? {String(this.isOutsideWorkingHours(this.state.config))}
-        working hrs? {wh.start_minute} - {wh.end_minute}, now:{' '}
-        {this.minutesFromMidnight()}
-
-      </div>
       <ThemeProvider theme={theme}>
         {children && children({
           sandbox,
@@ -674,7 +655,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
           onToggleOpen: this.handleToggleOpen,
         })}
       </ThemeProvider>
-      </React.Fragment>
     );
   }
 }

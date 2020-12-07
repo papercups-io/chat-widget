@@ -4,6 +4,13 @@ import renderer from 'react-test-renderer';
 import {tzDate} from '../utils';
 import 'jest';
 
+// mock api before import
+jest.mock('../api', () => ({
+  fetchWidgetSettings: jest.fn(() => Promise.resolve({})),
+  updateWidgetSettingsMetadata: jest.fn(() => Promise.resolve({}))
+}))
+import * as mockApi from '../api';
+
 import ChatWidgetContainer from './ChatWidgetContainer';
 
 const WORKING_HOURS_MONDAY = {
@@ -32,14 +39,18 @@ export const WORKING_HOURS_EVERYDAY = {
   end_minute: 20 * 60,
 }
 
-jest.mock('../api', () => ({
-  fetchWidgetSettings: jest.fn(() => Promise.resolve({})),
-  updateWidgetSettingsMetadata: jest.fn(() => Promise.resolve({}))
-}))
-
 describe('ChatWidgetContainer unit', () => {
+  beforeEach(() => {
+    mockApi.fetchWidgetSettings.mockReturnValue(Promise.resolve({}))
+    mockApi.updateWidgetSettingsMetadata.mockReturnValue(Promise.resolve({}))
+  })
+
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
   describe('getWorkingHours', () => {
-    it('converts a single workingHour to day-of-week dicts', () => {
+    it.only('converts a single workingHour to day-of-week dicts', () => {
       const config = {
         workingHours: JSON.stringify([WORKING_HOURS_MONDAY])
       }
