@@ -4,38 +4,29 @@ import {render, fireEvent, waitFor, screen} from '@testing-library/react';
 import {tzDate} from '../utils';
 import 'jest';
 
-import {
-  WidgetSettings,
-  WorkingHours,
-} from '../types';
+import {WidgetSettings, WorkingHours} from '../types';
 
-import {
-  WORKING_HOURS_EVERYDAY,
-} from './ChatWidgetContainer.test';
+import {WORKING_HOURS_EVERYDAY} from './ChatWidgetContainer.test';
 
 jest.mock('../api', () => ({
   fetchWidgetSettings: jest.fn(() => Promise.resolve({})),
-  updateWidgetSettingsMetadata: jest.fn(() => Promise.resolve({}))
-}))
+  updateWidgetSettingsMetadata: jest.fn(() => Promise.resolve({})),
+}));
 import * as mockApi from '../api';
 import ChatWidget from './ChatWidget';
 
 describe('ChatWidget behavior', () => {
   beforeEach(() => {
-    mockApi.fetchWidgetSettings.mockReturnValue(Promise.resolve({}))
-    mockApi.updateWidgetSettingsMetadata.mockReturnValue(Promise.resolve({}))
-  })
+    mockApi.fetchWidgetSettings.mockReturnValue(Promise.resolve({}));
+    mockApi.updateWidgetSettingsMetadata.mockReturnValue(Promise.resolve({}));
+  });
 
   afterEach(() => {
-    jest.resetAllMocks()
-  })
+    jest.resetAllMocks();
+  });
 
   it('renders without crashing', () => {
-    render(
-      <ChatWidget
-        accountId={1}
-      />
-    );
+    render(<ChatWidget accountId={1} />);
   });
 
   describe('when hideOutsideWorkingHours is turned on', () => {
@@ -44,11 +35,13 @@ describe('ChatWidget behavior', () => {
         hide_outside_working_hours: true,
         account: {
           working_hours: [WORKING_HOURS_EVERYDAY],
-          time_zone: "America/New_York",
+          time_zone: 'America/New_York',
         },
-      }
+      };
 
-      mockApi.fetchWidgetSettings.mockReturnValue(Promise.resolve(widgetSettings))
+      mockApi.fetchWidgetSettings.mockReturnValue(
+        Promise.resolve(widgetSettings)
+      );
     });
 
     describe('when outside working hours', () => {
@@ -58,22 +51,17 @@ describe('ChatWidget behavior', () => {
           month: 0,
           day: 1,
           hour: 4,
-          tz: "America/New_York"
-        })
+          tz: 'America/New_York',
+        });
         jest.useFakeTimers('modern');
-        jest.setSystemTime(fourAM.valueOf())
+        jest.setSystemTime(fourAM.valueOf());
       });
       afterAll(() => {
         jest.useRealTimers();
       });
 
       it('renders null widget', async () => {
-        render(
-          <ChatWidget
-            accountId={1}
-          >
-          </ChatWidget>
-        );
+        render(<ChatWidget accountId={1}></ChatWidget>);
         await waitFor(() => screen.getByTestId('widget-null'));
 
         expect(screen.getByTestId('widget-null')).toBeTruthy();
@@ -88,23 +76,18 @@ describe('ChatWidget behavior', () => {
           month: 0,
           day: 1,
           hour: 8,
-          tz: "America/New_York"
-        })
+          tz: 'America/New_York',
+        });
         jest.useFakeTimers('modern');
-        jest.setSystemTime(eightAM.valueOf())
+        jest.setSystemTime(eightAM.valueOf());
       });
       afterAll(() => {
         jest.useRealTimers();
       });
 
       it.only('renders widget', async () => {
-        render(
-          <ChatWidget
-            accountId={1}
-          >
-          </ChatWidget>
-        );
-        await waitFor(() => screen.getByTestId('widget-iframewrapper') );
+        render(<ChatWidget accountId={1}></ChatWidget>);
+        await waitFor(() => screen.getByTestId('widget-iframewrapper'));
 
         expect(screen.getByTestId('widget-iframewrapper')).toBeTruthy();
       });

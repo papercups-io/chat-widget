@@ -22,7 +22,18 @@ import {
 } from '../types';
 
 const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
-const WORKING_HOURS_SORT_ORDER = ['everyday', 'weekdays', 'weekends', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+const WORKING_HOURS_SORT_ORDER = [
+  'everyday',
+  'weekdays',
+  'weekends',
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+];
 
 // TODO: set this up somewhere else
 const setupPostMessageHandlers = (w: any, handlers: (msg?: any) => void) => {
@@ -194,9 +205,9 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   }
 
   queryString = (config: WidgetConfig) => {
-    const dup = {...config}
+    const dup = {...config};
     return qs.stringify(dup, {skipEmptyString: true, skipNull: true});
-  }
+  };
 
   componentWillUnmount() {
     this.subscriptions.forEach((unsubscribe) => {
@@ -526,49 +537,70 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   minutesFromMidnight = () => {
     // minutes in client's local time
-    const now = dayjs()
-    const dayStart = dayjs(new Date(now.year(), now.month(), now.date(), 0, 0, 0))
+    const now = dayjs();
+    const dayStart = dayjs(
+      new Date(now.year(), now.month(), now.date(), 0, 0, 0)
+    );
     return (now.valueOf() - dayStart.valueOf()) / 1000 / 60;
   };
 
   workingHoursAsDays = (wh: WorkingHours) => {
     if (wh.day === 'everyday') {
-      return [...Array(7)].map((_, idx) => ({day: idx, start_minute: wh.start_minute, end_minute: wh.end_minute}))
+      return [...Array(7)].map((_, idx) => ({
+        day: idx,
+        start_minute: wh.start_minute,
+        end_minute: wh.end_minute,
+      }));
     }
     if (wh.day === 'weekdays') {
-      return [...Array(5)].map((_, idx) => ({day: idx+1, start_minute: wh.start_minute, end_minute: wh.end_minute}))
+      return [...Array(5)].map((_, idx) => ({
+        day: idx + 1,
+        start_minute: wh.start_minute,
+        end_minute: wh.end_minute,
+      }));
     }
     if (wh.day === 'weekends') {
-      return [...Array(2)].map((_, idx) => ({day: idx+5, start_minute: wh.start_minute, end_minute: wh.end_minute}))
+      return [...Array(2)].map((_, idx) => ({
+        day: idx + 5,
+        start_minute: wh.start_minute,
+        end_minute: wh.end_minute,
+      }));
+    } else {
+      return [
+        {
+          day: WORKING_HOURS_SORT_ORDER.indexOf(wh.day) - 3,
+          start_minute: wh.start_minute,
+          end_minute: wh.end_minute,
+        },
+      ];
     }
-    else {
-      return [{day: WORKING_HOURS_SORT_ORDER.indexOf(wh.day)-3, start_minute: wh.start_minute, end_minute: wh.end_minute}]
-    }
-  }
+  };
 
   workingHoursByDay = (sortedDays: Array<WorkingHours>) => {
     return sortedDays.reduce((acc, wh) => {
-      this.workingHoursAsDays(wh).forEach(asDay => {
-        acc[asDay.day] = asDay
-        delete acc[asDay.day]["day"]
-      })
-      return acc
-    }, {})
-  }
+      this.workingHoursAsDays(wh).forEach((asDay) => {
+        acc[asDay.day] = asDay;
+        delete acc[asDay.day]['day'];
+      });
+      return acc;
+    }, {});
+  };
 
   getWorkingHours = (config: WidgetConfig) => {
-    const hoursArray = JSON.parse(config.workingHours || "[]")
-    hoursArray.sort((wh: WorkingHours) => WORKING_HOURS_SORT_ORDER.indexOf(wh.day))
-    return this.workingHoursByDay(hoursArray)
-  }
+    const hoursArray = JSON.parse(config.workingHours || '[]');
+    hoursArray.sort((wh: WorkingHours) =>
+      WORKING_HOURS_SORT_ORDER.indexOf(wh.day)
+    );
+    return this.workingHoursByDay(hoursArray);
+  };
 
   workingHoursToday = (config: WidgetConfig) => {
     const workingHours = this.getWorkingHours(config);
-    return workingHours[dayjs().day().toString()]
-  }
+    return workingHours[dayjs().day().toString()];
+  };
 
   isWorkingHours = (config: WidgetConfig) => {
-    const currentWorkingHours = this.workingHoursToday(config)
+    const currentWorkingHours = this.workingHoursToday(config);
     const agentTimezone: any = config.timezone;
 
     if (!currentWorkingHours) {
@@ -576,16 +608,19 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     }
 
     let mins = this.minutesFromMidnight();
-    mins =  mins + offsetFromTo('local', agentTimezone)
-    if (mins >= currentWorkingHours.start_minute && mins <= currentWorkingHours.end_minute) {
+    mins = mins + offsetFromTo('local', agentTimezone);
+    if (
+      mins >= currentWorkingHours.start_minute &&
+      mins <= currentWorkingHours.end_minute
+    ) {
       return true;
     }
 
     return false;
-  }
+  };
 
   isOutsideWorkingHours = (config: WidgetConfig) => {
-    return !this.isWorkingHours(config)
+    return !this.isWorkingHours(config);
   };
 
   hideIfOutsideHours = () => {
@@ -601,13 +636,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   render() {
     if (this.state.hideWidget) {
-      return (
-        <span
-          data-testid='widget-null'
-          style={{width: 0}}
-        >
-        </span>
-      );
+      return <span data-testid='widget-null' style={{width: 0}}></span>;
     }
 
     const {
@@ -641,19 +670,20 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     return (
       <ThemeProvider theme={theme}>
-        {children && children({
-          sandbox,
-          isLoaded,
-          isActive,
-          isOpen,
-          isTransitioning,
-          customIconUrl,
-          iframeUrl,
-          query,
-          shouldDisplayNotifications,
-          setIframeRef: this.setIframeRef,
-          onToggleOpen: this.handleToggleOpen,
-        })}
+        {children &&
+          children({
+            sandbox,
+            isLoaded,
+            isActive,
+            isOpen,
+            isTransitioning,
+            customIconUrl,
+            iframeUrl,
+            query,
+            shouldDisplayNotifications,
+            setIframeRef: this.setIframeRef,
+            onToggleOpen: this.handleToggleOpen,
+          })}
       </ThemeProvider>
     );
   }

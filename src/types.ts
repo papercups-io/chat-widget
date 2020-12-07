@@ -64,7 +64,7 @@ export type WidgetConfig = {
   subscriptionPlan?: string;
   hideOutsideWorkingHours?: boolean;
   timezone?: string;
-  workingHours?: string;  // stringified Array<WorkingHours>
+  workingHours?: string; // stringified Array<WorkingHours>
   metadata?: string; // stringified JSON
   version?: string;
 };
