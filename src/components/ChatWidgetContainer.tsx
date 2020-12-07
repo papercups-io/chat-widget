@@ -1,10 +1,12 @@
+// https://github.com/system-ui/theme-ui/issues/1160
+/** @jsxRuntime classic */
 /** @jsx jsx */
 
 import React from 'react';
 import {ThemeProvider, jsx} from 'theme-ui';
 import qs from 'query-string';
 import {fetchWidgetSettings, updateWidgetSettingsMetadata} from '../api';
-import {noop, now, today, offsetFromTo} from '../utils';
+import {noop, now, dayjs, offsetFromTo} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {isDev} from '../config';
@@ -130,6 +132,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   async componentDidMount() {
     // TODO: use `subscription_plan` from settings.account to determine
     // whether to display the Papercups branding or not in the chat window
+    console.log("ABOUT TO FETCH")
+    console.log(fetchWidgetSettings())
     const settings = await this.fetchWidgetSettings();
     const {
       accountId,
@@ -524,12 +528,12 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   minutesFromMidnight = () => {
     // minutes in client's local time
-    return (now().valueOf() - today().valueOf()) / 1000 / 60;
+    const now = dayjs()
+    const dayStart = dayjs(new Date(now.year(), now.month(), now.date(), 0, 0, 0))
+    return (now.valueOf() - dayStart.valueOf()) / 1000 / 60;
   };
 
   workingHoursAsDays = (wh: WorkingHours) => {
-    console.log("CONVERTING WH")
-    console.log(wh)
     if (wh.day === 'everyday') {
       return [...Array(7)].map((_, idx) => ({day: idx, start_minute: wh.start_minute, end_minute: wh.end_minute}))
     }
@@ -545,12 +549,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   }
 
   workingHoursByDay = (sortedDays: Array<WorkingHours>) => {
-    console.log("SORTED DAYS")
-    console.log(sortedDays)
     return sortedDays.reduce((acc, wh) => {
       this.workingHoursAsDays(wh).forEach(asDay => {
-        console.log("processing wh:", wh)
-        console.log("processing day:", asDay)
         acc[asDay.day] = asDay
         delete acc[asDay.day]["day"]
       })
@@ -566,18 +566,16 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   isWorkingHours = (config: WidgetConfig) => {
     const workingHours = this.getWorkingHours(config);
-    const currentWorkingHours = workingHours[now().getDay()]
-    const agentTimezone = config.timezone;
+    const currentWorkingHours = workingHours[dayjs().day().toString()]
+    const agentTimezone: any = config.timezone;
 
     if (!currentWorkingHours) {
       return false;
     }
 
-    // TODO: needs check for has working hours for current day
-
     let mins = this.minutesFromMidnight();
     mins =  mins + offsetFromTo('local', agentTimezone)
-    if (mins <= currentWorkingHours.start_minute || mins >= currentWorkingHours.end_minute) {
+    if (mins >= currentWorkingHours.start_minute && mins <= currentWorkingHours.end_minute) {
       return true;
     }
 

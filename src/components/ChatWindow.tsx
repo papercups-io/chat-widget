@@ -1,3 +1,6 @@
+// https://github.com/system-ui/theme-ui/issues/1160
+// https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#react-automatic-runtime
+/** @jsxRuntime classic */
 /** @jsx jsx */
 
 import {jsx} from 'theme-ui';

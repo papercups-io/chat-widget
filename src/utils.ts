@@ -1,11 +1,13 @@
 // polyfill Intl API used by dayjs, for IE11: https://github.com/formatjs/date-time-format-timezone
 import 'date-time-format-timezone';
 // tz requires utc: https://day.js.org/docs/en/plugin/timezone
-import dayjs from 'dayjs';
-const dayjsUtc = require('dayjs/plugin/utc');
-const dayjsTz = require('dayjs/plugin/timezone');
+import {default as dayjs} from 'dayjs';
+import objectSupport from "dayjs/plugin/objectSupport";
+import dayjsUtc from 'dayjs/plugin/utc';
+import dayjsTz from 'dayjs/plugin/timezone';
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTz)
+dayjs.extend(objectSupport);
 
 
 export function noop() {}
@@ -24,19 +26,6 @@ export function now() {
   );
 }
 
-export function today() {
-  const date = new Date();
-
-  return new Date(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-    0,
-    0,
-    0
-  );
-}
-
 export function utcOffset(tz: string) {
   if (tz === "local") {
     return dayjs().utcOffset()
@@ -49,11 +38,11 @@ export function offsetFromTo(tz1: string, tz2: string) {
 }
 
 export function tzDate({
-  year, month, day, hour, minute = 0, second = 0, millis = 0, tz
+  year, month, day, hour, minute = 0, second = 0, millisecond = 0, tz
 }: {
-  year: number, month: number, day: number, hour: number, minute?: number, second?: number, millis?: number, tz: string,
+  year: number, month: number, day: number, hour: number, minute?: number, second?: number, millisecond?: number, tz: string,
 }) {
-  const date = dayjs(new Date(year, month, day, hour, minute, second, millis))
-  date.tz(tz)
-  return date
+  return dayjs.tz({year, month, day, hour, minute, second, millisecond}, tz)
 }
+
+export {dayjs as dayjs};

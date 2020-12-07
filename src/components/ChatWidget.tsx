@@ -1,3 +1,5 @@
+// https://github.com/system-ui/theme-ui/issues/1160
+/** @jsxRuntime classic */
 /** @jsx jsx */
 
 import React from 'react';

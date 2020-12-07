@@ -12,10 +12,6 @@ import {
   WidgetSettings,
   WorkingHours,
 } from '../types';
-import {
-  mockDate,
-  resetDate,
-} from '../test_utils';
 
 jest.mock('../api', () => ({
   fetchWidgetSettings: jest.fn(() => Promise.resolve({})),
@@ -258,7 +254,7 @@ describe('ChatWidgetContainer unit', () => {
     })
   })
 
-  describe.only('isWorkingHours', () => {
+  describe('isWorkingHours', () => {
     let widgetContainer = renderer.create(
       <ChatWidgetContainer
         accountId={1}
@@ -269,7 +265,7 @@ describe('ChatWidgetContainer unit', () => {
       // https://github.com/facebook/jest/issues/2234
       const mondayDec7 = tzDate({
         year: 2020,
-        month: 12,
+        month: 11,
         day: 7,
         hour: 8,
         tz: "America/New_York"
@@ -277,7 +273,7 @@ describe('ChatWidgetContainer unit', () => {
       jest.useFakeTimers('modern');
       jest.setSystemTime(mondayDec7.valueOf())
     });
-    afterAll(() => {
+    afterEach(() => {
       jest.useRealTimers();
     });
 
@@ -307,12 +303,12 @@ describe('ChatWidgetContainer unit', () => {
         beforeEach(() => {
           const mondayDec7 = tzDate({
             year: 2020,
-            month: 12,
+            month: 11,
             day: 7,
             hour: 5,
             tz: "America/New_York"
           })
-      jest.useFakeTimers('modern');
+          jest.useFakeTimers('modern');
           jest.setSystemTime(mondayDec7.valueOf())
         })
 
@@ -327,21 +323,21 @@ describe('ChatWidgetContainer unit', () => {
 
       describe('when the timezone puts it into working hours', () => {
         beforeEach(() => {
-          const eightAmInNY = tzDate({
+          const elevenPmInNY = tzDate({
             year: 2020,
-            month: 12,
+            month: 11,
             day: 7,
-            hour: 5,
-            tz: "America/Los_Angeles"
+            hour: 23,
+            tz: "America/New_York"
           })
-      jest.useFakeTimers('modern');
-          jest.setSystemTime(eightAmInNY.valueOf())
+          jest.useFakeTimers('modern');
+          jest.setSystemTime(elevenPmInNY.valueOf())
         })
 
         it('returns true', () => {
           const config = {
             workingHours: JSON.stringify([WORKING_HOURS_MONDAY]),
-            timezone: "America/New_York",
+            timezone: "America/Los_Angeles",
           }
           expect(widgetContainer.getInstance().isWorkingHours(config)).toEqual(true)
         })
@@ -349,21 +345,21 @@ describe('ChatWidgetContainer unit', () => {
 
       describe('when the timezone puts it outside working hours', () => {
         beforeEach(() => {
-          const tenPmInNY = tzDate({
+          const eightAmInNY = tzDate({
             year: 2020,
-            month: 12,
+            month: 11,
             day: 7,
-            hour: 19,  // 7pm in LA
-            tz: "America/Los_Angeles"
+            hour: 8,
+            tz: "America/New_York"
           })
       jest.useFakeTimers('modern');
-          jest.setSystemTime(tenPmInNY.valueOf())
+          jest.setSystemTime(eightAmInNY.valueOf())
         })
 
         it('returns false', () => {
           const config = {
             workingHours: JSON.stringify([WORKING_HOURS_MONDAY]),
-            timezone: "America/New_York",
+            timezone: "America/Los_Angeles",
           }
           expect(widgetContainer.getInstance().isWorkingHours(config)).toEqual(false)
         })
@@ -375,8 +371,8 @@ describe('ChatWidgetContainer unit', () => {
 describe('ChatWidgetContainer scenario', () => {
 
   beforeEach(() => {
-    mockApi.fetchWidgetSettings.mockResolvedValue({})
-    mockApi.updateWidgetSettingsMetadata.mockResolvedValue({})
+    mockApi.fetchWidgetSettings.mockReturnValue(Promise.resolve({}))
+    mockApi.updateWidgetSettingsMetadata.mockReturnValue(Promise.resolve({}))
   })
 
   afterEach(() => {
@@ -393,26 +389,33 @@ describe('ChatWidgetContainer scenario', () => {
 
   describe('when hideOutsideWorkingHours is turned on', () => {
     beforeEach(() => {
-      const workingHours: Array<WorkingHours> = [
-      ]
       const widgetSettings: WidgetSettings = {
         hide_outside_working_hours: true,
         account: {
-          working_hours: [...workingHours]
+          working_hours: [],
+          time_zone: "America/New_York",
         },
       }
 
-      mockApi.fetchWidgetSettings.mockResolvedValueOnce(widgetSettings)
+      mockApi.fetchWidgetSettings.mockReturnValue(Promise.resolve(widgetSettings))
     });
 
     describe('when outside working hours', () => {
-      beforeEach(() => {
-        const fourAM = new Date(2020, 1, 1, 4)
-        mockDate(fourAM.toISOString())
-      })
-      afterEach(() => {
-        resetDate()
-      })
+      beforeAll(() => {
+        // https://github.com/facebook/jest/issues/2234
+        const fourAM = tzDate({
+          year: 2020,
+          month: 0,
+          day: 1,
+          hour: 4,
+          tz: "America/New_York"
+        })
+        jest.useFakeTimers('modern');
+        jest.setSystemTime(fourAM.valueOf())
+      });
+      afterAll(() => {
+        jest.useRealTimers();
+      });
 
       it('renders null widget', async () => {
         render(
@@ -428,6 +431,22 @@ describe('ChatWidgetContainer scenario', () => {
     });
 
     describe('when during working hours', () => {
+      beforeAll(() => {
+        // https://github.com/facebook/jest/issues/2234
+        const eightAM = tzDate({
+          year: 2020,
+          month: 0,
+          day: 1,
+          hour: 8,
+          tz: "America/New_York"
+        })
+        jest.useFakeTimers('modern');
+        jest.setSystemTime(eightAM.valueOf())
+      });
+      afterAll(() => {
+        jest.useRealTimers();
+      });
+
       it('renders widget', async () => {
         render(
           <ChatWidgetContainer
