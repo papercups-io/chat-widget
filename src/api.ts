@@ -32,6 +32,7 @@ export type CustomerMetadata = {
 export type Account = {
   company_name?: string;
   subscription_plan?: string;
+  is_outside_working_hours?: boolean;
 };
 
 export type WidgetSettings = {
