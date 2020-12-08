@@ -1,4 +1,4 @@
-import ChatWidget from '.';
+import ChatWidget from './index';
 
 describe('ChatWidget', () => {
   it('is truthy', () => {

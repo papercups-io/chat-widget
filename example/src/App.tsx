@@ -2,6 +2,9 @@ import React from 'react';
 
 import ChatWidget, {ChatWindow, Papercups} from '@papercups-io/chat-widget';
 
+// NB: during development, replace this with a valid account ID from your dev db
+const TEST_ACCOUNT_ID = '2EBBAD4C-B162-4ED2-AFF5-EAF9EBF469A5';
+
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
 const App = ({disco, displayChatWindow}: Props) => {
@@ -48,7 +51,7 @@ const App = ({disco, displayChatWindow}: Props) => {
             title='Welcome to Papercups!'
             subtitle='Ask us anything in the chat window 😊'
             primaryColor={primaryColor}
-            accountId='eb504736-0f20-4978-98ff-1a82ae60b266'
+            accountId={TEST_ACCOUNT_ID}
             greeting='Hi there! How can I help you?'
             newMessagePlaceholder='Start typing...'
             agentAvailableText='Agents are online!'
@@ -88,7 +91,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           title='Welcome to Papercups!'
           subtitle='Ask us anything in the chat window 😊'
           primaryColor={primaryColor}
-          accountId='eb504736-0f20-4978-98ff-1a82ae60b266'
+          accountId={TEST_ACCOUNT_ID}
           greeting='Hi there! How can I help you?'
           newMessagePlaceholder='Start typing...'
           agentAvailableText='Agents are online!'

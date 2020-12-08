@@ -10,7 +10,7 @@ import {
   fetchWidgetSettings,
   updateWidgetSettingsMetadata,
 } from '../api';
-import {WidgetConfig, noop} from '../utils';
+import {WidgetConfig, isValidUuid, noop} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import {isDev} from '../config';
@@ -110,6 +110,14 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     if (!props.accountId) {
       throw new Error('An `accountId` is required to run the Papercups chat!');
+    } else if (!isValidUuid(props.accountId)) {
+      console.error(
+        `The \`accountId\` must be a valid UUID. (Received invalid \`accountId\`: ${props.accountId})`
+      );
+      console.error(
+        `If you're missing a Papercups \`accountId\`, you can get one by signing up for a free account at https://app.papercups.io/register`
+      );
+      throw new Error(`Invalid \`accountId\`: ${props.accountId}`);
     }
 
     this.state = {
