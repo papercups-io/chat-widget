@@ -151,9 +151,14 @@ These are the props you can pass into your `<ChatWidget />` React component, or 
 
 To build the project, run `npm start` in the root directory. (If you're running it for the first time, you'll have to run `npm install` first.)
 
+```bash
+npm install
+npm start
+```
+
 To test it out, use the `/example` directory:
 
-```
+```bash
 cd example
 npm install
 npm start
