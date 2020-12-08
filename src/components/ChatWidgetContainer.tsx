@@ -63,6 +63,7 @@ export type SharedProps = {
   greeting?: string;
   customer?: CustomerMetadata | null;
   newMessagePlaceholder?: string;
+  emailInputPlaceholder?: string;
   agentAvailableText?: string;
   agentUnavailableText?: string;
   showAgentAvailability?: boolean;
@@ -74,6 +75,10 @@ export type SharedProps = {
   onChatClosed?: () => void;
   onMessageSent?: (message: Message) => void;
   onMessageReceived?: (message: Message) => void;
+  // TODO: how should we name these?
+  setDefaultTitle?: (settings: WidgetSettings) => string | Promise<string>;
+  setDefaultSubtitle?: (settings: WidgetSettings) => string | Promise<string>;
+  setDefaultGreeting?: (settings: WidgetSettings) => string | Promise<string>;
 };
 
 type Props = SharedProps & {
@@ -136,12 +141,10 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const settings = await this.fetchWidgetSettings();
     const {
       accountId,
-      title,
-      subtitle,
       primaryColor,
       baseUrl,
-      greeting,
       newMessagePlaceholder,
+      emailInputPlaceholder,
       agentAvailableText,
       agentUnavailableText,
       showAgentAvailability,
@@ -166,12 +169,14 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       baseUrl,
       agentAvailableText,
       agentUnavailableText,
-      title: title || settings.title,
-      subtitle: subtitle || settings.subtitle,
+      title: await this.getDefaultTitle(settings),
+      subtitle: await this.getDefaultSubtitle(settings),
       primaryColor: primaryColor || settings.color,
-      greeting: greeting || settings.greeting,
+      greeting: await this.getDefaultGreeting(settings),
       newMessagePlaceholder:
         newMessagePlaceholder || settings.new_message_placeholder,
+      emailInputPlaceholder:
+        emailInputPlaceholder || settings.email_input_placeholder,
       companyName: settings?.account?.company_name,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       showAgentAvailability: showAgentAvailability ? 1 : 0,
@@ -207,6 +212,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       baseUrl,
       greeting,
       newMessagePlaceholder,
+      emailInputPlaceholder,
     } = this.props;
     const current = [
       accountId,
@@ -216,6 +222,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       baseUrl,
       greeting,
       newMessagePlaceholder,
+      emailInputPlaceholder,
     ];
     const prev = [
       prevProps.accountId,
@@ -225,6 +232,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       prevProps.baseUrl,
       prevProps.greeting,
       prevProps.newMessagePlaceholder,
+      prevProps.emailInputPlaceholder,
     ];
     const shouldUpdate = current.some((value, idx) => {
       return value !== prev[idx];
@@ -242,9 +250,40 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         baseUrl,
         greeting,
         newMessagePlaceholder,
+        emailInputPlaceholder,
       });
     }
   }
+
+  getDefaultTitle = async (settings: WidgetSettings) => {
+    const {title, setDefaultTitle} = this.props;
+
+    if (setDefaultTitle && typeof setDefaultTitle === 'function') {
+      return setDefaultTitle(settings);
+    } else {
+      return title || settings.title;
+    }
+  };
+
+  getDefaultSubtitle = async (settings: WidgetSettings) => {
+    const {subtitle, setDefaultSubtitle} = this.props;
+
+    if (setDefaultSubtitle && typeof setDefaultSubtitle === 'function') {
+      return setDefaultSubtitle(settings);
+    } else {
+      return subtitle || settings.subtitle;
+    }
+  };
+
+  getDefaultGreeting = async (settings: WidgetSettings) => {
+    const {greeting, setDefaultGreeting} = this.props;
+
+    if (setDefaultGreeting && typeof setDefaultGreeting === 'function') {
+      return setDefaultGreeting(settings);
+    } else {
+      return greeting || settings.greeting;
+    }
+  };
 
   setIframeRef = (el: HTMLIFrameElement) => {
     this.iframeRef = el;
@@ -279,7 +318,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     this.logger.debug('Updated customer ID:', customerId);
   };
 
-  fetchWidgetSettings = () => {
+  fetchWidgetSettings = async (): Promise<WidgetSettings> => {
     const {accountId, baseUrl} = this.props;
     const empty = {} as WidgetSettings;
 

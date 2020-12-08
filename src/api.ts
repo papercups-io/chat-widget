@@ -41,6 +41,7 @@ export type WidgetSettings = {
   color?: string;
   greeting?: string;
   new_message_placeholder?: string;
+  email_input_placeholder?: string;
   account?: Account;
 };
 
