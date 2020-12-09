@@ -94,6 +94,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           accountId={TEST_ACCOUNT_ID}
           greeting='Hi there! How can I help you?'
           newMessagePlaceholder='Start typing...'
+          emailInputPlaceholder='What is your email address?'
           agentAvailableText='Agents are online!'
           agentUnavailableText='Agents are not available at the moment.'
           customer={{
@@ -124,6 +125,14 @@ const App = ({disco, displayChatWindow}: Props) => {
             console.log('Message received!', message)
           }
           onMessageSent={(message) => console.log('Message sent!', message)}
+          setDefaultGreeting={(settings) => {
+            const shouldDisplayAwayMessage =
+              settings?.account?.is_outside_working_hours || false;
+
+            return shouldDisplayAwayMessage
+              ? "We're away at the moment, but we'll be back on Monday!"
+              : 'Hi there! How can I help you?';
+          }}
         />
       )}
 
