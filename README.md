@@ -130,6 +130,8 @@ These are the props you can pass into your `<ChatWidget />` React component, or 
 | **`title`** | `string` | The title in the header of your chat widget | Welcome! |
 | **`subtitle`** | `string` | The subtitle in the header of your chat widget | How can we help you? |
 | **`newMessagePlaceholder`** | `string` | The placeholder text in the new message input | Start typing... |
+| **`emailInputPlaceholder`** | `string` | The placeholder text in the optional email input | Enter your email |
+| **`newMessagesNotificationText`** | `string` | The notification text when new messages arrive and the chat window is closed | View new messages |
 | **`primaryColor`** | `string` | The theme color of your chat widget | `1890ff` |
 | **`greeting`** | `string` | An optional initial message to greet your customers with | N/A |
 | **`showAgentAvailability`** | `boolean` | If you want to show whether you (or your agents) are online or not | `false` |
