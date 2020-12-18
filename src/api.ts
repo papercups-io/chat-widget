@@ -43,6 +43,7 @@ export type WidgetSettings = {
   greeting?: string;
   new_message_placeholder?: string;
   email_input_placeholder?: string;
+  new_messages_notification_text?: string;
   account?: Account;
 };
 

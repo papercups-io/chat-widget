@@ -7,6 +7,7 @@ export type WidgetConfig = {
   greeting?: string;
   newMessagePlaceholder?: string;
   emailInputPlaceholder?: string;
+  newMessagesNotificationText?: string;
   companyName?: string;
   agentAvailableText?: string;
   agentUnavailableText?: string;
