@@ -95,6 +95,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           greeting='Hi there! How can I help you?'
           newMessagePlaceholder='Start typing...'
           emailInputPlaceholder='What is your email address?'
+          newMessagesNotificationText='View new messages'
           agentAvailableText='Agents are online!'
           agentUnavailableText='Agents are not available at the moment.'
           customer={{

@@ -64,6 +64,7 @@ export type SharedProps = {
   customer?: CustomerMetadata | null;
   newMessagePlaceholder?: string;
   emailInputPlaceholder?: string;
+  newMessagesNotificationText?: string;
   agentAvailableText?: string;
   agentUnavailableText?: string;
   showAgentAvailability?: boolean;
@@ -145,6 +146,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       baseUrl,
       newMessagePlaceholder,
       emailInputPlaceholder,
+      newMessagesNotificationText,
       agentAvailableText,
       agentUnavailableText,
       showAgentAvailability,
@@ -177,6 +179,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         newMessagePlaceholder || settings.new_message_placeholder,
       emailInputPlaceholder:
         emailInputPlaceholder || settings.email_input_placeholder,
+      newMessagesNotificationText:
+        newMessagesNotificationText || settings.new_messages_notification_text,
       companyName: settings?.account?.company_name,
       requireEmailUpfront: requireEmailUpfront ? 1 : 0,
       showAgentAvailability: showAgentAvailability ? 1 : 0,
@@ -213,6 +217,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       greeting,
       newMessagePlaceholder,
       emailInputPlaceholder,
+      newMessagesNotificationText,
     } = this.props;
     const current = [
       accountId,
@@ -223,6 +228,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       greeting,
       newMessagePlaceholder,
       emailInputPlaceholder,
+      newMessagesNotificationText,
     ];
     const prev = [
       prevProps.accountId,
@@ -233,6 +239,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       prevProps.greeting,
       prevProps.newMessagePlaceholder,
       prevProps.emailInputPlaceholder,
+      prevProps.newMessagesNotificationText,
     ];
     const shouldUpdate = current.some((value, idx) => {
       return value !== prev[idx];
@@ -251,6 +258,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         greeting,
         newMessagePlaceholder,
         emailInputPlaceholder,
+        newMessagesNotificationText,
       });
     }
   }
