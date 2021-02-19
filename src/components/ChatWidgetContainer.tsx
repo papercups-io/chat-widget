@@ -218,6 +218,10 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       newMessagePlaceholder,
       emailInputPlaceholder,
       newMessagesNotificationText,
+      requireEmailUpfront,
+      showAgentAvailability,
+      agentAvailableText,
+      agentUnavailableText,
     } = this.props;
     const current = [
       accountId,
@@ -229,6 +233,10 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       newMessagePlaceholder,
       emailInputPlaceholder,
       newMessagesNotificationText,
+      requireEmailUpfront,
+      showAgentAvailability,
+      agentAvailableText,
+      agentUnavailableText,
     ];
     const prev = [
       prevProps.accountId,
@@ -240,6 +248,10 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       prevProps.newMessagePlaceholder,
       prevProps.emailInputPlaceholder,
       prevProps.newMessagesNotificationText,
+      prevProps.requireEmailUpfront,
+      prevProps.showAgentAvailability,
+      prevProps.agentAvailableText,
+      prevProps.agentUnavailableText,
     ];
     const shouldUpdate = current.some((value, idx) => {
       return value !== prev[idx];
@@ -259,6 +271,10 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         newMessagePlaceholder,
         emailInputPlaceholder,
         newMessagesNotificationText,
+        agentAvailableText,
+        agentUnavailableText,
+        requireEmailUpfront: requireEmailUpfront ? 1 : 0,
+        showAgentAvailability: showAgentAvailability ? 1 : 0,
       });
     }
   }
