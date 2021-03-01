@@ -121,17 +121,17 @@ const App = ({disco, displayChatWindow}: Props) => {
           iconVariant='filled'
           styles={{
             chatContainer: {
-              left: 20,
-              right: 'auto',
+              // left: 20,
+              // right: 'auto',
               maxHeight: 640,
             },
             toggleContainer: {
-              left: 20,
-              right: 'auto',
+              // left: 20,
+              // right: 'auto',
             },
             toggleButton: {},
           }}
-          toggleButton={({isOpen, onToggleOpen}) => (
+          renderToggleButton={({isOpen, onToggleOpen}) => (
             <button onClick={onToggleOpen}>{isOpen ? 'Close' : 'Open'}</button>
           )}
           onChatLoaded={() => console.log('Chat loaded!')}

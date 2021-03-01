@@ -17,7 +17,7 @@ type Props = SharedProps & {
   defaultIsOpen?: boolean;
   hideToggleButton?: boolean;
   iconVariant?: 'outlined' | 'filled';
-  toggleButton?: (options: ToggleButtonOptions) => React.ReactElement;
+  renderToggleButton?: (options: ToggleButtonOptions) => React.ReactElement;
   styles?: {
     chatContainer?: CSSProperties;
     toggleContainer?: CSSProperties;
@@ -47,7 +47,7 @@ const ChatWidget = (props: Props) => {
           const {
             hideToggleButton,
             iconVariant,
-            toggleButton,
+            renderToggleButton,
             styles = {},
           } = props;
           const {
@@ -102,8 +102,9 @@ const ChatWidget = (props: Props) => {
                     variant: 'styles.WidgetToggleContainer',
                   }}
                 >
-                  {toggleButton && typeof toggleButton === 'function' ? (
-                    toggleButton({
+                  {renderToggleButton &&
+                  typeof renderToggleButton === 'function' ? (
+                    renderToggleButton({
                       isOpen,
                       onToggleOpen,
                       isDisabled: isTransitioning,
