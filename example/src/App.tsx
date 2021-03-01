@@ -131,9 +131,9 @@ const App = ({disco, displayChatWindow}: Props) => {
             },
             toggleButton: {},
           }}
-          renderToggleButton={({isOpen, onToggleOpen}) => (
-            <button onClick={onToggleOpen}>{isOpen ? 'Close' : 'Open'}</button>
-          )}
+          // renderToggleButton={({isOpen, onToggleOpen}) => (
+          //   <button onClick={onToggleOpen}>{isOpen ? 'Close' : 'Open'}</button>
+          // )}
           onChatLoaded={() => console.log('Chat loaded!')}
           onChatClosed={() => console.log('Chat closed!')}
           onChatOpened={() => console.log('Chat opened!')}
