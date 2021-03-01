@@ -1,5 +1,5 @@
-import React from 'react';
-import {Button, Flex, Image} from 'theme-ui';
+import React, {CSSProperties} from 'react';
+import {Button, Image} from 'theme-ui';
 import {motion} from 'framer-motion';
 
 const Path = (props: any) => (
@@ -138,40 +138,34 @@ export const WidgetToggle = ({
   isDisabled,
   customIconUrl,
   iconVariant,
+  style,
   toggle,
 }: {
   isOpen?: boolean;
   isDisabled?: boolean;
   customIconUrl?: string;
   iconVariant?: 'outlined' | 'filled';
+  style: CSSProperties;
   toggle: () => void;
 }) => {
   return (
-    <Flex
+    <Button
+      className='Papercups-toggleButton'
+      variant='primary'
+      p={0}
+      style={style}
       sx={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        width: '100%',
+        variant: 'styles.WidgetToggle',
       }}
+      disabled={isDisabled}
+      onClick={toggle}
     >
-      <Button
-        className='Papercups-toggleButton'
-        variant='primary'
-        p={0}
-        sx={{
-          variant: 'styles.WidgetToggle',
-        }}
-        disabled={isDisabled}
-        onClick={toggle}
-      >
-        <ToggleIcon
-          customIconUrl={customIconUrl}
-          iconVariant={iconVariant}
-          isOpen={isOpen}
-        />
-      </Button>
-    </Flex>
+      <ToggleIcon
+        customIconUrl={customIconUrl}
+        iconVariant={iconVariant}
+        isOpen={isOpen}
+      />
+    </Button>
   );
 };
 

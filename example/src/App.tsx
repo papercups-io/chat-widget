@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ChatWidget, {ChatWindow, Papercups} from '@papercups-io/chat-widget';
+import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget';
 
 // NB: during development, replace this with a valid account ID from your dev db
 const TEST_ACCOUNT_ID = '2EBBAD4C-B162-4ED2-AFF5-EAF9EBF469A5';
@@ -119,6 +119,21 @@ const App = ({disco, displayChatWindow}: Props) => {
           hideToggleButton={false}
           defaultIsOpen={false}
           iconVariant='filled'
+          styles={{
+            chatContainer: {
+              left: 20,
+              right: 'auto',
+              maxHeight: 640,
+            },
+            toggleContainer: {
+              left: 20,
+              right: 'auto',
+            },
+            toggleButton: {},
+          }}
+          toggleButton={({isOpen, onToggleOpen}) => (
+            <button onClick={onToggleOpen}>{isOpen ? 'Close' : 'Open'}</button>
+          )}
           onChatLoaded={() => console.log('Chat loaded!')}
           onChatClosed={() => console.log('Chat closed!')}
           onChatOpened={() => console.log('Chat opened!')}
