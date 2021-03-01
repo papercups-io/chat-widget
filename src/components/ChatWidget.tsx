@@ -1,16 +1,28 @@
 /** @jsx jsx */
 
-import React from 'react';
+import React, {CSSProperties} from 'react';
 import {motion} from 'framer-motion';
 import {jsx} from 'theme-ui';
 import WidgetToggle from './WidgetToggle';
 import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 import ErrorBoundary from './ErrorBoundary';
 
+type ToggleButtonOptions = {
+  isOpen: boolean;
+  isDisabled: boolean;
+  onToggleOpen: () => void;
+};
+
 type Props = SharedProps & {
   defaultIsOpen?: boolean;
   hideToggleButton?: boolean;
   iconVariant?: 'outlined' | 'filled';
+  renderToggleButton?: (options: ToggleButtonOptions) => React.ReactElement;
+  styles?: {
+    chatContainer?: CSSProperties;
+    toggleContainer?: CSSProperties;
+    toggleButton?: CSSProperties;
+  };
 };
 
 const ChatWidget = (props: Props) => {
@@ -31,7 +43,18 @@ const ChatWidget = (props: Props) => {
             setIframeRef,
             onToggleOpen,
           } = config;
-          const {hideToggleButton, iconVariant} = props;
+
+          const {
+            hideToggleButton,
+            iconVariant,
+            renderToggleButton,
+            styles = {},
+          } = props;
+          const {
+            chatContainer: chatContainerStyle = {},
+            toggleContainer: toggleContainerStyle = {},
+            toggleButton: toggleButtonStyle = {},
+          } = styles;
 
           return (
             <React.Fragment>
@@ -50,8 +73,12 @@ const ChatWidget = (props: Props) => {
                 src={`${iframeUrl}?${query}`}
                 style={
                   isActive
-                    ? {}
-                    : {pointerEvents: 'none', height: 0, minHeight: 0}
+                    ? chatContainerStyle
+                    : {
+                        pointerEvents: 'none',
+                        height: 0,
+                        minHeight: 0,
+                      }
                 }
                 sx={{
                   border: 'none',
@@ -69,18 +96,29 @@ const ChatWidget = (props: Props) => {
                 <motion.div
                   className='Papercups-toggleButtonContainer'
                   initial={false}
+                  style={toggleContainerStyle}
                   animate={isOpen ? 'open' : 'closed'}
                   sx={{
                     variant: 'styles.WidgetToggleContainer',
                   }}
                 >
-                  <WidgetToggle
-                    isDisabled={isTransitioning}
-                    isOpen={isOpen}
-                    customIconUrl={customIconUrl}
-                    iconVariant={iconVariant}
-                    toggle={onToggleOpen}
-                  />
+                  {renderToggleButton &&
+                  typeof renderToggleButton === 'function' ? (
+                    renderToggleButton({
+                      isOpen,
+                      onToggleOpen,
+                      isDisabled: isTransitioning,
+                    })
+                  ) : (
+                    <WidgetToggle
+                      style={toggleButtonStyle}
+                      isDisabled={isTransitioning}
+                      isOpen={isOpen}
+                      customIconUrl={customIconUrl}
+                      iconVariant={iconVariant}
+                      toggle={onToggleOpen}
+                    />
+                  )}
                 </motion.div>
               )}
             </React.Fragment>

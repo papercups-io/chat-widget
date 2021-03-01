@@ -2,7 +2,7 @@
 
 > Papercups chat widget
 
-[![NPM](https://img.shields.io/npm/v/@papercups-io/chat-widget.svg)](https://www.npmjs.com/package/@papercups-io/chat-widget) 
+[![NPM](https://img.shields.io/npm/v/@papercups-io/chat-widget.svg)](https://www.npmjs.com/package/@papercups-io/chat-widget)
 [![Downloads](https://img.shields.io/npm/dm/@papercups-io/chat-widget.svg)](https://www.npmjs.com/package/@papercups-io/chat-widget)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -30,7 +30,7 @@ Paste the code below between your `<head>` and `</head>` tags:
 <script>
   window.Papercups = {
     config: {
-      // Pass in your Papercups account token here after signing up 
+      // Pass in your Papercups account token here after signing up
       accountId: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx',
       title: 'Welcome to Papercups!',
       subtitle: 'Ask us anything in the chat window below 😊',
@@ -43,7 +43,7 @@ Paste the code below between your `<head>` and `</head>` tags:
         name: 'Test User',
         email: 'test@test.com',
         external_id: '123',
-        metadata: {version: 1, plan: 'premium'} // Custom fields go here
+        metadata: {version: 1, plan: 'premium'}, // Custom fields go here
       },
       // Optionally specify the base URL
       baseUrl: 'https://app.papercups.io',
@@ -71,10 +71,10 @@ Place the code below in any pages on which you would like to render the widget. 
 ```tsx
 import React from 'react';
 
-import ChatWidget from '@papercups-io/chat-widget';
+import {ChatWidget} from '@papercups-io/chat-widget';
 
 // You can also import the following in v1.1.0 and above:
-// import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget'; 
+// import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget';
 //
 // The `ChatWindow` component allows you to embed the chat however you want,
 // and the `Papercups` object provides access to functions that can programmatically
@@ -93,7 +93,7 @@ const ExamplePage = () => {
         if you would like it to render on every page
       */}
       <ChatWidget
-        // Pass in your Papercups account token here after signing up 
+        // Pass in your Papercups account token here after signing up
         accountId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'
         title='Welcome to Papercups!'
         subtitle='Ask us anything in the chat window below 😊'
@@ -106,7 +106,7 @@ const ExamplePage = () => {
           name: 'Test User',
           email: 'test@test.com',
           external_id: '123',
-          metadata: {version: 1, plan: 'premium'} // Custom fields go here
+          metadata: {version: 1, plan: 'premium'}, // Custom fields go here
         }}
         // Optionally specify the base URL
         baseUrl='https://app.papercups.io'
@@ -126,31 +126,31 @@ const ExamplePage = () => {
 
 These are the props you can pass into your `<ChatWidget />` React component, or the fields you can specify in your `Papercups.config`:
 
-| Prop | Type | Value | Default |
-| :--- | :--- | :----- | :------ |
-| **`accountId`** | `string` | Your Papercups account token | N/A |
-| **`title`** | `string` | The title in the header of your chat widget | Welcome! |
-| **`subtitle`** | `string` | The subtitle in the header of your chat widget | How can we help you? |
-| **`newMessagePlaceholder`** | `string` | The placeholder text in the new message input | Start typing... |
-| **`emailInputPlaceholder`** | `string` | The placeholder text in the optional email input | Enter your email |
-| **`newMessagesNotificationText`** | `string` | The notification text when new messages arrive and the chat window is closed | View new messages |
-| **`primaryColor`** | `string` | The theme color of your chat widget | `1890ff` |
-| **`greeting`** | `string` | An optional initial message to greet your customers with | N/A |
-| **`showAgentAvailability`** | `boolean` | If you want to show whether you (or your agents) are online or not | `false` |
-| **`agentAvailableText`** | `string` | The text shown when you (or your agents) are online | We're online right now! |
-| **`agentUnavailableText`** | `string` | The text shown when you (and your agents) are offline | We're away at the moment. |
-| **`customer`** | `object` | Identifying information for the customer, including `name`, `email`, `external_id`, and `metadata` (for any custom fields) | N/A |
-| **`baseUrl`** | `string` | The base URL of your API if you're self-hosting Papercups | https://app.papercups.io |
-| **`iframeUrlOverride`** | `string` | An override of the iframe URL we use to render the chat, if you chose to self-host that as well | https://chat-widget.papercups.io |
-| **`requireEmailUpfront`** | `boolean` | If you want to require unidentified customers to provide their email before they can message you | `false` |
-| **`defaultIsOpen`** | `boolean` | If you want the chat widget to open as soon as it loads | `false` |
-| **`hideToggleButton`** | `boolean` | Hides the toggle button in case you want to open/close programmatically | `false` |
-| **`customIconUrl`** | `string` | A link to a custom icon image URL | N/A |
-| **`onChatLoaded`** | `() => void` | Callback fired when chat is loaded | N/A |
-| **`onChatOpened`** | `() => void` | Callback fired when chat is opened | N/A |
-| **`onChatClosed`** | `() => void` | Callback fired when chat is closed | N/A |
-| **`onMessageSent`** | `(message: Message) => void` | Callback fired when message is sent | N/A |
-| **`onMessageReceived`** | `(message: Message) => void` | Callback fired when message is received | N/A |
+| Prop                              | Type                         | Value                                                                                                                      | Default                          |
+| :-------------------------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
+| **`accountId`**                   | `string`                     | Your Papercups account token                                                                                               | N/A                              |
+| **`title`**                       | `string`                     | The title in the header of your chat widget                                                                                | Welcome!                         |
+| **`subtitle`**                    | `string`                     | The subtitle in the header of your chat widget                                                                             | How can we help you?             |
+| **`newMessagePlaceholder`**       | `string`                     | The placeholder text in the new message input                                                                              | Start typing...                  |
+| **`emailInputPlaceholder`**       | `string`                     | The placeholder text in the optional email input                                                                           | Enter your email                 |
+| **`newMessagesNotificationText`** | `string`                     | The notification text when new messages arrive and the chat window is closed                                               | View new messages                |
+| **`primaryColor`**                | `string`                     | The theme color of your chat widget                                                                                        | `1890ff`                         |
+| **`greeting`**                    | `string`                     | An optional initial message to greet your customers with                                                                   | N/A                              |
+| **`showAgentAvailability`**       | `boolean`                    | If you want to show whether you (or your agents) are online or not                                                         | `false`                          |
+| **`agentAvailableText`**          | `string`                     | The text shown when you (or your agents) are online                                                                        | We're online right now!          |
+| **`agentUnavailableText`**        | `string`                     | The text shown when you (and your agents) are offline                                                                      | We're away at the moment.        |
+| **`customer`**                    | `object`                     | Identifying information for the customer, including `name`, `email`, `external_id`, and `metadata` (for any custom fields) | N/A                              |
+| **`baseUrl`**                     | `string`                     | The base URL of your API if you're self-hosting Papercups                                                                  | https://app.papercups.io         |
+| **`iframeUrlOverride`**           | `string`                     | An override of the iframe URL we use to render the chat, if you chose to self-host that as well                            | https://chat-widget.papercups.io |
+| **`requireEmailUpfront`**         | `boolean`                    | If you want to require unidentified customers to provide their email before they can message you                           | `false`                          |
+| **`defaultIsOpen`**               | `boolean`                    | If you want the chat widget to open as soon as it loads                                                                    | `false`                          |
+| **`hideToggleButton`**            | `boolean`                    | Hides the toggle button in case you want to open/close programmatically                                                    | `false`                          |
+| **`customIconUrl`**               | `string`                     | A link to a custom icon image URL                                                                                          | N/A                              |
+| **`onChatLoaded`**                | `() => void`                 | Callback fired when chat is loaded                                                                                         | N/A                              |
+| **`onChatOpened`**                | `() => void`                 | Callback fired when chat is opened                                                                                         | N/A                              |
+| **`onChatClosed`**                | `() => void`                 | Callback fired when chat is closed                                                                                         | N/A                              |
+| **`onMessageSent`**               | `(message: Message) => void` | Callback fired when message is sent                                                                                        | N/A                              |
+| **`onMessageReceived`**           | `(message: Message) => void` | Callback fired when message is received                                                                                    | N/A                              |
 
 ## Development
 
@@ -173,15 +173,16 @@ This will start a development server on [http://localhost:3000](http://localhost
 
 ### Important notes
 
-By default, the example widget points at development servers for the [Papercups API](https://github.com/papercups-io/papercups) (which runs at http://localhost:4000) and the [Papercups chat window](https://github.com/papercups-io/chat-window) (which runs at http://localhost:8080). These values are set with the [`baseUrl`](https://github.com/papercups-io/chat-widget/blob/master/example/src/App.tsx#L66) and [`iframeUrlOverride`](https://github.com/papercups-io/chat-widget/blob/master/example/src/App.tsx#L67) props respectively. 
+By default, the example widget points at development servers for the [Papercups API](https://github.com/papercups-io/papercups) (which runs at http://localhost:4000) and the [Papercups chat window](https://github.com/papercups-io/chat-window) (which runs at http://localhost:8080). These values are set with the [`baseUrl`](https://github.com/papercups-io/chat-widget/blob/master/example/src/App.tsx#L66) and [`iframeUrlOverride`](https://github.com/papercups-io/chat-widget/blob/master/example/src/App.tsx#L67) props respectively.
 
 If you want to develop against your account in production, you can update these values to the following:
+
 - `baseUrl: http://app.papercups.io`
 - `iframeUrlOverride: https://chat-widget.papercups.io`
 
 _(Note that you can also simply remove these props, since the values above are the defaults.)_
 
-You'll also want to update your account token to point to your own account. If you haven't already, create a free account at https://app.papercups.io/register to get started. 
+You'll also want to update your account token to point to your own account. If you haven't already, create a free account at https://app.papercups.io/register to get started.
 
 Once you have your account token, update the [`accountId`](https://github.com/papercups-io/chat-widget/blob/master/example/src/App.tsx#L46) prop to point at yours.
 
