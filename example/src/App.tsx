@@ -125,13 +125,13 @@ const App = ({disco, displayChatWindow}: Props) => {
             chatContainer: {
               // left: 20,
               // right: 'auto',
-              bottom: 240,
+              bottom: 160,
               maxHeight: 640,
             },
             toggleContainer: {
               // left: 20,
               // right: 'auto',
-              bottom: 160,
+              bottom: 80,
             },
             toggleButton: {},
           }}

@@ -24,29 +24,20 @@ type PositionConfig = {
   offset: number;
 };
 
-type Props = SharedProps & {
-  defaultIsOpen?: boolean;
-  isOpenByDefault?: boolean;
-  persistOpenState?: boolean;
-  hideToggleButton?: boolean;
-  iconVariant?: 'outlined' | 'filled';
-  position?: 'left' | 'right' | PositionConfig;
-  renderToggleButton?: (options: ToggleButtonOptions) => React.ReactElement;
-  styles?: StyleOverrides;
-};
+const DEFAULT_X_OFFSET = 20;
 
 const normalizePositionConfig = (
   position?: 'left' | 'right' | PositionConfig
 ): PositionConfig => {
   if (!position) {
-    return {side: 'right', offset: 20};
+    return {side: 'right', offset: DEFAULT_X_OFFSET};
   }
 
   switch (position) {
     case 'left':
-      return {side: 'left', offset: 20};
+      return {side: 'left', offset: DEFAULT_X_OFFSET};
     case 'right':
-      return {side: 'right', offset: 20};
+      return {side: 'right', offset: DEFAULT_X_OFFSET};
     default:
       return position;
   }
@@ -61,7 +52,7 @@ const getDefaultStyles = (
     toggleContainer: toggleContainerStyle = {},
     toggleButton: toggleButtonStyle = {},
   } = styles;
-  const {side = 'right', offset = 20} = position;
+  const {side = 'right', offset = DEFAULT_X_OFFSET} = position;
 
   switch (side) {
     case 'left':
@@ -78,6 +69,17 @@ const getDefaultStyles = (
         toggleButton: toggleButtonStyle,
       };
   }
+};
+
+type Props = SharedProps & {
+  defaultIsOpen?: boolean;
+  isOpenByDefault?: boolean;
+  persistOpenState?: boolean;
+  hideToggleButton?: boolean;
+  iconVariant?: 'outlined' | 'filled';
+  position?: 'left' | 'right' | PositionConfig;
+  renderToggleButton?: (options: ToggleButtonOptions) => React.ReactElement;
+  styles?: StyleOverrides;
 };
 
 const ChatWidget = (props: Props) => {
