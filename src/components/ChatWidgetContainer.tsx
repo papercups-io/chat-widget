@@ -171,8 +171,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const config: WidgetConfig = {
       accountId,
       baseUrl,
-      agentAvailableText,
-      agentUnavailableText,
       title: await this.getDefaultTitle(settings),
       subtitle: await this.getDefaultSubtitle(settings),
       primaryColor: primaryColor || settings.color,
@@ -184,13 +182,19 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       newMessagesNotificationText:
         newMessagesNotificationText || settings.new_messages_notification_text,
       companyName: settings?.account?.company_name,
-      requireEmailUpfront: requireEmailUpfront ? 1 : 0,
-      showAgentAvailability: showAgentAvailability ? 1 : 0,
+      requireEmailUpfront:
+        requireEmailUpfront || settings.require_email_upfront ? 1 : 0,
+      showAgentAvailability:
+        showAgentAvailability || settings.show_agent_availability ? 1 : 0,
+      agentAvailableText: settings.agent_available_text || agentAvailableText,
+      agentUnavailableText:
+        settings.agent_unavailable_text || agentUnavailableText,
       closeable: canToggle ? 1 : 0,
       customerId: this.storage.getCustomerId(),
       subscriptionPlan: settings?.account?.subscription_plan,
+      isBrandingHidden: settings?.is_branding_hidden,
       metadata: JSON.stringify(metadata),
-      version: '1.1.6',
+      version: '1.1.8',
     };
 
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
