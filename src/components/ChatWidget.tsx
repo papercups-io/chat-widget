@@ -15,6 +15,8 @@ type ToggleButtonOptions = {
 
 type Props = SharedProps & {
   defaultIsOpen?: boolean;
+  isOpenByDefault?: boolean;
+  persistOpenState?: boolean;
   hideToggleButton?: boolean;
   iconVariant?: 'outlined' | 'filled';
   renderToggleButton?: (options: ToggleButtonOptions) => React.ReactElement;

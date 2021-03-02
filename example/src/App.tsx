@@ -117,8 +117,9 @@ const App = ({disco, displayChatWindow}: Props) => {
           requireEmailUpfront
           showAgentAvailability
           hideToggleButton={false}
-          defaultIsOpen={false}
+          isOpenByDefault
           iconVariant='filled'
+          persistOpenState
           styles={{
             chatContainer: {
               // left: 20,

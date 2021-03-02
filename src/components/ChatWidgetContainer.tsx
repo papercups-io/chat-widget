@@ -84,6 +84,8 @@ export type SharedProps = {
 
 type Props = SharedProps & {
   defaultIsOpen?: boolean;
+  isOpenByDefault?: boolean;
+  persistOpenState?: boolean;
   canToggle?: boolean;
   children: (data: any) => any;
 };
@@ -466,18 +468,38 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     this.send('notifications:display', {shouldDisplayNotifications: false});
   };
 
+  shouldOpenByDefault = (): boolean => {
+    const {
+      defaultIsOpen,
+      isOpenByDefault,
+      persistOpenState,
+      canToggle,
+    } = this.props;
+    if (!canToggle) {
+      return true;
+    }
+
+    const isOpenFromCache = this.storage.getOpenState();
+
+    if (persistOpenState) {
+      return isOpenFromCache;
+    }
+
+    return !!(isOpenByDefault || defaultIsOpen);
+  };
+
   handleChatLoaded = () => {
     this.setState({isLoaded: true});
 
     const {config = {} as WidgetConfig} = this.state;
     const {subscriptionPlan = null} = config;
-    const {defaultIsOpen, canToggle, onChatLoaded = noop} = this.props;
+    const {onChatLoaded = noop} = this.props;
 
     if (onChatLoaded && typeof onChatLoaded === 'function') {
       onChatLoaded();
     }
 
-    if (defaultIsOpen || !canToggle) {
+    if (this.shouldOpenByDefault()) {
       this.setState({isOpen: true}, () => this.emitToggleEvent(true));
     }
 
@@ -526,7 +548,15 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   emitToggleEvent = (isOpen: boolean) => {
     this.send('papercups:toggle', {isOpen});
 
-    const {onChatOpened = noop, onChatClosed = noop} = this.props;
+    const {
+      persistOpenState = false,
+      onChatOpened = noop,
+      onChatClosed = noop,
+    } = this.props;
+
+    if (persistOpenState) {
+      this.storage.setOpenState(isOpen);
+    }
 
     if (isOpen) {
       onChatOpened && onChatOpened();
