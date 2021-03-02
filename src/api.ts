@@ -36,6 +36,7 @@ export type Account = {
 };
 
 export type WidgetSettings = {
+  id?: string;
   subtitle?: string;
   title?: string;
   base_url?: string;
@@ -44,6 +45,15 @@ export type WidgetSettings = {
   new_message_placeholder?: string;
   email_input_placeholder?: string;
   new_messages_notification_text?: string;
+  is_branding_hidden?: boolean;
+  show_agent_availability?: boolean;
+  agent_available_text?: string;
+  agent_unavailable_text?: string;
+  require_email_upfront?: boolean;
+  is_open_by_default?: boolean;
+  custom_icon_url?: string;
+  iframe_url_override?: string;
+  icon_variant?: 'outlined' | 'filled';
   account?: Account;
 };
 
