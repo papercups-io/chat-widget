@@ -13,18 +13,71 @@ type ToggleButtonOptions = {
   onToggleOpen: () => void;
 };
 
+type StyleOverrides = {
+  chatContainer?: CSSProperties;
+  toggleContainer?: CSSProperties;
+  toggleButton?: CSSProperties;
+};
+
+type PositionConfig = {
+  side: 'left' | 'right';
+  offset: number;
+};
+
 type Props = SharedProps & {
   defaultIsOpen?: boolean;
   isOpenByDefault?: boolean;
   persistOpenState?: boolean;
   hideToggleButton?: boolean;
   iconVariant?: 'outlined' | 'filled';
+  position?: 'left' | 'right' | PositionConfig;
   renderToggleButton?: (options: ToggleButtonOptions) => React.ReactElement;
-  styles?: {
-    chatContainer?: CSSProperties;
-    toggleContainer?: CSSProperties;
-    toggleButton?: CSSProperties;
-  };
+  styles?: StyleOverrides;
+};
+
+const normalizePositionConfig = (
+  position?: 'left' | 'right' | PositionConfig
+): PositionConfig => {
+  if (!position) {
+    return {side: 'right', offset: 20};
+  }
+
+  switch (position) {
+    case 'left':
+      return {side: 'left', offset: 20};
+    case 'right':
+      return {side: 'right', offset: 20};
+    default:
+      return position;
+  }
+};
+
+const getDefaultStyles = (
+  styles: StyleOverrides = {},
+  position: PositionConfig
+): StyleOverrides => {
+  const {
+    chatContainer: chatContainerStyle = {},
+    toggleContainer: toggleContainerStyle = {},
+    toggleButton: toggleButtonStyle = {},
+  } = styles;
+  const {side = 'right', offset = 20} = position;
+
+  switch (side) {
+    case 'left':
+      return {
+        chatContainer: {left: offset, right: 'auto', ...chatContainerStyle},
+        toggleContainer: {left: offset, right: 'auto', ...toggleContainerStyle},
+        toggleButton: toggleButtonStyle,
+      };
+    case 'right':
+    default:
+      return {
+        chatContainer: {right: offset, left: 'auto', ...chatContainerStyle},
+        toggleContainer: {right: offset, left: 'auto', ...toggleContainerStyle},
+        toggleButton: toggleButtonStyle,
+      };
+  }
 };
 
 const ChatWidget = (props: Props) => {
@@ -50,13 +103,15 @@ const ChatWidget = (props: Props) => {
             hideToggleButton,
             iconVariant,
             renderToggleButton,
+            position = 'right',
             styles = {},
           } = props;
+          const positionConfig = normalizePositionConfig(position);
           const {
             chatContainer: chatContainerStyle = {},
             toggleContainer: toggleContainerStyle = {},
             toggleButton: toggleButtonStyle = {},
-          } = styles;
+          } = getDefaultStyles(styles, positionConfig);
 
           return (
             <React.Fragment>

@@ -120,15 +120,16 @@ const App = ({disco, displayChatWindow}: Props) => {
           isOpenByDefault
           iconVariant='filled'
           persistOpenState
+          position={{side: 'left', offset: 80}}
           styles={{
             chatContainer: {
-              // left: 20,
-              // right: 'auto',
+              left: 20,
+              right: 'auto',
               maxHeight: 640,
             },
             toggleContainer: {
-              // left: 20,
-              // right: 'auto',
+              left: 20,
+              right: 'auto',
             },
             toggleButton: {},
           }}
