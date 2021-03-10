@@ -42,6 +42,7 @@ export type WidgetSettings = {
   base_url?: string;
   color?: string;
   greeting?: string;
+  away_message?: string;
   new_message_placeholder?: string;
   email_input_placeholder?: string;
   new_messages_notification_text?: string;

@@ -61,6 +61,7 @@ export type SharedProps = {
   accountId: string;
   baseUrl?: string;
   greeting?: string;
+  awayMessage?: string;
   customer?: CustomerMetadata | null;
   newMessagePlaceholder?: string;
   emailInputPlaceholder?: string;
@@ -146,6 +147,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       accountId,
       primaryColor,
       baseUrl,
+      awayMessage,
       newMessagePlaceholder,
       emailInputPlaceholder,
       newMessagesNotificationText,
@@ -175,6 +177,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       subtitle: await this.getDefaultSubtitle(settings),
       primaryColor: primaryColor || settings.color,
       greeting: await this.getDefaultGreeting(settings),
+      awayMessage: awayMessage || settings.away_message,
       newMessagePlaceholder:
         newMessagePlaceholder || settings.new_message_placeholder,
       emailInputPlaceholder:

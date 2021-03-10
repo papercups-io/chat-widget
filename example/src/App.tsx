@@ -93,6 +93,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           primaryColor={primaryColor}
           accountId={TEST_ACCOUNT_ID}
           greeting='Hi there! How can I help you?'
+          awayMessage="Sorry, we're not available at the moment! Leave your email and we'll get back to you as soon as we can :)"
           newMessagePlaceholder='Start typing...'
           emailInputPlaceholder='What is your email address?'
           newMessagesNotificationText='View new messages'

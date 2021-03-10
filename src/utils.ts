@@ -5,6 +5,7 @@ export type WidgetConfig = {
   subtitle?: string;
   primaryColor?: string;
   greeting?: string;
+  awayMessage?: string;
   newMessagePlaceholder?: string;
   emailInputPlaceholder?: string;
   newMessagesNotificationText?: string;
