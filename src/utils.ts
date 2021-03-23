@@ -13,6 +13,7 @@ export type WidgetConfig = {
   agentAvailableText?: string;
   agentUnavailableText?: string;
   showAgentAvailability?: 1 | 0;
+  hideOutsideWorkingHours?: boolean;
   requireEmailUpfront?: 1 | 0;
   closeable?: 1 | 0;
   customerId?: string;

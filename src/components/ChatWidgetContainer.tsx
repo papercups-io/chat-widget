@@ -72,6 +72,7 @@ export type SharedProps = {
   iframeUrlOverride?: string;
   requireEmailUpfront?: boolean;
   customIconUrl?: string;
+  hideOutsideWorkingHours?: boolean;
   onChatLoaded?: () => void;
   onChatOpened?: () => void;
   onChatClosed?: () => void;
@@ -154,6 +155,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       agentAvailableText,
       agentUnavailableText,
       showAgentAvailability,
+      hideOutsideWorkingHours,
       requireEmailUpfront,
       canToggle,
       customer = {},
@@ -189,6 +191,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         requireEmailUpfront || settings.require_email_upfront ? 1 : 0,
       showAgentAvailability:
         showAgentAvailability || settings.show_agent_availability ? 1 : 0,
+      hideOutsideWorkingHours:
+        hideOutsideWorkingHours || settings.account?.is_outside_working_hours,
       agentAvailableText: settings.agent_available_text || agentAvailableText,
       agentUnavailableText:
         settings.agent_unavailable_text || agentUnavailableText,
@@ -231,6 +235,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       showAgentAvailability,
       agentAvailableText,
       agentUnavailableText,
+      hideOutsideWorkingHours,
     } = this.props;
     const current = [
       accountId,
@@ -246,6 +251,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       showAgentAvailability,
       agentAvailableText,
       agentUnavailableText,
+      hideOutsideWorkingHours,
     ];
     const prev = [
       prevProps.accountId,
@@ -261,6 +267,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       prevProps.showAgentAvailability,
       prevProps.agentAvailableText,
       prevProps.agentUnavailableText,
+      prevProps.hideOutsideWorkingHours,
     ];
     const shouldUpdate = current.some((value, idx) => {
       return value !== prev[idx];
@@ -284,6 +291,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         agentUnavailableText,
         requireEmailUpfront: requireEmailUpfront ? 1 : 0,
         showAgentAvailability: showAgentAvailability ? 1 : 0,
+        hideOutsideWorkingHours,
       });
     }
   }
@@ -573,7 +581,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   handleOpenWidget = () => {
-    if (!this.props.canToggle || this.state.isOpen) {
+    if (
+      !this.props.canToggle ||
+      this.state.isOpen ||
+      this.props.hideOutsideWorkingHours
+    ) {
       return;
     }
 
@@ -619,7 +631,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       shouldDisplayNotifications,
       isTransitioning,
     } = this.state;
-    const {customIconUrl, children} = this.props;
+    const {customIconUrl, children, hideOutsideWorkingHours} = this.props;
     const {primaryColor} = config;
 
     if (!query) {
@@ -641,21 +653,23 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     ].join(' ');
 
     return (
-      <ThemeProvider theme={theme}>
-        {children({
-          sandbox,
-          isLoaded,
-          isActive,
-          isOpen,
-          isTransitioning,
-          customIconUrl,
-          iframeUrl,
-          query,
-          shouldDisplayNotifications,
-          setIframeRef: this.setIframeRef,
-          onToggleOpen: this.handleToggleOpen,
-        })}
-      </ThemeProvider>
+      !hideOutsideWorkingHours && (
+        <ThemeProvider theme={theme}>
+          {children({
+            sandbox,
+            isLoaded,
+            isActive,
+            isOpen,
+            isTransitioning,
+            customIconUrl,
+            iframeUrl,
+            query,
+            shouldDisplayNotifications,
+            setIframeRef: this.setIframeRef,
+            onToggleOpen: this.handleToggleOpen,
+          })}
+        </ThemeProvider>
+      )
     );
   }
 }
