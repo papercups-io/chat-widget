@@ -3,7 +3,7 @@ import React from 'react';
 import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget';
 
 // NB: during development, replace this with a valid account ID from your dev db
-const TEST_ACCOUNT_ID = '2EBBAD4C-B162-4ED2-AFF5-EAF9EBF469A5';
+const TEST_ACCOUNT_ID = '2ebbad4c-b162-4ed2-aff5-eaf9ebf469a5';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
@@ -117,6 +117,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           iframeUrlOverride='http://localhost:8080'
           requireEmailUpfront
           showAgentAvailability
+          hideOutsideWorkingHours={false}
           hideToggleButton={false}
           isOpenByDefault
           iconVariant='filled'
