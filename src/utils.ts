@@ -18,6 +18,7 @@ export type WidgetConfig = {
   customerId?: string;
   subscriptionPlan?: string;
   isBrandingHidden?: boolean;
+  isOutsideWorkingHours?: boolean;
   metadata?: string; // stringified JSON
   version?: string;
 };

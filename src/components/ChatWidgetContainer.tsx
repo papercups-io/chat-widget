@@ -71,6 +71,7 @@ export type SharedProps = {
   showAgentAvailability?: boolean;
   iframeUrlOverride?: string;
   requireEmailUpfront?: boolean;
+  hideOutsideWorkingHours?: boolean;
   customIconUrl?: string;
   onChatLoaded?: () => void;
   onChatOpened?: () => void;
@@ -195,6 +196,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       closeable: canToggle ? 1 : 0,
       customerId: this.storage.getCustomerId(),
       subscriptionPlan: settings?.account?.subscription_plan,
+      isOutsideWorkingHours: settings?.account?.is_outside_working_hours,
       isBrandingHidden: settings?.is_branding_hidden,
       metadata: JSON.stringify(metadata),
       version: '1.1.8',
@@ -482,6 +484,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       persistOpenState,
       canToggle,
     } = this.props;
+
     if (!canToggle) {
       return true;
     }
@@ -619,10 +622,18 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       shouldDisplayNotifications,
       isTransitioning,
     } = this.state;
-    const {customIconUrl, children} = this.props;
+    const {
+      customIconUrl,
+      hideOutsideWorkingHours = false,
+      children,
+    } = this.props;
     const {primaryColor} = config;
 
     if (!query) {
+      return null;
+    }
+
+    if (hideOutsideWorkingHours && config.isOutsideWorkingHours) {
       return null;
     }
 
