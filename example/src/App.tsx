@@ -119,6 +119,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           showAgentAvailability
           hideOutsideWorkingHours={false}
           hideToggleButton={false}
+          popUpInitialMessage={1000}
           isOpenByDefault
           iconVariant='filled'
           persistOpenState

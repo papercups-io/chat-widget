@@ -152,5 +152,10 @@ export default function store(
     setOpenState: (state: string | boolean) =>
       openStateStorage.set(':open', state),
     clearOpenState: () => openStateStorage.remove(':open'),
+    // Popup seen state
+    getPopupSeen: () => openStateStorage.get(':pop_up_seen'),
+    setPopupSeen: (state: string | boolean) =>
+      openStateStorage.set(':pop_up_seen', state),
+    clearPopupSeen: () => openStateStorage.remove(':pop_up_seen'),
   };
 }

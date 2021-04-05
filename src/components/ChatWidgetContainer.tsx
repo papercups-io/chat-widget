@@ -72,6 +72,7 @@ export type SharedProps = {
   iframeUrlOverride?: string;
   requireEmailUpfront?: boolean;
   hideOutsideWorkingHours?: boolean;
+  popUpInitialMessage?: boolean | number;
   customIconUrl?: string;
   onChatLoaded?: () => void;
   onChatOpened?: () => void;
@@ -474,6 +475,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     this.logger.debug('Handling messages seen');
 
     this.setState({shouldDisplayNotifications: false});
+    this.storage.setPopupSeen(true);
     this.send('notifications:display', {shouldDisplayNotifications: false});
   };
 
@@ -503,7 +505,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     const {config = {} as WidgetConfig} = this.state;
     const {subscriptionPlan = null} = config;
-    const {onChatLoaded = noop} = this.props;
+    const {popUpInitialMessage, onChatLoaded = noop} = this.props;
 
     if (onChatLoaded && typeof onChatLoaded === 'function') {
       onChatLoaded();
@@ -511,6 +513,20 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     if (this.shouldOpenByDefault()) {
       this.setState({isOpen: true}, () => this.emitToggleEvent(true));
+    }
+
+    if (popUpInitialMessage && !this.storage.getPopupSeen()) {
+      const t =
+        typeof popUpInitialMessage === 'number' ? popUpInitialMessage : 0;
+
+      setTimeout(() => {
+        this.setState({shouldDisplayNotifications: true});
+        this.send('notifications:display', {
+          shouldDisplayNotifications: true,
+          // TODO: this may not be necessary
+          popUpInitialMessage: true,
+        });
+      }, t);
     }
 
     this.send('papercups:plan', {plan: subscriptionPlan});
@@ -580,7 +596,17 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       return;
     }
 
-    this.setState({isOpen: true}, () => this.emitToggleEvent(true));
+    if (this.state.shouldDisplayNotifications) {
+      this.setState({isTransitioning: true}, () => {
+        setTimeout(() => {
+          this.setState({isOpen: true, isTransitioning: false}, () =>
+            this.emitToggleEvent(true)
+          );
+        }, 200);
+      });
+    } else {
+      this.setState({isOpen: true}, () => this.emitToggleEvent(true));
+    }
   };
 
   handleCloseWidget = () => {
