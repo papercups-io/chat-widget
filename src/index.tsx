@@ -10,10 +10,24 @@ export const identify = () => {
   console.warn('`Papercups.identify` has not been implemented yet!');
 };
 
+export const sendBotMessage = ({
+  message,
+  signature,
+}: {
+  message: string;
+  signature: string;
+}) =>
+  window.dispatchEvent(
+    new CustomEvent('papercups:send_bot_message', {
+      detail: {message, signature},
+    })
+  );
+
 export const Papercups = {
   open,
   close,
   toggle,
+  sendBotMessage,
 };
 
 export {ChatWidget, ChatWindow};

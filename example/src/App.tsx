@@ -3,7 +3,7 @@ import React from 'react';
 import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget';
 
 // NB: during development, replace this with a valid account ID from your dev db
-const TEST_ACCOUNT_ID = '2ebbad4c-b162-4ed2-aff5-eaf9ebf469a5';
+const TEST_ACCOUNT_ID = 'b6d3ac2d-fe0b-425b-93f6-327fd67848df';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
@@ -162,6 +162,11 @@ const App = ({disco, displayChatWindow}: Props) => {
       <button onClick={Papercups.open}>Open</button>
       <button onClick={Papercups.close}>Close</button>
       <button onClick={Papercups.toggle}>Toggle</button>
+      <button
+        onClick={() => Papercups.sendBotMessage({message: 'a', signature: 'b'})}
+      >
+        sendMsg
+      </button>
     </>
   );
 };
