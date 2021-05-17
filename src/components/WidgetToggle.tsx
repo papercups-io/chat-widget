@@ -1,4 +1,4 @@
-import React, {CSSProperties} from 'react';
+import {CSSProperties} from 'react';
 import {Button, Image} from 'theme-ui';
 import {motion} from 'framer-motion';
 

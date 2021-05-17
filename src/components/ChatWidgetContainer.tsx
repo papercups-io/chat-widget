@@ -1,7 +1,7 @@
-/** @jsx jsx */
+/** @jsxImportSource theme-ui */
 
 import React from 'react';
-import {ThemeProvider, jsx} from 'theme-ui';
+import {ThemeProvider} from 'theme-ui';
 import qs from 'query-string';
 import {
   CustomerMetadata,
@@ -107,7 +107,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   iframeRef: any;
   storage: any;
   subscriptions: Array<() => void> = [];
-  logger: Logger;
+  logger!: Logger;
 
   EVENTS = [
     'papercups:open',
@@ -483,12 +483,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   shouldOpenByDefault = (): boolean => {
-    const {
-      defaultIsOpen,
-      isOpenByDefault,
-      persistOpenState,
-      canToggle,
-    } = this.props;
+    const {defaultIsOpen, isOpenByDefault, persistOpenState, canToggle} =
+      this.props;
 
     if (!canToggle) {
       return true;
@@ -545,10 +541,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     return Object.keys(customer).reduce((acc, key) => {
       if (key === 'metadata') {
         return {...acc, [key]: customer[key]};
-      } else {
+      } else if (key === 'name' || key === 'email' || key === 'external_id') {
         // Make sure all other passed-in values are strings
         return {...acc, [key]: String(customer[key])};
       }
+      return {...acc};
     }, {});
   };
 
