@@ -1,9 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render, waitFor, screen } from '@testing-library/react';
 import App from './App';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
+test('renders chat widget', async () => {
+  render(<App />);
+  await waitFor(() => screen.getByTitle('Papercups Chat Widget Container'));
 });

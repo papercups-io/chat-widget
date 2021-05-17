@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget';
 
@@ -8,7 +8,7 @@ const TEST_ACCOUNT_ID = '2ebbad4c-b162-4ed2-aff5-eaf9ebf469a5';
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
 const App = ({disco, displayChatWindow}: Props) => {
-  const colors = [
+  const colors = useMemo(() => [
     '#1890ff',
     '#f5222d',
     '#7cb305',
@@ -16,7 +16,7 @@ const App = ({disco, displayChatWindow}: Props) => {
     '#13c2c2',
     '#722ed1',
     '#eb2f96',
-  ];
+  ], []);
 
   const [primaryColor, setPrimaryColor] = React.useState(colors[0]);
 
