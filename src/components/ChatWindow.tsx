@@ -1,6 +1,5 @@
-/** @jsx jsx */
+/** @jsxImportSource theme-ui */
 
-import {jsx} from 'theme-ui';
 import {motion} from 'framer-motion';
 import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 import ErrorBoundary from './ErrorBoundary';
