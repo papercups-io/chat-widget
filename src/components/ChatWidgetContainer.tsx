@@ -13,7 +13,6 @@ import {
 import {WidgetConfig, isValidUuid, noop} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
-import {isDev} from '../config';
 import Logger from '../logger';
 import {getUserInfo} from '../track/info';
 

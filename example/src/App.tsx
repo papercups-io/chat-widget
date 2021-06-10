@@ -124,6 +124,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           iconVariant='filled'
           persistOpenState
           position={{side: 'right', offset: 80}}
+          debug
           styles={{
             chatContainer: {
               // left: 20,
@@ -149,8 +150,8 @@ const App = ({disco, displayChatWindow}: Props) => {
           }
           onMessageSent={(message) => console.log('Message sent!', message)}
           setDefaultGreeting={(settings) => {
-            const shouldDisplayAwayMessage =
-              settings?.account?.is_outside_working_hours || false;
+            const shouldDisplayAwayMessage = !!settings?.account
+              ?.is_outside_working_hours;
 
             return shouldDisplayAwayMessage
               ? "We're away at the moment, but we'll be back on Monday!"
