@@ -159,6 +159,7 @@ export const WidgetToggle = ({
       }}
       disabled={isDisabled}
       onClick={toggle}
+      aria-label={`${isOpen ? 'Close' : 'Open'} chat widget`}
     >
       <ToggleIcon
         customIconUrl={customIconUrl}
