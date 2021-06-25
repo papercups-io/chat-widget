@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const helpers = (win: any) => {
   const ArrayProto = Array.prototype;
   const FuncProto = Function.prototype;
@@ -107,7 +108,7 @@ export const helpers = (win: any) => {
     let bound: any;
 
     if (nativeBind && func.bind === nativeBind) {
-      return nativeBind.apply(func, slice.call(arguments, 1));
+      return nativeBind.apply(func, slice.call(arguments, 1) as [thisArg: any, ...argArray: any[]]);
     }
     if (!isFunction(func)) {
       throw new TypeError();

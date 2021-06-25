@@ -18,11 +18,10 @@ export function getUserInfo(win: any) {
   // https://github.com/PostHog/posthog-js/blob/dbfac85a2808626e3c1780013a9075d5c9fd0971/src/utils.js#L1433
   const info = {
     campaignParams: function () {
-      const campaign_keywords = 'utm_source utm_medium utm_campaign utm_content utm_term'.split(
-        ' '
-      );
+      const campaign_keywords =
+        'utm_source utm_medium utm_campaign utm_content utm_term'.split(' ');
       let kw = '';
-      let params: any = {};
+      const params: any = {};
 
       each(campaign_keywords, function (kwkey: string) {
         kw = getQueryParam(document.URL, kwkey);
@@ -50,16 +49,16 @@ export function getUserInfo(win: any) {
     },
 
     searchInfo: function (referrer: any) {
-      let search = info.searchEngine(referrer);
-      let param = search != 'yahoo' ? 'q' : 'p';
-      let ret: any = {};
+      const search = info.searchEngine(referrer);
+      const param = search !== 'yahoo' ? 'q' : 'p';
+      const ret: any = {};
 
       if (search !== null) {
-        ret['$search_engine'] = search;
+        ret.$search_engine = search;
 
-        var keyword = getQueryParam(referrer, param);
+        const keyword = getQueryParam(referrer, param);
         if (keyword.length) {
-          ret['ph_keyword'] = keyword;
+          ret.ph_keyword = keyword;
         }
       }
 
