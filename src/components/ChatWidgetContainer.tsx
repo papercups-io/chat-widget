@@ -109,6 +109,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   logger: Logger;
 
   EVENTS = [
+    'papercups:send_bot_message',
     'papercups:open',
     'papercups:close',
     'papercups:toggle',
@@ -383,6 +384,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const {type, detail} = event;
 
     switch (type) {
+      case 'papercups:send_bot_message':
+        return this.handleSendBotMessage(detail);
       case 'papercups:open':
         return this.handleOpenWidget();
       case 'papercups:close':
@@ -394,6 +397,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       default:
         return null;
     }
+  };
+
+  handleSendBotMessage = (detail: any) => {
+    this.handleOpenWidget();
+    this.send('papercups:send_bot_message', detail);
   };
 
   postMessageHandlers = (msg: any) => {
