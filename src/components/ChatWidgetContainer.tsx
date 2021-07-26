@@ -13,7 +13,6 @@ import {
 import {WidgetConfig, isValidUuid, noop} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
-import {isDev} from '../config';
 import Logger from '../logger';
 import {getUserInfo} from '../track/info';
 
@@ -74,6 +73,7 @@ export type SharedProps = {
   hideOutsideWorkingHours?: boolean;
   popUpInitialMessage?: boolean | number;
   customIconUrl?: string;
+  debug?: boolean;
   onChatLoaded?: () => void;
   onChatOpened?: () => void;
   onChatClosed?: () => void;
@@ -159,11 +159,10 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       requireEmailUpfront,
       canToggle,
       customer = {},
+      debug = false,
     } = this.props;
-    // TODO: make it possible to opt into debug mode via props
-    const debugModeEnabled = isDev(window);
 
-    this.logger = new Logger(debugModeEnabled);
+    this.logger = new Logger(!!debug);
     this.subscriptions = [
       setupPostMessageHandlers(window, this.postMessageHandlers),
       setupCustomEventHandlers(window, this.EVENTS, this.customEventHandlers),
