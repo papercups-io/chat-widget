@@ -14,7 +14,9 @@ export type WidgetConfig = {
   agentUnavailableText?: string;
   showAgentAvailability?: 1 | 0;
   requireEmailUpfront?: 1 | 0;
+  disableAnalyticsTracking?: 1 | 0;
   closeable?: 1 | 0;
+  debug?: 1 | 0;
   customerId?: string;
   subscriptionPlan?: string;
   isBrandingHidden?: boolean;

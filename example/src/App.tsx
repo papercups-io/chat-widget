@@ -125,6 +125,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           persistOpenState
           position={{side: 'right', offset: 80}}
           debug
+          disableAnalyticsTracking
           styles={{
             chatContainer: {
               // left: 20,
