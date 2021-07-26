@@ -10,7 +10,7 @@ class Logger {
       return;
     }
 
-    console.debug(...args);
+    console.debug('[Papercups]', ...args);
   }
 
   log(...args: any) {
@@ -18,19 +18,19 @@ class Logger {
       return;
     }
 
-    console.log(...args);
+    console.log('[Papercups]', ...args);
   }
 
   info(...args: any) {
-    console.info(...args);
+    console.info('[Papercups]', ...args);
   }
 
   warn(...args: any) {
-    console.warn(...args);
+    console.warn('[Papercups]', ...args);
   }
 
   error(...args: any) {
-    console.error(...args);
+    console.error('[Papercups]', ...args);
   }
 }
 
