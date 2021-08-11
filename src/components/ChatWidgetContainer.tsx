@@ -462,8 +462,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const {event, payload = {}} = msg.data;
 
     if (!this.hasValidPayloadIdentity(payload)) {
-      this.logger.debug(
-        '[Warning] iframe payload `ts` identifer does not match original `ts` — halting message handlers.'
+      this.logger.warn(
+        'Payload identifer from iframe does not match parent — halting message handlers.'
       );
 
       return null;
