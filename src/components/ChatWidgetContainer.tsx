@@ -151,6 +151,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
+    const ts = +new Date();
     // TODO: use `subscription_plan` from settings.account to determine
     // whether to display the Papercups branding or not in the chat window
     const settings = await this.fetchWidgetSettings();
@@ -212,6 +213,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       disableAnalyticsTracking: disableAnalyticsTracking ? 1 : 0,
       debug: debug ? 1 : 0,
       version: '1.1.11',
+      ts: ts.toString(),
     };
 
     const query = qs.stringify(config, {skipEmptyString: true, skipNull: true});
@@ -410,6 +412,23 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     );
   };
 
+  hasValidPayloadIdentity = (payload: any) => {
+    const ts = payload && payload.ts;
+    const {config = {} as WidgetConfig} = this.state;
+
+    if (!ts) {
+      // If the payload doesn't contain an identifier, let it pass through
+      return true;
+    }
+
+    if (config.ts === ts) {
+      // Pass through, since the payload identifier matches the component ts
+      return true;
+    }
+
+    return false;
+  };
+
   customEventHandlers = (event: any) => {
     if (!event || !event.type) {
       return null;
@@ -441,6 +460,14 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     }
 
     const {event, payload = {}} = msg.data;
+
+    if (!this.hasValidPayloadIdentity(payload)) {
+      this.logger.debug(
+        '[Warning] iframe payload `ts` identifer does not match original `ts` — halting message handlers.'
+      );
+
+      return null;
+    }
 
     switch (event) {
       case 'chat:loaded':
