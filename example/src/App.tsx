@@ -19,6 +19,7 @@ const App = ({disco, displayChatWindow}: Props) => {
   ];
 
   const [primaryColor, setPrimaryColor] = React.useState(colors[0]);
+  const [customer, setCustomerDetails] = React.useState<any>(null);
 
   React.useEffect(() => {
     if (!disco) {
@@ -34,6 +35,26 @@ const App = ({disco, displayChatWindow}: Props) => {
 
     return () => clearInterval(interval);
   }, [disco, colors, primaryColor]);
+
+  const toggleLoginState = () => {
+    const metadata =
+      customer && customer.email
+        ? null
+        : {
+            name: 'Example User',
+            email: 'test@example.com',
+            external_id: '321',
+            // Ad hoc metadata
+            metadata: {
+              plan: 'starter',
+              registered_at: '2020-09-01',
+              age: 25,
+              valid: true,
+            },
+          };
+
+    setCustomerDetails(metadata);
+  };
 
   return (
     <>
@@ -99,23 +120,12 @@ const App = ({disco, displayChatWindow}: Props) => {
           newMessagesNotificationText='View new messages'
           agentAvailableText='Agents are online!'
           agentUnavailableText='Agents are not available at the moment.'
-          customer={{
-            name: 'Test User',
-            email: 'test@test.com',
-            external_id: '123',
-            // Ad hoc metadata
-            metadata: {
-              plan: 'starter',
-              registered_at: '2020-09-01',
-              age: 25,
-              valid: true,
-            },
-          }}
+          customer={customer}
           // NB: we override these values during development -- note that the
           // API runs on port 4000 by default, and the iframe on 8080
           baseUrl='http://localhost:4000'
           iframeUrlOverride='http://localhost:8080'
-          requireEmailUpfront
+          requireEmailUpfront={false}
           showAgentAvailability
           hideOutsideWorkingHours={false}
           hideToggleButton={false}
@@ -143,7 +153,9 @@ const App = ({disco, displayChatWindow}: Props) => {
           // renderToggleButton={({isOpen, onToggleOpen}) => (
           //   <button onClick={onToggleOpen}>{isOpen ? 'Close' : 'Open'}</button>
           // )}
-          onChatLoaded={() => console.log('Chat loaded!')}
+          onChatLoaded={({open, close, identify}) =>
+            console.log('Chat loaded!', {open, close, identify})
+          }
           onChatClosed={() => console.log('Chat closed!')}
           onChatOpened={() => console.log('Chat opened!')}
           onMessageReceived={(message) =>
@@ -164,6 +176,9 @@ const App = ({disco, displayChatWindow}: Props) => {
       <button onClick={Papercups.open}>Open</button>
       <button onClick={Papercups.close}>Close</button>
       <button onClick={Papercups.toggle}>Toggle</button>
+      <button onClick={toggleLoginState}>
+        {customer ? 'Log out' : 'Log in'}
+      </button>
     </>
   );
 };
