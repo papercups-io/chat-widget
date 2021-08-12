@@ -23,6 +23,7 @@ export type WidgetConfig = {
   isOutsideWorkingHours?: boolean;
   metadata?: string; // stringified JSON
   version?: string;
+  ts?: string;
 };
 
 export function noop() {}
