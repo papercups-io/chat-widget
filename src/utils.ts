@@ -1,4 +1,7 @@
 export type WidgetConfig = {
+  token?: string;
+  inbox?: string;
+  // TODO: deprecate
   accountId?: string;
   baseUrl?: string;
   title?: string;
