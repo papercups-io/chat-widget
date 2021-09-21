@@ -54,10 +54,10 @@ const setupCustomEventHandlers = (
 };
 
 export type SharedProps = {
-  token?: string;
+  token: string;
   inbox?: string;
   // TOOD: deprecate, use `token` instead
-  accountId: string;
+  accountId?: string;
   title?: string;
   subtitle?: string;
   primaryColor?: string;
@@ -134,15 +134,15 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     const token = props.token || props.accountId;
 
     if (!token) {
-      throw new Error('An `accountId` is required to run the Papercups chat!');
+      throw new Error('A `token` is required to run the Papercups chat!');
     } else if (!isValidUuid(token)) {
       console.error(
-        `The \`accountId\` must be a valid UUID. (Received invalid \`accountId\`: ${token})`
+        `The \`token\` must be a valid UUID. (Received invalid \`token\`: ${token})`
       );
       console.error(
-        `If you're missing a Papercups \`accountId\`, you can get one by signing up for a free account at https://app.papercups.io/register`
+        `If you're missing a Papercups \`token\`, you can get one by signing up for a free account at https://app.papercups.io/register`
       );
-      throw new Error(`Invalid \`accountId\`: ${token}`);
+      throw new Error(`Invalid \`token\`: ${token}`);
     }
 
     this.state = {
@@ -411,7 +411,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   fetchWidgetSettings = async (): Promise<WidgetSettings> => {
     const {token, inbox, accountId, baseUrl} = this.props;
-    const params = {account_id: token || accountId, inbox_id: inbox};
+    const params = {account_id: accountId || token, inbox_id: inbox};
     const empty = {} as WidgetSettings;
 
     return fetchWidgetSettings(params, baseUrl)
@@ -422,7 +422,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   updateWidgetSettingsMetadata = async () => {
     const {token, inbox, accountId, baseUrl} = this.props;
     const params = {
-      account_id: token || accountId,
+      account_id: accountId || token,
       inbox_id: inbox,
       metadata: getUserInfo(window),
     };

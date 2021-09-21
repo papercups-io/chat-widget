@@ -70,10 +70,13 @@ const App = ({disco, displayChatWindow}: Props) => {
           }}
         >
           <ChatWindow
+            token={TEST_ACCOUNT_ID}
+            inbox={TEST_INBOX_ID}
+            // deprecate `accountId`, use `token` instead
+            accountId={TEST_ACCOUNT_ID}
             title='Welcome to Papercups!'
             subtitle='Ask us anything in the chat window 😊'
             primaryColor={primaryColor}
-            accountId={TEST_ACCOUNT_ID}
             greeting='Hi there! How can I help you?'
             newMessagePlaceholder='Start typing...'
             agentAvailableText='Agents are online!'
@@ -110,10 +113,10 @@ const App = ({disco, displayChatWindow}: Props) => {
         // like to render the widget on, or in your root/router component
         // if you would like it to render on every page
         <ChatWidget
-          // deprecate `accountId`, use `token` instead
-          accountId={TEST_ACCOUNT_ID}
           token={TEST_ACCOUNT_ID}
           inbox={TEST_INBOX_ID}
+          // deprecate `accountId`, use `token` instead
+          accountId={TEST_ACCOUNT_ID}
           title='Welcome to Papercups!'
           subtitle='Ask us anything in the chat window 😊'
           primaryColor={primaryColor}
