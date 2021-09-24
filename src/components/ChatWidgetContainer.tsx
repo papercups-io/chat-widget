@@ -54,10 +54,13 @@ const setupCustomEventHandlers = (
 };
 
 export type SharedProps = {
+  token: string;
+  inbox?: string;
+  // TOOD: deprecate, use `token` instead
+  accountId?: string;
   title?: string;
   subtitle?: string;
   primaryColor?: string;
-  accountId: string;
   baseUrl?: string;
   greeting?: string;
   awayMessage?: string;
@@ -128,16 +131,18 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    if (!props.accountId) {
-      throw new Error('An `accountId` is required to run the Papercups chat!');
-    } else if (!isValidUuid(props.accountId)) {
+    const token = props.token || props.accountId;
+
+    if (!token) {
+      throw new Error('A `token` is required to run the Papercups chat!');
+    } else if (!isValidUuid(token)) {
       console.error(
-        `The \`accountId\` must be a valid UUID. (Received invalid \`accountId\`: ${props.accountId})`
+        `The \`token\` must be a valid UUID. (Received invalid \`token\`: ${token})`
       );
       console.error(
-        `If you're missing a Papercups \`accountId\`, you can get one by signing up for a free account at https://app.papercups.io/register`
+        `If you're missing a Papercups \`token\`, you can get one by signing up for a free account at https://app.papercups.io/register`
       );
-      throw new Error(`Invalid \`accountId\`: ${props.accountId}`);
+      throw new Error(`Invalid \`token\`: ${token}`);
     }
 
     this.state = {
@@ -156,6 +161,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     // whether to display the Papercups branding or not in the chat window
     const settings = await this.fetchWidgetSettings();
     const {
+      token,
+      inbox,
       accountId,
       primaryColor,
       baseUrl,
@@ -183,8 +190,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
     const metadata = {...getUserInfo(window), ...customer};
     const config: WidgetConfig = {
-      accountId,
       baseUrl,
+      inbox,
+      token: token || accountId,
+      // TODO: deprecate
+      accountId: token || accountId,
       title: await this.getDefaultTitle(settings),
       subtitle: await this.getDefaultSubtitle(settings),
       primaryColor: primaryColor || settings.color,
@@ -212,7 +222,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       metadata: JSON.stringify(metadata),
       disableAnalyticsTracking: disableAnalyticsTracking ? 1 : 0,
       debug: debug ? 1 : 0,
-      version: '1.1.11',
+      version: '1.2.0',
       ts: ts.toString(),
     };
 
@@ -234,6 +244,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const {
+      token,
+      inbox,
       accountId,
       title,
       subtitle,
@@ -250,6 +262,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       customer,
     } = this.props;
     const current = [
+      token,
+      inbox,
       accountId,
       title,
       subtitle,
@@ -265,6 +279,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       agentUnavailableText,
     ];
     const prev = [
+      prevProps.token,
+      prevProps.inbox,
       prevProps.accountId,
       prevProps.title,
       prevProps.subtitle,
@@ -289,6 +305,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     // customizing the chat widget to suit their needs)
     if (shouldUpdateConfig) {
       this.handleConfigUpdated({
+        token,
+        inbox,
         accountId,
         title,
         subtitle,
@@ -392,24 +410,27 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   };
 
   fetchWidgetSettings = async (): Promise<WidgetSettings> => {
-    const {accountId, baseUrl} = this.props;
+    const {token, inbox, accountId, baseUrl} = this.props;
+    const params = {account_id: accountId || token, inbox_id: inbox};
     const empty = {} as WidgetSettings;
 
-    return fetchWidgetSettings(accountId, baseUrl)
+    return fetchWidgetSettings(params, baseUrl)
       .then((settings) => settings || empty)
       .catch(() => empty);
   };
 
-  updateWidgetSettingsMetadata = () => {
-    const {accountId, baseUrl} = this.props;
-    const metadata = getUserInfo(window);
+  updateWidgetSettingsMetadata = async () => {
+    const {token, inbox, accountId, baseUrl} = this.props;
+    const params = {
+      account_id: accountId || token,
+      inbox_id: inbox,
+      metadata: getUserInfo(window),
+    };
 
-    return updateWidgetSettingsMetadata(accountId, metadata, baseUrl).catch(
-      (err) => {
-        // No need to block on this
-        this.logger.error('Failed to update widget metadata:', err);
-      }
-    );
+    return updateWidgetSettingsMetadata(params, baseUrl).catch((err) => {
+      // No need to block on this
+      this.logger.error('Failed to update widget metadata:', err);
+    });
   };
 
   hasValidPayloadIdentity = (payload: any) => {

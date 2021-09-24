@@ -31,7 +31,9 @@ Paste the code below between your `<head>` and `</head>` tags:
   window.Papercups = {
     config: {
       // Pass in your Papercups account token here after signing up
-      accountId: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx',
+      token: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx',
+      // Specify a Papercups inbox
+      inbox: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx',
       title: 'Welcome to Papercups!',
       subtitle: 'Ask us anything in the chat window below 😊',
       newMessagePlaceholder: 'Start typing...',
@@ -94,7 +96,9 @@ const ExamplePage = () => {
       */}
       <ChatWidget
         // Pass in your Papercups account token here after signing up
-        accountId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'
+        token='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'
+        // Specify a Papercups inbox
+        inbox='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'
         title='Welcome to Papercups!'
         subtitle='Ask us anything in the chat window below 😊'
         newMessagePlaceholder='Start typing...'
@@ -126,38 +130,40 @@ const ExamplePage = () => {
 
 These are the props you can pass into your `<ChatWidget />` React component, or the fields you can specify in your `Papercups.config`:
 
-| Prop                              | Type                         | Value                                                                                                                      | Default                          |
-| :-------------------------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
-| **`accountId`**                   | `string`                     | Your Papercups account token                                                                                               | N/A                              |
-| **`title`**                       | `string`                     | The title in the header of your chat widget                                                                                | Welcome!                         |
-| **`subtitle`**                    | `string`                     | The subtitle in the header of your chat widget                                                                             | How can we help you?             |
-| **`newMessagePlaceholder`**       | `string`                     | The placeholder text in the new message input                                                                              | Start typing...                  |
-| **`emailInputPlaceholder`**       | `string`                     | The placeholder text in the optional email input                                                                           | Enter your email                 |
-| **`newMessagesNotificationText`** | `string`                     | The notification text when new messages arrive and the chat window is closed                                               | View new messages                |
-| **`primaryColor`**                | `string`                     | The theme color of your chat widget                                                                                        | `1890ff`                         |
-| **`greeting`**                    | `string`                     | An optional initial message to greet your customers with                                                                   | N/A                              |
-| **`awayMessage`**                 | `string`                     | Replaces the `greeting` message if outside working hours                                                                   | N/A                              |
-| **`showAgentAvailability`**       | `boolean`                    | If you want to show whether you (or your agents) are online or not                                                         | `false`                          |
-| **`agentAvailableText`**          | `string`                     | The text shown when you (or your agents) are online                                                                        | We're online right now!          |
-| **`agentUnavailableText`**        | `string`                     | The text shown when you (and your agents) are offline                                                                      | We're away at the moment.        |
-| **`customer`**                    | `object`                     | Identifying information for the customer, including `name`, `email`, `external_id`, and `metadata` (for any custom fields) | N/A                              |
-| **`baseUrl`**                     | `string`                     | The base URL of your API if you're self-hosting Papercups                                                                  | https://app.papercups.io         |
-| **`iframeUrlOverride`**           | `string`                     | An override of the iframe URL we use to render the chat, if you chose to self-host that as well                            | https://chat-widget.papercups.io |
-| **`requireEmailUpfront`**         | `boolean`                    | If you want to require unidentified customers to provide their email before they can message you                           | `false`                          |
-| **`isOpenByDefault`**             | `boolean`                    | If you want the chat widget to open as soon as it loads                                                                    | `false`                          |
-| **`persistOpenState`**            | `boolean`                    | Persists the open state of the chat across pages                                                                           | `false`                          |
-| **`hideToggleButton`**            | `boolean`                    | Hides the toggle button in case you want to open/close programmatically                                                    | `false`                          |
-| **`hideOutsideWorkingHours`**     | `boolean`                    | Hides the chat widget outside of working hours set in Papercups                                                            | `false`                          |
-| **`popUpInitialMessage`**         | `boolean \| number`          | Pops up the initial greeting after `number` milliseconds (or immediately if `true`)                                        | `false`                          |
-| **`customIconUrl`**               | `string`                     | A link to a custom icon image URL                                                                                          | N/A                              |
-| **`iconVariant`**                 | `'outlined' \| 'filled'`     | The style of the default icon                                                                                              | `outlined`                       |
-| **`position`**                    | `'right' \| 'left'`          | The position of the chat on the page                                                                                       | `right`                          |
-| **`styles`**                      | `object`                     | Inline style overrides for `chatContainer`, `toggleContainer`, and `toggleButton`                                          | `{}`                             |
-| **`onChatLoaded`**                | `() => void`                 | Callback fired when chat is loaded                                                                                         | N/A                              |
-| **`onChatOpened`**                | `() => void`                 | Callback fired when chat is opened                                                                                         | N/A                              |
-| **`onChatClosed`**                | `() => void`                 | Callback fired when chat is closed                                                                                         | N/A                              |
-| **`onMessageSent`**               | `(message: Message) => void` | Callback fired when message is sent                                                                                        | N/A                              |
-| **`onMessageReceived`**           | `(message: Message) => void` | Callback fired when message is received                                                                                    | N/A                              |
+| Prop                              | Type                                | Value                                                                                                                      | Default                          |
+| :-------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
+| **`token`**                       | `string`                            | Your Papercups account token                                                                                               | N/A                              |
+| **`inbox`**                       | `string`                            | The Papercups inbox you would like messages to flow into (defaults to your primary inbox)                                  | N/A                              |
+| **`accountId`** (deprecated)      | `string`                            | Your Papercups account token (deprecated: use `token` field instead)                                                       | N/A                              |
+| **`title`**                       | `string`                            | The title in the header of your chat widget                                                                                | Welcome!                         |
+| **`subtitle`**                    | `string`                            | The subtitle in the header of your chat widget                                                                             | How can we help you?             |
+| **`newMessagePlaceholder`**       | `string`                            | The placeholder text in the new message input                                                                              | Start typing...                  |
+| **`emailInputPlaceholder`**       | `string`                            | The placeholder text in the optional email input                                                                           | Enter your email                 |
+| **`newMessagesNotificationText`** | `string`                            | The notification text when new messages arrive and the chat window is closed                                               | View new messages                |
+| **`primaryColor`**                | `string`                            | The theme color of your chat widget                                                                                        | `1890ff`                         |
+| **`greeting`**                    | `string`                            | An optional initial message to greet your customers with                                                                   | N/A                              |
+| **`awayMessage`**                 | `string`                            | Replaces the `greeting` message if outside working hours                                                                   | N/A                              |
+| **`showAgentAvailability`**       | `boolean`                           | If you want to show whether you (or your agents) are online or not                                                         | `false`                          |
+| **`agentAvailableText`**          | `string`                            | The text shown when you (or your agents) are online                                                                        | We're online right now!          |
+| **`agentUnavailableText`**        | `string`                            | The text shown when you (and your agents) are offline                                                                      | We're away at the moment.        |
+| **`customer`**                    | `object`                            | Identifying information for the customer, including `name`, `email`, `external_id`, and `metadata` (for any custom fields) | N/A                              |
+| **`baseUrl`**                     | `string`                            | The base URL of your API if you're self-hosting Papercups                                                                  | https://app.papercups.io         |
+| **`iframeUrlOverride`**           | `string`                            | An override of the iframe URL we use to render the chat, if you chose to self-host that as well                            | https://chat-widget.papercups.io |
+| **`requireEmailUpfront`**         | `boolean`                           | If you want to require unidentified customers to provide their email before they can message you                           | `false`                          |
+| **`isOpenByDefault`**             | `boolean`                           | If you want the chat widget to open as soon as it loads                                                                    | `false`                          |
+| **`persistOpenState`**            | `boolean`                           | Persists the open state of the chat across pages                                                                           | `false`                          |
+| **`hideToggleButton`**            | `boolean`                           | Hides the toggle button in case you want to open/close programmatically                                                    | `false`                          |
+| **`hideOutsideWorkingHours`**     | `boolean`                           | Hides the chat widget outside of working hours set in Papercups                                                            | `false`                          |
+| **`popUpInitialMessage`**         | `boolean \| number`                 | Pops up the initial greeting after `number` milliseconds (or immediately if `true`)                                        | `false`                          |
+| **`customIconUrl`**               | `string`                            | A link to a custom icon image URL                                                                                          | N/A                              |
+| **`iconVariant`**                 | `'outlined' \| 'filled'`            | The style of the default icon                                                                                              | `outlined`                       |
+| **`position`**                    | `'right' \| 'left'`                 | The position of the chat on the page                                                                                       | `right`                          |
+| **`styles`**                      | `object`                            | Inline style overrides for `chatContainer`, `toggleContainer`, and `toggleButton`                                          | `{}`                             |
+| **`onChatLoaded`**                | `({open, close, identify}) => void` | Callback fired when chat is loaded, returning some utility functions                                                       | N/A                              |
+| **`onChatOpened`**                | `() => void`                        | Callback fired when chat is opened                                                                                         | N/A                              |
+| **`onChatClosed`**                | `() => void`                        | Callback fired when chat is closed                                                                                         | N/A                              |
+| **`onMessageSent`**               | `(message: Message) => void`        | Callback fired when message is sent                                                                                        | N/A                              |
+| **`onMessageReceived`**           | `(message: Message) => void`        | Callback fired when message is received                                                                                    | N/A                              |
 
 ## Development
 

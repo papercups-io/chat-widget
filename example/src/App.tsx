@@ -2,8 +2,9 @@ import React from 'react';
 
 import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget';
 
-// NB: during development, replace this with a valid account ID from your dev db
+// NB: during development, replace this with valid account/inbox IDs from your dev db
 const TEST_ACCOUNT_ID = '2ebbad4c-b162-4ed2-aff5-eaf9ebf469a5';
+const TEST_INBOX_ID = '76bbe5c8-bde4-43d2-a4b4-d0e06149005a';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
@@ -69,10 +70,13 @@ const App = ({disco, displayChatWindow}: Props) => {
           }}
         >
           <ChatWindow
+            token={TEST_ACCOUNT_ID}
+            inbox={TEST_INBOX_ID}
+            // deprecate `accountId`, use `token` instead
+            accountId={TEST_ACCOUNT_ID}
             title='Welcome to Papercups!'
             subtitle='Ask us anything in the chat window 😊'
             primaryColor={primaryColor}
-            accountId={TEST_ACCOUNT_ID}
             greeting='Hi there! How can I help you?'
             newMessagePlaceholder='Start typing...'
             agentAvailableText='Agents are online!'
@@ -109,10 +113,13 @@ const App = ({disco, displayChatWindow}: Props) => {
         // like to render the widget on, or in your root/router component
         // if you would like it to render on every page
         <ChatWidget
+          token={TEST_ACCOUNT_ID}
+          inbox={TEST_INBOX_ID}
+          // deprecate `accountId`, use `token` instead
+          accountId={TEST_ACCOUNT_ID}
           title='Welcome to Papercups!'
           subtitle='Ask us anything in the chat window 😊'
           primaryColor={primaryColor}
-          accountId={TEST_ACCOUNT_ID}
           greeting='Hi there! How can I help you?'
           awayMessage="Sorry, we're not available at the moment! Leave your email and we'll get back to you as soon as we can :)"
           newMessagePlaceholder='Start typing...'
