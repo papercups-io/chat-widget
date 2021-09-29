@@ -221,7 +221,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       metadata: JSON.stringify(metadata),
       disableAnalyticsTracking: disableAnalyticsTracking ? 1 : 0,
       debug: debug ? 1 : 0,
-      version: '1.2.0',
+      version: '1.2.1',
       ts: ts.toString(),
     };
 
