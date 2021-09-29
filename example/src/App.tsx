@@ -4,7 +4,7 @@ import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget';
 
 // NB: during development, replace this with valid account/inbox IDs from your dev db
 const TEST_ACCOUNT_ID = '2ebbad4c-b162-4ed2-aff5-eaf9ebf469a5';
-const TEST_INBOX_ID = '76bbe5c8-bde4-43d2-a4b4-d0e06149005a';
+const TEST_INBOX_ID = '0e2d2cf5-7d6d-47ed-8b74-72a7ded1e668';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
@@ -140,20 +140,20 @@ const App = ({disco, displayChatWindow}: Props) => {
           isOpenByDefault
           iconVariant='filled'
           persistOpenState
-          position={{side: 'right', offset: 80}}
+          // position={{side: 'right', offset: 80}}
           debug
           disableAnalyticsTracking
           styles={{
             chatContainer: {
               // left: 20,
               // right: 'auto',
-              bottom: 160,
-              maxHeight: 640,
+              // bottom: 160,
+              // maxHeight: 640,
             },
             toggleContainer: {
               // left: 20,
               // right: 'auto',
-              bottom: 80,
+              // bottom: 80,
             },
             toggleButton: {},
           }}

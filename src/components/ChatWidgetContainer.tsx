@@ -118,7 +118,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   iframeRef: any;
   storage: any;
   subscriptions: Array<() => void> = [];
-  logger: Logger;
+  logger: Logger = new Logger();
 
   EVENTS = [
     'papercups:open',
@@ -157,9 +157,6 @@ class ChatWidgetContainer extends React.Component<Props, State> {
 
   async componentDidMount() {
     const ts = +new Date();
-    // TODO: use `subscription_plan` from settings.account to determine
-    // whether to display the Papercups branding or not in the chat window
-    const settings = await this.fetchWidgetSettings();
     const {
       token,
       inbox,
@@ -187,7 +184,9 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     ];
 
     this.storage = store(window);
-
+    // TODO: use `subscription_plan` from settings.account to determine
+    // whether to display the Papercups branding or not in the chat window
+    const settings = await this.fetchWidgetSettings();
     const metadata = {...getUserInfo(window), ...customer};
     const config: WidgetConfig = {
       baseUrl,
@@ -222,7 +221,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       metadata: JSON.stringify(metadata),
       disableAnalyticsTracking: disableAnalyticsTracking ? 1 : 0,
       debug: debug ? 1 : 0,
-      version: '1.2.0',
+      version: '1.2.1',
       ts: ts.toString(),
     };
 
