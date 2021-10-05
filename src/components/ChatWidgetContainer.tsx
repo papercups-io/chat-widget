@@ -242,6 +242,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
+    // Don't do anything if the widget hasn't loaded yet
+    if (!this.state.isLoaded) {
+      return;
+    }
+
     const {
       token,
       inbox,
