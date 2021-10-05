@@ -46,19 +46,19 @@ const App = ({disco, displayChatWindow}: Props) => {
 
   const handleIdentifyCustomer = () => {
     const params = {
-      name: 'Test Alex',
-      email: 'alex@papercups.io',
-      external_id: '123:alex@papercups.io',
+      name: 'Demo User',
+      email: 'demo@papercups.io',
+      external_id: '789:demo@papercups.io',
       // Ad hoc metadata
       metadata: {
         plan: 'team',
         registered_at: '2020-09-01',
-        age: 32,
+        age: 30,
         valid: true,
       },
     };
 
-    cups.identify('321:alex@papercups.io', params);
+    cups.identify('789:demo@papercups.io', params);
     setCustomerDetails(params);
   };
 
