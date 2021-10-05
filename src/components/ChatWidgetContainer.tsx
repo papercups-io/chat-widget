@@ -680,6 +680,9 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     );
 
     this.storage.setCustomerId(customerId);
+    this.setState({
+      config: {...this.state.config, customerId},
+    });
   };
 
   emitToggleEvent = (isOpen: boolean) => {
