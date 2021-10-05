@@ -34,7 +34,6 @@
     "@types/node": "^12.12.38",
     "@types/react": "^16.9.27",
     "@types/react-dom": "^16.9.7",
-    "@types/superagent": "^4.1.8",
     "@types/theme-ui": "^0.3.5",
     "@types/tinycolor2": "^1.4.2",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
@@ -64,9 +63,9 @@
     "dist"
   ],
   "dependencies": {
+    "@papercups-io/browser": "0.0.3-beta.5",
     "framer-motion": "^2.0.1",
     "query-string": "^6.13.1",
-    "superagent": "^5.3.1",
     "theme-ui": "^0.3.1",
     "tinycolor2": "^1.4.1"
   }
