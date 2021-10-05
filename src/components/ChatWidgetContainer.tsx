@@ -9,49 +9,18 @@ import {
   WidgetSettings,
   fetchWidgetSettings,
   updateWidgetSettingsMetadata,
-} from '../api';
-import {WidgetConfig, isValidUuid, noop} from '../utils';
+  isValidUuid,
+  getUserInfo,
+  setupCustomEventHandlers,
+  setupPostMessageHandlers,
+} from '@papercups-io/browser';
+
+import {WidgetConfig, noop} from '../utils';
 import getThemeConfig from '../theme';
 import store from '../storage';
 import Logger from '../logger';
-import {getUserInfo} from '../track/info';
 
 const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
-
-// TODO: set this up somewhere else
-const setupPostMessageHandlers = (w: any, handlers: (msg?: any) => void) => {
-  const cb = (msg: any) => {
-    handlers(msg);
-  };
-
-  if (w.addEventListener) {
-    w.addEventListener('message', cb);
-
-    return () => w.removeEventListener('message', cb);
-  } else {
-    w.attachEvent('onmessage', cb);
-
-    return () => w.detachEvent('onmessage', cb);
-  }
-};
-
-const setupCustomEventHandlers = (
-  w: any,
-  events: Array<string>,
-  handlers: (e: any) => void
-) => {
-  if (w.addEventListener) {
-    for (const event of events) {
-      w.addEventListener(event, handlers);
-    }
-
-    return () => events.map((event) => w.removeEventListener(event, handlers));
-  } else {
-    console.error('Custom events are not supported in your browser!');
-
-    return noop;
-  }
-};
 
 export type SharedProps = {
   token: string;
@@ -125,6 +94,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     'papercups:close',
     'papercups:toggle',
     'papercups:identify',
+    'papercups:customer:set',
     'storytime:customer:set',
   ];
 
@@ -242,6 +212,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
+    // Don't do anything if the widget hasn't loaded yet
+    if (!this.state.isLoaded) {
+      return;
+    }
+
     const {
       token,
       inbox,
@@ -675,6 +650,9 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     );
 
     this.storage.setCustomerId(customerId);
+    this.setState({
+      config: {...this.state.config, customerId},
+    });
   };
 
   emitToggleEvent = (isOpen: boolean) => {

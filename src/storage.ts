@@ -1,5 +1,4 @@
 // TODO: do something different for dev vs prod
-// TODO: do something different for dev vs prod
 const PREFIX = '__PAPERCUPS__';
 
 type StorageType = 'local' | 'session' | 'cookie' | 'memory' | 'none' | null;

@@ -3,6 +3,7 @@
 import React, {CSSProperties} from 'react';
 import {motion} from 'framer-motion';
 import {jsx} from 'theme-ui';
+
 import WidgetToggle from './WidgetToggle';
 import ChatWidgetContainer, {SharedProps} from './ChatWidgetContainer';
 import ErrorBoundary from './ErrorBoundary';
