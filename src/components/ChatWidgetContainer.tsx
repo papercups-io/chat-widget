@@ -94,6 +94,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     'papercups:close',
     'papercups:toggle',
     'papercups:identify',
+    'papercups:customer:set',
     'storytime:customer:set',
   ];
 

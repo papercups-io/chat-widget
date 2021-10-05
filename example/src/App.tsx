@@ -1,10 +1,17 @@
 import React from 'react';
 
-import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget';
+import {ChatWidget, ChatWindow} from '@papercups-io/chat-widget';
+import {Papercups} from '@papercups-io/browser';
 
 // NB: during development, replace this with valid account/inbox IDs from your dev db
 const TEST_ACCOUNT_ID = '2ebbad4c-b162-4ed2-aff5-eaf9ebf469a5';
 const TEST_INBOX_ID = 'eab9c66e-ea8a-46f7-9565-3927ec55e20d';
+
+const cups = Papercups.init({
+  accountId: TEST_ACCOUNT_ID,
+  inboxId: TEST_INBOX_ID,
+  baseUrl: 'http://localhost:4000',
+});
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
@@ -37,24 +44,22 @@ const App = ({disco, displayChatWindow}: Props) => {
     return () => clearInterval(interval);
   }, [disco, colors, primaryColor]);
 
-  const toggleLoginState = () => {
-    const metadata =
-      customer && customer.email
-        ? null
-        : {
-            name: 'Example User',
-            email: 'test@example.com',
-            external_id: '321',
-            // Ad hoc metadata
-            metadata: {
-              plan: 'starter',
-              registered_at: '2020-09-01',
-              age: 25,
-              valid: true,
-            },
-          };
+  const handleIdentifyCustomer = () => {
+    const params = {
+      name: 'Test Alex',
+      email: 'alex@papercups.io',
+      external_id: '123:alex@papercups.io',
+      // Ad hoc metadata
+      metadata: {
+        plan: 'team',
+        registered_at: '2020-09-01',
+        age: 32,
+        valid: true,
+      },
+    };
 
-    setCustomerDetails(metadata);
+    cups.identify('321:alex@papercups.io', params);
+    setCustomerDetails(params);
   };
 
   return (
@@ -127,7 +132,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           newMessagesNotificationText='View new messages'
           agentAvailableText='Agents are online!'
           agentUnavailableText='Agents are not available at the moment.'
-          customer={customer}
+          // customer={customer}
           // NB: we override these values during development -- note that the
           // API runs on port 4000 by default, and the iframe on 8080
           baseUrl='http://localhost:4000'
@@ -183,8 +188,8 @@ const App = ({disco, displayChatWindow}: Props) => {
       <button onClick={Papercups.open}>Open</button>
       <button onClick={Papercups.close}>Close</button>
       <button onClick={Papercups.toggle}>Toggle</button>
-      <button onClick={toggleLoginState}>
-        {customer ? 'Log out' : 'Log in'}
+      <button onClick={handleIdentifyCustomer}>
+        {customer ? 'Logged in' : 'Log in'}
       </button>
     </>
   );

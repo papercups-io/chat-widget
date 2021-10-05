@@ -63,7 +63,7 @@
     "dist"
   ],
   "dependencies": {
-    "@papercups-io/browser": "0.0.3-beta.5",
+    "@papercups-io/browser": "0.0.3-beta.7",
     "framer-motion": "^2.0.1",
     "query-string": "^6.13.1",
     "theme-ui": "^0.3.1",
