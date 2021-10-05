@@ -4,7 +4,7 @@ import {ChatWidget, ChatWindow, Papercups} from '@papercups-io/chat-widget';
 
 // NB: during development, replace this with valid account/inbox IDs from your dev db
 const TEST_ACCOUNT_ID = '2ebbad4c-b162-4ed2-aff5-eaf9ebf469a5';
-const TEST_INBOX_ID = '0e2d2cf5-7d6d-47ed-8b74-72a7ded1e668';
+const TEST_INBOX_ID = 'eab9c66e-ea8a-46f7-9565-3927ec55e20d';
 
 type Props = {disco?: boolean; displayChatWindow?: boolean};
 
