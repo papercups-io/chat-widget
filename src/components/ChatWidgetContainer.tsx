@@ -25,7 +25,7 @@ const DEFAULT_IFRAME_URL = 'https://chat-widget.papercups.io';
 export type SharedProps = {
   token: string;
   inbox?: string;
-  // TOOD: deprecate, use `token` instead
+  // TODO: deprecate, use `token` instead
   accountId?: string;
   title?: string;
   subtitle?: string;
