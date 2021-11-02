@@ -191,7 +191,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       metadata: JSON.stringify(metadata),
       disableAnalyticsTracking: disableAnalyticsTracking ? 1 : 0,
       debug: debug ? 1 : 0,
-      version: '1.2.1',
+      version: '1.3.0',
       ts: ts.toString(),
     };
 
@@ -297,7 +297,7 @@ class ChatWidgetContainer extends React.Component<Props, State> {
       });
     }
 
-    if (customerId && this.shouldUpdateCustomer(customer, prevProps.customer)) {
+    if (this.shouldUpdateCustomer(customer, prevProps.customer)) {
       this.updateCustomerMetadata(customerId, customer);
     }
   }
@@ -369,6 +369,17 @@ class ChatWidgetContainer extends React.Component<Props, State> {
     this.send('config:update', updates);
   };
 
+  handleSetCustomerId = (id?: any) => {
+    const cachedCustomerId = this.storage.getCustomerId();
+    const customerId = id || cachedCustomerId;
+
+    this.logger.debug('Setting customer ID:', customerId);
+    this.setState({
+      config: {...this.state.config, customerId},
+    });
+    this.send('customer:set:id', customerId);
+  };
+
   handleCustomerIdUpdated = (id?: any) => {
     const cachedCustomerId = this.storage.getCustomerId();
     const customerId = id || cachedCustomerId;
@@ -438,6 +449,8 @@ class ChatWidgetContainer extends React.Component<Props, State> {
         return this.handleCloseWidget();
       case 'papercups:toggle':
         return this.handleToggleOpen();
+      case 'papercups:customer:set':
+        return this.handleSetCustomerId(detail);
       case 'storytime:customer:set':
         return this.handleCustomerIdUpdated(detail); // TODO: test this!
       default:
@@ -611,15 +624,11 @@ class ChatWidgetContainer extends React.Component<Props, State> {
   identify = (data: CustomerMetadata) => {
     const {customerId} = this.state.config;
 
-    if (!customerId) {
-      return null;
-    }
-
     return this.updateCustomerMetadata(customerId, data);
   };
 
   updateCustomerMetadata = (
-    customerId: string,
+    customerId: string | undefined,
     data: CustomerMetadata | null | undefined
   ) => {
     const customerBrowserInfo = getUserInfo(window);
