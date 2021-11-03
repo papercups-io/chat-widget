@@ -1,6 +1,6 @@
 {
   "name": "@papercups-io/chat-widget",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Papercups chat widget",
   "author": "reichert621",
   "license": "MIT",
@@ -63,7 +63,7 @@
     "dist"
   ],
   "dependencies": {
-    "@papercups-io/browser": "0.0.3",
+    "@papercups-io/browser": "0.0.4-beta.0",
     "framer-motion": "^2.0.1",
     "query-string": "^6.13.1",
     "theme-ui": "^0.3.1",

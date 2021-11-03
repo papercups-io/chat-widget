@@ -137,7 +137,7 @@ const App = ({disco, displayChatWindow}: Props) => {
           // API runs on port 4000 by default, and the iframe on 8080
           baseUrl='http://localhost:4000'
           iframeUrlOverride='http://localhost:8080'
-          requireEmailUpfront={false}
+          requireEmailUpfront={!customer && !customer?.email}
           showAgentAvailability
           hideOutsideWorkingHours={false}
           hideToggleButton={false}
@@ -189,7 +189,7 @@ const App = ({disco, displayChatWindow}: Props) => {
       <button onClick={Papercups.close}>Close</button>
       <button onClick={Papercups.toggle}>Toggle</button>
       <button onClick={handleIdentifyCustomer}>
-        {customer ? 'Logged in' : 'Log in'}
+        {customer && customer.email ? 'Logged in' : 'Log in'}
       </button>
     </>
   );
